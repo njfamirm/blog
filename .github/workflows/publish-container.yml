@@ -1,14 +1,18 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: Publish Alwatr Containers
+name: Publish Containers
 
 on:
   workflow_dispatch:
 
-  pull_request:
-    paths:
-      - 'cloud/Dockerfile'
-      - '.github/workflows/publish-alwatr-container.yml'
+  # push:
+  #   branches:
+  #     - main
+
+  # pull_request:
+  #   paths:
+  #     - 'cloud/Dockerfile'
+  #     - '.github/workflows/publish-alwatr-container.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -26,7 +30,7 @@ jobs:
       matrix:
         include:
           - image: njfamirm-ir
-            description: njfamirm's personal blog.
+            description: Njfamirm personal website.
             siteUrl: https://njfamirm.ir
 
     permissions:
