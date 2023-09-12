@@ -12,8 +12,8 @@ title: Reading List
     </h2>
   </div>
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
-    {% for item in collections.reading %}
-      <div class="space-y-4 p-4 rounded bg-background brightness-90 w-full md:w-2/5 group cursor-pointer">
+    {% for item in collections.reading | reverse %}
+      <div class="flex flex-col gap-4 justify-between p-4 rounded border w-full md:w-2/5 group cursor-pointer">
         <a class="text-2xl font-bold text-primary italic group-hover:brightness-125" href="{{ item.data.url }}">
           {{ item.data.title }}<span class="font-lg text-secondary opacity-40 no-underline">, {{ item.data.type }}</span>
         </a>
@@ -22,7 +22,6 @@ title: Reading List
         <div class="flex flex-row justify-between">
           <a class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.data.url | getHostname }}">{{ item.data.url | getHostname }}</a>
           <div class="inline-flex flex-row flex-wrap gap-1 text-center">
-            {# <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em"></span> #}
             {% for tag in item.data.keywords %}
               <span class="font-mono inline-flex p-1 rounded leading-4 text-onTertiary bg-tertiary" style="font-size: 0.8em">{{ tag }}</span>
             {% endfor %}

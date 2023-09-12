@@ -2,6 +2,6 @@
 title: JSON Schema
 url: https://json-schema.org/
 keywords:
-  - Javascript
+  - javascript
 type: Reference
 ---
