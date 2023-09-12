@@ -1,5 +1,10 @@
 ---
 title: Reading List
+pagination:
+  data: collections.reading
+  size: 20
+  alias: readingList
+permalink: /en/reading/{{ pagination.pageNumber }}/index.html
 ---
 
 <main class="space-y-16 container xl:max-w-7xl mx-auto px-4 py-16 lg:px-8 lg:py-32">
@@ -12,10 +17,10 @@ title: Reading List
     </h2>
   </div>
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
-    {% for item in collections.reading | reverse %}
-      <div class="flex flex-col gap-4 justify-between p-4 rounded border w-full md:w-2/5 group cursor-pointer">
-        <a class="text-2xl font-bold text-primary italic group-hover:brightness-125" href="{{ item.data.url }}">
-          {{ item.data.title }}<span class="font-lg text-secondary opacity-40 no-underline">, {{ item.data.type }}</span>
+    {% for item in readingList | reverse %}
+      <div class="flex flex-col gap-4 justify-between grow p-4 rounded border w-full md:w-2/5 cursor-pointer">
+        <a class="text-2xl font-bold text-primary italic hover:brightness-125" href="{{ item.data.url }}">
+          <span class="underline underline-offset-1">{{ item.data.title }}</span><span class="font-lg text-secondary opacity-40">, {{ item.data.type }}</span>
         </a>
         <p>{{ item.data.description }}</p>
 
@@ -29,5 +34,14 @@ title: Reading List
         </div>
       </div>
     {% endfor %}
+  </div>
+
+  <div class="flex flex-row justify-end gap-10">
+    {% if pagination.previousPageHref %}
+      <a class="block text-center text-lg font-semibold bg-primary text-onPrimary rounded p-2 bg-opacity-80 hover:brightness-150" href="{{ pagination.previousPageHref }}">Previous Page</a>
+    {% endif %}
+    {% if pagination.nextPageHref %}
+      <a class="block text-center text-lg font-bold bg-primary text-onPrimary rounded p-2 hover:brightness-150" href="{{ pagination.nextPageHref }}">Next Page</a>
+    {% endif %}
   </div>
 </main>
