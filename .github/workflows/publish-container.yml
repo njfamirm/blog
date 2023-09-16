@@ -5,14 +5,14 @@ name: Publish Containers
 on:
   workflow_dispatch:
 
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 
-  # pull_request:
-  #   paths:
-  #     - 'cloud/Dockerfile'
-  #     - '.github/workflows/publish-alwatr-container.yml'
+  pull_request:
+    paths:
+      - 'cloud/Dockerfile'
+      - '.github/workflows/publish-alwatr-container.yml'
 
 env:
   REGISTRY: ghcr.io
