@@ -2,5 +2,10 @@
   "layout": "blog-post.njk",
   "tags": ["blog"],
   "date": "git Created",
-  "eleventyNavigation": {"parent": "Blog"}
+  "eleventyNavigation": {"parent": "Blog"},
+  "author": {
+    "name": "S. Amir Mohammad Najafi",
+    "url": "https://www.njfamirm.ir",
+    "avatar": "assets/img/authors/njfamirm.jpg"
+  }
 }
