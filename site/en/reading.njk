@@ -22,8 +22,8 @@ eleventyNavigation:
 
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
     {% for item in readingList | reverse %}
-      <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-2xl hover:shadow-lg transition-shadow cursor-pointer group" href="{{ item.data.url }}">
-        <span class="text-2xl font-bold text-primary italic group-hover:brightness-125">
+      <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-2xl bg-surface brightness-125 hover:shadow-lg transition-shadow cursor-pointer group" href="{{ item.data.url }}">
+        <span class="text-2xl font-bold text-primary italic group-hover:brightness-90">
           <h3 class="inline underline underline-offset-1">{{ item.data.title }}</h3>
           <span class="font-lg text-secondary opacity-40">, {{ item.data.type }}</span>
         </span>
