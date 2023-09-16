@@ -1,7 +1,7 @@
 const image = require('@11ty/eleventy-img');
 
 async function imageShortcode(src, alt) {
-  let metadata = await image(src, {
+  let metadata = await image('assets' + src, {
     hashLength: 8,
     urlPath: '/img/',
     outputDir: 'dist/img',

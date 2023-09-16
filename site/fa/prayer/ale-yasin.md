@@ -1,7 +1,7 @@
 ---
 title: زیارت آل یاسین
 description: زیارت آل یاسین علیهم‌السلام
-socialImage: assets/img/prayer/ale-yasin/cover.jpg
+socialImage: /img/prayer/ale-yasin/cover.jpg
 type:
   - زیارت
 keywords:
