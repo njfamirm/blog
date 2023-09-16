@@ -5,11 +5,5 @@ eleventyExcludeFromCollections: true
 
 {% set css %}
   {% include "./_css/main.css" %}
-  {# {% include "./_css/kalameh-font.css" %} #}
-  {% include "./_css/vazirmatn-font.css" %}
-  {% include "./_css/post.css" %}
-  {% include "./_css/prayer.css" %}
-  {% include "./_css/syntax-highlighter.css" %}
-  {% include "./_css/font.css" %}
 {% endset %}
 {{ css | postcss | safe }}

@@ -1,0 +1,15 @@
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ title }}",
+    "datePublished": "{{ page.date.toISOString() }}",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "{{ author.name or site.author.name }}",
+        "url": "{{ author.url or site.author.url }}"
+      }
+    ]
+  }
+</script>

@@ -7,7 +7,7 @@ const {imageShortcode} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
-const timeToRead = require('eleventy-plugin-time-to-read');
+const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 
 /**
@@ -31,8 +31,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addShortcode('image', imageShortcode);
   eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
 
+  eleventyConfig.addPlugin(eleventyNavigationPlugin);
   eleventyConfig.addPlugin(syntaxHighlight);
-  eleventyConfig.addPlugin(timeToRead);
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPlugin(directoryOutputPlugin, {
     columns: {

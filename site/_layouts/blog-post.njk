@@ -1,0 +1,54 @@
+---
+layout: base.njk
+---
+<main class="p-10 mt-24 lg:px-48 box-border">
+  <div class="flex flex-row gap-2 font-black mb-2">
+    {% for type in type %}
+      <span class="text-primary">{{ type }}</span>
+    {% endfor %}
+  </div>
+
+  <h1 class="text-4xl md:text-7xl lg:text-6xl font-black leading-none text-onBackground" style="letter-spacing: -0.03em">
+    {{ title }}
+  </h1>
+  <p class="mt-4">{{ description }}</p>
+  <div class="dark:brightness-90 rounded-lg overflow-clip select-none my-10 text-center drop-shadow-lg">
+    {% image socialImage, socialImageAlt or "Cover post" %}
+  </div>
+
+  <div class="flex flex-row justify-between items-end text-secondary">
+    <span class="flex flex-row gap-4 items-center">
+      <span class="avatar rounded-full overflow-hidden object-cover w-10 h-10 [&_img]:w-full [&_img]:h-full">
+        {% image author.avatar, "Author avatar" %}
+      </span>
+      <p class="font-bold">{{ author.name or site.author.name }}</p>
+    </span>
+
+    <p class="whitespace-nowrap">{{ page.date | humanReadableDate }}</p>
+  </div>
+
+  <div class="bg-primary w-full h-[2px] mt-4 mb-10"></div>
+
+  <article class="blog-post-container md:px-24">
+    {{ content | safe }}
+
+    <div class="flex flex-row flex-wrap justify-between gap-6 mt-24">
+      <a class="" href="{% editOnGitHub page %}" target="_blank">
+        <svg class="inline-block" fill="currentColor" height="22" width="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-12q-33 0-56.5-23.5T120-92v-560q0-33 23.5-56.5T200-732h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-12H200Zm280-360Zm167-337 57 56-264 264v57h56l265-265 57 56-288 289H360v-170l287-287Zm171 168L647-709l100-100q24-24 57.5-24t56.5 24l56 57q23 23 23 56t-23 56l-99 99Z"/></svg>
+        <span class="inline-block align-middle">Improve this page</span>
+      </a>
+
+      <span class="text-lg">
+        <span class="font-bold">Keywords:</span>
+        {% for tag in keywords %}
+          <span class="text-tertiary">{{ tag }}</span>{% if not loop.last %},{% endif %}
+        {% endfor %}
+      </span>
+    </div>
+  </article>
+</main>
+
+{% block endBody %}
+  {% include "structured-data/blog.njk" %}
+  {% include "structured-data/breadcrumb.njk" %}
+{% endblock endBody %}

@@ -1,6 +1,6 @@
 {
   "layout": "base.njk",
-  "templateEngineOverride": "njk,md",
+  "templateEngineOverride": "njk",
   "site": {
     "locale": "fa-IR",
     "dir": "rtl"

@@ -1,19 +1,29 @@
-import {tailwindConfig} from '@alwatr/style';
+// import {tailwindConfig} from '@alwatr/style';
 
-export default {
-  ...tailwindConfig,
+import {colorTheme} from '@alwatr/style/lib/colors.js';
+import {elevationPlugin} from '@alwatr/style/lib/elevation.js';
+import {screenTheme} from '@alwatr/style/lib/screen.js';
+import {stateLayerPlugin} from '@alwatr/style/lib/state-layer.js';
+import {typographyTheme} from '@alwatr/style/lib/typography.js';
+import {zIndexTheme} from '@alwatr/style/lib/z-index.js';
+
+const config = {
+  content: ['**/*.njk'],
+  darkMode: 'media',
   theme: {
-    ...tailwindConfig.theme,
     extend: {
-      ...tailwindConfig.theme.extend,
-      fontFamily: {
-        ...tailwindConfig.theme.extend.fontFamily,
-        kalameh: [
-          ['"kalameh"', ...tailwindConfig.theme.extend.fontFamily.system],
-          {fontFeatureSettings: '"calt" 1, "tnum" 0'},
-        ],
-      },
+      ...colorTheme,
+      ...typographyTheme,
+      ...zIndexTheme,
+      ...screenTheme,
     },
   },
-  content: ['**/*.njk'],
+  plugins: [elevationPlugin, stateLayerPlugin],
 };
+
+// const config = {
+//   ...tailwindConfig,
+//   content: ['**/*.njk'],
+// };
+
+export default config;

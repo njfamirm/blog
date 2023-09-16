@@ -19,9 +19,11 @@
 <link media="print" rel="stylesheet" href="/style.css?v={{ git.shortSha }}" onload="this.media='all';this.onload=null;"/>
 
 <link rel="manifest" href="/manifest.webmanifest"/>
+
 <link rel="alternate" title="Blog Posts" type=application/atom+xml href="/feed.xml">
 <link rel="alternate" title="Reading List" type=application/atom+xml href="/en/reading/feed.xml">
 <link rel="alternate" title="Prayers Posts" type=application/atom+xml href="/fa/prayer/feed.xml">
+
 <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 
 <meta name="color-scheme" content="light dark"/>
@@ -35,11 +37,11 @@
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="{{ currentUrl }}"/>
 
-{% set socialImage = coverImage or sharing_image or thumbnail or hero or site.defaultSocialImage %}
+{% set socialImagePath = socialImage or sharing_image or thumbnail or hero or site.defaultSocialImage %}
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="/{{ socialImage }}"/>
-<meta property="og:image" content="/{{ socialImage }}"/>
+<meta name="twitter:image" content="/{{ socialImagePath }}"/>
+<meta property="og:image" content="/{{ socialImagePath }}"/>
 
 {% if coverAlt %}
   <meta property="og:image:alt" content="{{ coverAlt }}"/>
@@ -55,10 +57,10 @@
   <meta name="twitter:creator" content="@{{ contact.twitter }}"/>
 {% endif %}
 
-<meta name="authors" content="{{ authors or site.author.name | sort }}"/>
+<meta name="authors" content="{{ author.name or site.author.name }}"/>
 
-{% if tags %}
-  <meta name="tags" content="{{ tags | sort }}"/>
+{% if keywords %}
+  <meta name="tags" content="{{ keywords | sort }}"/>
 {% endif %}
 
 <link rel="icon" type="image/png" sizes="32x32" href="/img/meta/icon-32.png"/>

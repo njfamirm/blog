@@ -15,13 +15,14 @@ eleventyExcludeFromCollections: true
     <name>{{ site.author.name }}</name>
     <email>{{ site.author.email }}</email>
   </author>
-  {%- for post in collections.post | reverse %}
-  {%- set absolutePostUrl = post.url | absoluteUrl(env.siteUrl) %}
-  <entry>
-    <title>{{ post.data.title }}</title>
-    <link href="{{ absolutePostUrl }}"/>
-    <updated>{{ post.date | dateToRfc3339 }}</updated>
-    <id>{{ absolutePostUrl }}</id>
-  </entry>
+  {%- for post in collections.blog | reverse %}
+    {%- set absolutePostUrl = post.url | absoluteUrl(env.siteUrl) %}
+    <entry>
+      <title>{{ post.data.title }}</title>
+      <link href="{{ absolutePostUrl }}"/>
+      <updated>{{ post.date | dateToRfc3339 }}</updated>
+      <id>{{ absolutePostUrl }}</id>
+      <content xml:lang="{{ site.locale }}" type="html">{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}</content>
+    </entry>
   {%- endfor %}
 </feed>
