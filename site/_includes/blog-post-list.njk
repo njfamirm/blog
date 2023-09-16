@@ -7,7 +7,7 @@
         See my latest posts thats I'm write.
     </h3>
   </div>
-  <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
+  <div class="flex flex-row flex-wrap justify-center items-start gap-2 md:gap-8 w-full">
     {% for post in collections.blog %}
       <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 medium:w-2/5 group rounded-md p-1 shadow-md hover:shadow-lg transition-shadow">
         <div class="rounded-lg overflow-clip mb-2">
