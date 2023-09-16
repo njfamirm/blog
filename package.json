@@ -7,14 +7,10 @@
   "author": "S. Amir Mohammad Najafi <njfamirm@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dp": "run-s build:production deploy:production",
-    "ds": "run-s build:staging deploy:staging",
     "f": "yarn format",
     "s": "yarn start",
     "w": "yarn start",
     "b": "yarn build",
-    "bp": "yarn build:production",
-    "bs": "yarn build:stage",
     "c": "yarn clean",
     "cb": "run-s clean build",
     "format": "run-s format:*",
@@ -22,11 +18,7 @@
     "start": "eleventy --serve",
     "watch": "yarn start",
     "clean": "rm -rf dist",
-    "build": "eleventy",
-    "build:production": "siteUrl='https://www.njfamirm.ir' NODE_ENV='production' MY_ENVIRONMENT=production run-s clean build",
-    "build:staging": "siteUrl='https://beta.njfamirm.ir' MY_ENVIRONMENT=production noIndex=1 run-s clean build",
-    "deploy:production": "wrangler pages deploy --branch=main --project-name=njfamirm-ir dist",
-    "deploy:staging": "wrangler pages deploy --branch=main --project-name=beta-njfamirm-ir dist"
+    "build": "eleventy"
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
@@ -46,8 +38,7 @@
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^9.1.1",
     "prettier": "^3.0.3",
-    "tailwindcss": "^3.3.3",
-    "wrangler": "3.5.1"
+    "tailwindcss": "^3.3.3"
   },
   "dependencies": {
     "quicklink": "^2.3.0"
