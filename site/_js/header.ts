@@ -3,11 +3,11 @@
 // if (header != null) {
 //   window.addEventListener('scroll', function () {
 //     if (window.scrollY > 10) {
-//       header.style.backgroundColor = '#fff';
+//       header.classList.add('bg-surface');
 //       header.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
 //     }
 //     if (window.scrollY < 10) {
-//       header.style.backgroundColor = 'transparent';
+//       header.classList.remove('bg-surface');
 //       header.style.boxShadow = 'none';
 //     }
 //   });

@@ -1,0 +1,21 @@
+.blog-post-container {
+  img {
+    @apply dark:brightness-90 rounded-lg select-none my-10 text-center drop-shadow-lg mx-auto;
+  }
+
+  h2 {
+    @apply text-2xl sm:text-4xl font-bold text-primary mt-10 mb-5 md:text-4xl;
+  }
+
+  code:not(pre code) {
+    @apply italic brightness-75 text-lg rounded-sm font-mono selection:p-0;
+  }
+
+  a {
+    @apply text-tertiary hover:brightness-50 font-bold;
+  }
+
+  p {
+    @apply leading-7 text-xl my-5;
+  }
+}

@@ -5,6 +5,9 @@ pagination:
   size: 20
   alias: readingList
 permalink: /en/reading/{{ pagination.pageNumber }}/index.html
+eleventyNavigation:
+  key: Reading
+  order: 2
 ---
 
 <main class="space-y-16 container xl:max-w-7xl mx-auto px-4 py-16 lg:px-8 lg:py-32">
@@ -12,27 +15,33 @@ permalink: /en/reading/{{ pagination.pageNumber }}/index.html
     <h1 class="text-3xl md:text-4xl font-extrabold mb-4 text-primary">
       Reading List
     </h1>
-    <h2 class="text-lg md:text-xl md:leading-relaxed font-medium text-secondary lg:w-2/3 mx-auto">
+    <p class="text-lg md:text-xl md:leading-relaxed font-medium text-secondary lg:w-2/3 mx-auto">
       Articles, websites and anything that I think is good to read!
-    </h2>
+    </p>
   </div>
+
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
     {% for item in readingList | reverse %}
-      <div class="flex flex-col gap-4 justify-between grow p-4 rounded border w-full md:w-2/5 cursor-pointer">
-        <a class="text-2xl font-bold text-primary italic hover:brightness-125" href="{{ item.data.url }}">
-          <span class="underline underline-offset-1">{{ item.data.title }}</span><span class="font-lg text-secondary opacity-40">, {{ item.data.type }}</span>
-        </a>
+      <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-2xl hover:shadow-lg transition-shadow cursor-pointer group" href="{{ item.data.url }}">
+        <span class="text-2xl font-bold text-primary italic group-hover:brightness-125">
+          <h3 class="inline underline underline-offset-1">{{ item.data.title }}</h3>
+          <span class="font-lg text-secondary opacity-40">, {{ item.data.type }}</span>
+        </span>
         <p>{{ item.data.description }}</p>
 
         <div class="flex flex-row justify-between">
-          <a class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.data.url | getHostname }}">{{ item.data.url | getHostname }}</a>
-          <div class="inline-flex flex-row flex-wrap gap-1 text-center">
+          <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.data.url | getHostname }}">
+            {{ item.data.url | getHostname }}
+          </span>
+          <span>
             {% for tag in item.data.keywords %}
-              <span class="font-mono inline-flex p-1 rounded leading-4 text-onTertiary bg-tertiary" style="font-size: 0.8em">{{ tag }}</span>
+              <span><span class="text-tertiary">{{ tag }}</span>
+                {% if not loop.last %},{% endif %}
+              </span>
             {% endfor %}
-          </div>
+          </span>
         </div>
-      </div>
+      </a>
     {% endfor %}
   </div>
 
