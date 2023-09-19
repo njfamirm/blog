@@ -17,9 +17,9 @@
   "cSpell.words": [
     "cssnano",
     "decap",
+    "esbuild",
+    "Strapi",
     "tailwindcss",
-    "treeshake",
-    "tailwindcss",
-    "esbuild"
+    "treeshake"
   ]
 }
