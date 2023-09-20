@@ -27,7 +27,7 @@
     "@11ty/eleventy-plugin-directory-output": "^1.0.1",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
-    "@alwatr/style": "^1.1.1",
+    "@alwatr/style": "^1.1.2",
     "@swc/html": "^0.0.28",
     "@types/quicklink": "^2.3.1",
     "cssnano": "^6.0.1",
