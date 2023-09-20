@@ -8,7 +8,7 @@
     </h3>
   </div>
   <div class="flex flex-row flex-wrap justify-center items-start gap-2 md:gap-8 w-full">
-    {% for post in collections.blog %}
+    {% for post in collections.blog | reverse %}
       <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 md:w-2/5 group rounded-md p-1 bg-surface brightness-125 shadow-md hover:shadow-lg transition-shadow">
         <div class="rounded-lg overflow-clip mb-2 brightness-75">
           {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
