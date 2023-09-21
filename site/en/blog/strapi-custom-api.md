@@ -31,7 +31,7 @@ Also, our reading list page should work with the API and not need to be built st
 Before we can start building our reading-list, we need to create a new Strapi project.
 
 ```bash
-yarn create strapi-app reading-list
+yarn create strapi-app reading-list --ts
 ```
 
 ## Create Content Type
@@ -151,21 +151,15 @@ In this step, we use the service to create a function to get the reading list an
 `api/reading-list-search/services/reading-list-search.js`:
 
 ```ts
+import { errors } from '@strapi/utils';
+
+const { ApplicationError } = errors;
+
 async function search(keyword?: string) {
   try {
-    const entries = await strapi.entityService.findMany('api::reading-list.reading-list', {});
-
-    let filteredEntries = entries;
-    if (keyword) {
-      filteredEntries = entries.filter((entry) => {
-        const keywords = entry.keyword.split('\n').map((keyword) => keyword.trim());
-        return keywords.includes(keyword);
-      });
-    }
-
-    return filteredEntries;
+    return await strapi.entityService.findMany('api::reading-list.reading-list', { filters: { keyword: { $eq: keyword }}});
   } catch (err) {
-    return err;
+    throw new ApplicationError('Something went wrong')
   }
 }
 
@@ -181,10 +175,9 @@ Controllers contain a set of methods, called actions, reached by the client acco
 To write a controller for the reading-list search function, set the content of the `api/reading-list-search/controllers/reading-list-search.js` file something like this to pass keyword search query into search service function.
 
 ```ts
-async function search(ctx, _) {
+async function search(ctx) {
   try {
-    const data = await strapi.service('api::reading-list-search.reading-list-search').search(ctx.request.query.keyword);
-    ctx.body = data;
+    return await strapi.service('api::reading-list-search.reading-list-search').search(ctx.request.query.keyword);
   } catch (err) {
     ctx.badRequest('Reading list search controller error', {detail: err});
   }
@@ -197,7 +190,7 @@ export default {search};
 
 Requests sent to Strapi on any URL are handled by routes. <sup> <a href="https://docs.strapi.io/dev-docs/backend-customization/routes" target="_blank">ReadMore</a></sup>
 
-We must add this endpoint and sets the previous controller as the route handler, put this code to `api/reading-list-search/config/routes.json`:
+We must add this endpoint and sets the previous controller as the route handler, put this code to `api/reading-list-search/routes/reading-list-search.ts`:
 
 ```ts
 export default {
