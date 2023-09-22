@@ -38,4 +38,4 @@ jobs:
       - name: 🚀 Build Typescript
         run: yarn build
         env:
-          API_TOKEN: ${{ secrets.API_TOKEN }}
+          cmsApiToken: ${{ secrets.cmsApiToken }}

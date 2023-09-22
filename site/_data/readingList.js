@@ -1,6 +1,6 @@
 const fetch = require('@11ty/eleventy-fetch');
 
-const apiToken = process.env.API_TOKEN;
+const apiToken = process.env.cmsApiToken;
 const url = 'https://admin.njfamirm.ir/api/reading-list-search/';
 
 async function list() {
