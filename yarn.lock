@@ -169,12 +169,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/style@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@alwatr/style@npm:1.1.1"
+"@alwatr/style@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@alwatr/style@npm:1.1.2"
   dependencies:
     tslib: ^2.6.2
-  checksum: 21cbda4fda3f480dfc73e51aee27aaa6f71a1458173994217c3196ec1167f26debd4f45ab76dce86ad8067cd451e2a06e263351f27f369745acb4d10dce073ab
+  checksum: f69d2d2ba4e7599ef82d59dc7a95cc300cf6da3ce1faf9934e7c8ddd763dbddfba719507f9a981b2886cace03f1277c9eca11ad7d8681bb7c996d1ac6f04a8ca
   languageName: node
   linkType: hard
 
@@ -3829,7 +3829,7 @@ __metadata:
     "@11ty/eleventy-plugin-directory-output": ^1.0.1
     "@11ty/eleventy-plugin-rss": ^1.2.0
     "@11ty/eleventy-plugin-syntaxhighlight": ^5.0.0
-    "@alwatr/style": ^1.1.1
+    "@alwatr/style": ^1.1.2
     "@swc/html": ^0.0.28
     "@types/quicklink": ^2.3.1
     cssnano: ^6.0.1
