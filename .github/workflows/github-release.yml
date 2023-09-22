@@ -27,5 +27,5 @@ jobs:
       - name: 🚀 Release
         uses: softprops/action-gh-release@v1
         with:
-          generate_release_notes: true
+          body_path: CHANGELOG.md
           token: ${{ secrets.BOT_TOKEN }}
