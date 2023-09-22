@@ -45,6 +45,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@11ty/eleventy-fetch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@11ty/eleventy-fetch@npm:4.0.0"
+  dependencies:
+    debug: ^4.3.4
+    flat-cache: ^3.0.4
+    node-fetch: ^2.6.7
+    p-queue: ^6.6.2
+  checksum: 7fb500db66afca621d97b5c79a144f82fb2449f386018713e63b8dc2609f85e59bad8c257c9ebdc80ca7309b99774e0a811d9ba74466fc2471e3230981415324
+  languageName: node
+  linkType: hard
+
 "@11ty/eleventy-img@npm:^3.1.0":
   version: 3.1.0
   resolution: "@11ty/eleventy-img@npm:3.1.0"
@@ -4529,6 +4541,7 @@ __metadata:
   resolution: "njfamirm-ws@workspace:."
   dependencies:
     "@11ty/eleventy": ^2.0.1
+    "@11ty/eleventy-fetch": ^4.0.0
     "@11ty/eleventy-img": ^3.1.0
     "@11ty/eleventy-navigation": ^0.3.5
     "@11ty/eleventy-plugin-directory-output": ^1.0.1

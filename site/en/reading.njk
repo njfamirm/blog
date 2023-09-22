@@ -1,9 +1,10 @@
 ---
 title: Reading List
 pagination:
-  data: collections.reading
+  data: readingList
   size: 20
-  alias: readingList
+  alias: reading
+  reverse: true
 permalink: /en/reading/{{ pagination.pageNumber }}/index.html
 eleventyNavigation:
   key: Reading
@@ -21,22 +22,22 @@ eleventyNavigation:
   </div>
 
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
-    {% for item in readingList | reverse %}
+    {% for item in reading %}
       <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-sm bg-surface brightness-125 hover:shadow-md transition-shadow cursor-pointer group" href="{{ item.data.url }}">
         <span class="text-2xl font-bold text-primary italic group-hover:brightness-90">
-          <h3 class="inline underline underline-offset-1">{{ item.data.title }}</h3>
-          <span class="font-lg text-secondary opacity-40">, {{ item.data.type }}</span>
+          <h3 class="inline underline underline-offset-1">{{ item.title }}</h3>
+          <span class="font-lg text-secondary opacity-40">, {{ item.type }}</span>
         </span>
-        <p>{{ item.data.description }}</p>
+        <p>{{ item.description }}</p>
 
         <div class="flex flex-row justify-between">
-          <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.data.url | getHostname }}">
-            {{ item.data.url | getHostname }}
+          <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.url | getHostname }}">
+            {{ item.url | getHostname }}
           </span>
           <span>
-            {% for tag in item.data.keywords %}
-              <span><span class="text-tertiary">{{ tag }}</span>
-                {% if not loop.last %},{% endif %}
+            {% for tag in item.keyword | keywordSplit %}
+              <span>
+                <span class="text-tertiary">{{ tag }}</span>{% if not loop.last %},{% endif %}
               </span>
             {% endfor %}
           </span>
