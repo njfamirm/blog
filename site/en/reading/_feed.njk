@@ -10,18 +10,18 @@ eleventyExcludeFromCollections: true
   <subtitle>{{ site.description }}</subtitle>
   <link href="{{ env.siteUrl }}{{ permalink }}" rel="self"/>
   <link href="{{ env.siteUrl }}"/>
-  <updated>{{ collections.reading | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  {# <updated>{{ readingList | last }}</updated> #}
   <id>{{ env.siteUrl }}</id>
   <author>
     <name>{{ site.author.name }}</name>
     <email>{{ site.author.email }}</email>
   </author>
-  {%- for reading in collections.reading | reverse %}
-  {%- set absoluteReadingUrl = reading.data.url | absoluteUrl(env.siteUrl) %}
+  {%- for reading in readingList | reverse %}
+  {%- set absoluteReadingUrl = reading.url | absoluteUrl(env.siteUrl) %}
   <entry>
-    <title>{{ reading.data.title }}</title>
+    <title>{{ reading.title }}</title>
     <link href="{{ absoluteReadingUrl }}"/>
-    <updated>{{ reading.date | dateToRfc3339 }}</updated>
+    <updated>{{ reading.createdAt }}</updated>
     <id>{{ absoluteReadingUrl }}</id>
   </entry>
   {%- endfor %}

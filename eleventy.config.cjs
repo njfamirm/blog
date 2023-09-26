@@ -1,14 +1,18 @@
-const {minifyHtml} = require('./config/minify-html');
-const {postcssProcess} = require('./config/postcss.js');
-const {getHostname} = require('./config/url.js');
-const {esbuildTransform, esbuildBuild} = require('./config/esbuild.js');
-const {date} = require('./config/date.js');
-const {imageShortcode} = require('./shortcode/image.js');
-const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
 const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
+
+const {postcssProcess} = require('./filter/postcss.js');
+const {getHostname} = require('./filter/url.js');
+const {date} = require('./filter/date.js');
+const {keywordSplit} = require('./filter/keyword.js');
+
+const {imageShortcode} = require('./shortcode/image.js');
+const {editOnGitHub} = require('./shortcode/edit-on-github.js');
+
+const {minifyHtml} = require('./transform/minify-html');
+const {esbuildFilter, esbuildBuild} = require('./transform/esbuild.js');
 
 /**
  * 11ty configuration.
@@ -45,7 +49,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('getHostname', getHostname);
   eleventyConfig.addFilter('humanReadableDate', date);
   eleventyConfig.addAsyncFilter('postcss', postcssProcess);
-  eleventyConfig.addAsyncFilter('esbuild', esbuildTransform);
+  eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
+  eleventyConfig.addAsyncFilter('keywordSplit', keywordSplit);
 
   eleventyConfig.addTransform('minifyHtml', minifyHtml);
   eleventyConfig.addTransform('trimer', (content) => content.trim());

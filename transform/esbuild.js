@@ -24,7 +24,7 @@ async function esbuildBuild() {
   }
 }
 
-async function esbuildTransform(content) {
+async function esbuildFilter(content) {
   try {
     const result = await transform(content, {
       logLevel: 'info',
@@ -42,9 +42,9 @@ async function esbuildTransform(content) {
 
     return result.code;
   } catch (err) {
-    console.error('esbuildTransform Error: ', err);
+    console.error('esbuildFilter Error: ', err);
     return content;
   }
 }
 
-module.exports = {esbuildBuild, esbuildTransform};
+module.exports = {esbuildBuild, esbuildFilter};

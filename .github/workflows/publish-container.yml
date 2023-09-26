@@ -92,6 +92,7 @@ jobs:
           context: .
           file: cloud/Dockerfile
           build-args: |
+            cmsApiToken=${{ secrets.cmsApiToken }}
             siteUrl=${{ matrix.siteUrl }}
             noIndex=${{ matrix.noIndex }}
             NGINX_FORCE_DOMAIN=${{ matrix.NGINX_FORCE_DOMAIN }}

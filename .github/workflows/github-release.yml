@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Release on Github
+
+on:
+  workflow_dispatch:
+
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    if: github.repository_owner == 'njfamirm'
+
+    name: Release on Github
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      discussions: write
+
+    steps:
+      - name: ⤵️ Checkout repository
+        uses: actions/checkout@v4.0.0
+
+      - name: 🚀 Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.md
+          token: ${{ secrets.BOT_TOKEN }}
