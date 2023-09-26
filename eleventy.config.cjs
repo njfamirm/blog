@@ -1,12 +1,12 @@
 const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
-const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
+const eleventyNavigationPlugin = require('@11ty/eleventy-navigation');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 
 const {postcssProcess} = require('./filter/postcss.js');
 const {getHostname} = require('./filter/url.js');
 const {date} = require('./filter/date.js');
-const {keywordSplit} = require('./filter/keyword.js');
+const {keywordSplit, countKeywords} = require('./filter/keyword.js');
 
 const {imageShortcode} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
@@ -21,8 +21,8 @@ const {esbuildFilter, esbuildBuild} = require('./transform/esbuild.js');
  */
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
-    'assets': '/',
-    'img': '/img',
+    assets: '/',
+    img: '/img',
     'img/meta/favicon.ico': '/favicon.ico',
   });
 
@@ -30,7 +30,7 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addWatchTarget('site');
 
-  eleventyConfig.on("eleventy.before", esbuildBuild);
+  eleventyConfig.on('eleventy.before', esbuildBuild);
 
   eleventyConfig.addShortcode('image', imageShortcode);
   eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
@@ -51,6 +51,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addAsyncFilter('postcss', postcssProcess);
   eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
   eleventyConfig.addAsyncFilter('keywordSplit', keywordSplit);
+  eleventyConfig.addAsyncFilter('countKeywords', countKeywords);
 
   eleventyConfig.addTransform('minifyHtml', minifyHtml);
   eleventyConfig.addTransform('trimer', (content) => content.trim());

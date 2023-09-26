@@ -21,7 +21,6 @@
           <p class="leading-relaxed text-secondary mb-5">
             {{ post.data.description }}
           </p>
-
           <div class="flex flex-row justify-between w-full">
             <span class="flex flex-row gap-2 font-bold text-primary mb-2">
               {% for type in post.data.type %}
@@ -40,4 +39,8 @@
       </a>
     {% endfor %}
   </div>
+</div>
+
+<div class="flex justify-center w-full">
+  {% include "tag-box.njk" %}
 </div>
