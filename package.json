@@ -25,6 +25,11 @@
     "build": "eleventy",
     "release": "standard-version --sign"
   },
+  "standard-version": {
+    "scripts": {
+      "prerelease": "rm -f CHANGELOG.md"
+    }
+  },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
