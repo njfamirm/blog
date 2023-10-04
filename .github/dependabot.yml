@@ -17,7 +17,7 @@ updates:
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'
 
   -
     package-ecosystem: npm
@@ -35,11 +35,11 @@ updates:
       - maintenance
     groups:
       production-dependencies:
-        dependency-type: "production"
+        dependency-type: 'production'
       development-dependencies:
-        dependency-type: "development"
+        dependency-type: 'development'
         exclude-patterns:
-          - "*lint*"
+          - '*lint*'
       lint-dependencies:
         patterns:
-          - "*lint*"
+          - '*lint*'

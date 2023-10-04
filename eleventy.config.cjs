@@ -1,18 +1,31 @@
 const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
-const eleventyNavigationPlugin = require('@11ty/eleventy-navigation');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
-
-const {postcssProcess} = require('./filter/postcss.js');
-const {getHostname} = require('./filter/url.js');
-const {date} = require('./filter/date.js');
-const {keywordSplit, countKeywords} = require('./filter/keyword.js');
-
-const {imageShortcode} = require('./shortcode/image.js');
+const {markdown} = require('./config/markdown.js');
+const {esbuildTransform, esbuildBuild} = require('./config/esbuild.js');
+const {postcssProcess} = require('./config/postcss.js');
+const {downloadImage} = require('./config/download-image.js');
+const {
+  slugify,
+  trimer,
+  jsonParse,
+  jsonStringify,
+  humanReadableDate,
+  simpleDate,
+  normalizeKeyword,
+} = require('./config/util.js');
+const {loadIcon} = require('./shortcode/alwatr-icon.js');
+const {image} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
+const {minifyHtml} = require('./config/minify-html');
 
-const {minifyHtml} = require('./transform/minify-html');
-const {esbuildFilter, esbuildBuild} = require('./transform/esbuild.js');
+const directoryOutputPluginConfig = {
+  columns: {
+    filesize: true,
+    benchmark: true,
+  },
+  warningFileSize: 400 * 1000,
+};
 
 /**
  * 11ty configuration.
@@ -22,39 +35,35 @@ const {esbuildFilter, esbuildBuild} = require('./transform/esbuild.js');
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     assets: '/',
-    img: '/img',
-    'img/meta/favicon.ico': '/favicon.ico',
+    'assets/img/meta/favicon.ico': '/favicon.ico',
   });
 
   eleventyConfig.setQuietMode(true);
-
-  eleventyConfig.addWatchTarget('site');
+  eleventyConfig.addWatchTarget('./site/');
 
   eleventyConfig.on('eleventy.before', esbuildBuild);
 
-  eleventyConfig.addShortcode('image', imageShortcode);
-  eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
+  eleventyConfig.setLibrary('md', markdown);
 
-  eleventyConfig.addPlugin(eleventyNavigationPlugin);
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(pluginRss);
-  eleventyConfig.addPlugin(directoryOutputPlugin, {
-    columns: {
-      filesize: true,
-      benchmark: true,
-    },
-    warningFileSize: 400 * 1000,
-  });
-
-  eleventyConfig.addFilter('getHostname', getHostname);
-  eleventyConfig.addFilter('humanReadableDate', date);
+  eleventyConfig.addPlugin(directoryOutputPlugin, directoryOutputPluginConfig);
+  eleventyConfig.addFilter('slugify', slugify);
+  eleventyConfig.addFilter('jsonParse', jsonParse);
+  eleventyConfig.addFilter('jsonStringify', jsonStringify);
+  eleventyConfig.addFilter('humanReadableDate', humanReadableDate);
+  eleventyConfig.addFilter('simpleDate', simpleDate);
+  eleventyConfig.addFilter('normalizeKeyword', normalizeKeyword);
   eleventyConfig.addAsyncFilter('postcss', postcssProcess);
-  eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
-  eleventyConfig.addAsyncFilter('keywordSplit', keywordSplit);
-  eleventyConfig.addAsyncFilter('countKeywords', countKeywords);
+  eleventyConfig.addAsyncFilter('downloadImage', downloadImage);
+  eleventyConfig.addAsyncFilter('esbuild', esbuildTransform);
+
+  eleventyConfig.addShortcode('alwatrIcon', loadIcon);
+  eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
+  eleventyConfig.addShortcode('image', image);
 
   eleventyConfig.addTransform('minifyHtml', minifyHtml);
-  eleventyConfig.addTransform('trimer', (content) => content.trim());
+  eleventyConfig.addTransform('trimer', trimer);
 
   return {
     htmlTemplateEngine: 'njk',

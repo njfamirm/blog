@@ -1,10 +1,10 @@
 .blog-post-container {
   img {
-    @apply dark:brightness-90 rounded-lg select-none my-10 text-center drop-shadow-lg mx-auto;
+    @apply mx-auto my-10 select-none rounded-lg text-center drop-shadow-lg dark:brightness-90;
   }
 
   h2 {
-    @apply text-2xl sm:text-4xl font-bold text-primary mt-10 mb-5 md:text-4xl;
+    @apply mb-5 mt-10 text-2xl font-bold text-primary sm:text-4xl md:text-4xl;
   }
 
   code:not(pre code) {

@@ -9,10 +9,12 @@
   </div>
   <div class="flex flex-row flex-wrap justify-center items-start gap-2 md:gap-8 w-full">
     {% for post in collections.blog | reverse %}
-      <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 md:w-2/5 group rounded-md p-1 bg-surface brightness-125 shadow-md hover:shadow-lg transition-shadow">
-        <div class="rounded-lg overflow-clip mb-2 brightness-75">
-          {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
-        </div>
+      <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 medium:w-2/5 group rounded-md p-1 shadow-md hover:shadow-lg transition-shadow">
+        {% if post.data.socialImage %}
+          <div class="rounded-lg overflow-clip mb-2 [&_*]:w-full">
+            {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
+          </div>
+        {% endif %}
 
         <div class="mx-4">
           <h2 style="letter-spacing: -0.03em" class="font-extrabold my-2 md:text-[2em] text-[2.5em] leading-none group-hover:text-primary transition-colors">
@@ -28,12 +30,7 @@
               {% endfor %}
             </span>
 
-            <span>
-              {% for tag in post.data.keywords %}
-                <span class="text-tertiary">{{ tag }}</span>
-                {% if not loop.last %},{% endif %}
-              {% endfor %}
-            </span>
+            <span class="text-tertiary">{{ post.data.keywords | normalizeKeyword }}</span>
           </div>
         </div>
       </a>

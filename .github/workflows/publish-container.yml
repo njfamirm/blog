@@ -32,14 +32,10 @@ jobs:
           - image: njfamirm-ws
             description: Njfamirm personal website.
             siteUrl: https://www.njfamirm.ir
-            NGINX_FORCE_DOMAIN: www.njfamirm.ir
-            NGINX_FORCE_DOMAIN_STATUS: 302
 
           - image: njfamirm-ws-beta
             description: Njfamirm personal beta website.
             siteUrl: https://beta.njfamirm.ir
-            # NGINX_FORCE_DOMAIN: beta.njfamirm.ir
-            # NGINX_FORCE_DOMAIN_STATUS: 302
             noIndex: 1
 
     permissions:
@@ -95,8 +91,6 @@ jobs:
             cmsApiToken=${{ secrets.cmsApiToken }}
             siteUrl=${{ matrix.siteUrl }}
             noIndex=${{ matrix.noIndex }}
-            NGINX_FORCE_DOMAIN=${{ matrix.NGINX_FORCE_DOMAIN }}
-            NGINX_FORCE_DOMAIN_STATUS=${{ matrix.NGINX_FORCE_DOMAIN_STATUS }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,3 +1,15 @@
 {
-  "layout": "base.njk"
+  "layout": "base.njk",
+  "navigation": {
+    "topAppBar": [
+      {
+        "key": "Home",
+        "url": "/"
+      },
+      {
+        "key": "Blog",
+        "url": "/en/blog.html"
+      }
+    ]
+  }
 }
