@@ -13,9 +13,9 @@ async function list() {
         Authorization: `Bearer ${apiToken}`,
       },
     },
-  })
+  });
 
   return response;
-};
+}
 
 module.exports = list;

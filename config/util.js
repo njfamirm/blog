@@ -43,7 +43,6 @@ function getHostname(url) {
   return urlObj.hostname;
 }
 
-
 module.exports = {
   trimer,
   humanReadableDate,
@@ -52,5 +51,5 @@ module.exports = {
   normalizeKeyword,
   jsonParse,
   jsonStringify,
-  getHostname
+  getHostname,
 };

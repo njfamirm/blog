@@ -4,8 +4,8 @@ const fetch = require('@11ty/eleventy-fetch');
 
 async function download(url, path) {
   let buffer = await fetch(url, {
-    duration: "1d",
-    type: "buffer",
+    duration: '1d',
+    type: 'buffer',
   });
 
   writeFileSync(path, Buffer.from(buffer));

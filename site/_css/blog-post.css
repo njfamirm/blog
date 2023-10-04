@@ -8,19 +8,19 @@
   }
 
   code:not(pre code) {
-    @apply italic text-lg rounded-sm font-mono selection:p-0 bg-tertiary text-tertiary bg-opacity-10;
+    @apply rounded-sm bg-tertiary bg-opacity-10 font-mono text-lg italic text-tertiary selection:p-0;
   }
 
   a {
-    @apply text-tertiary hover:brightness-50 font-bold;
+    @apply font-bold text-tertiary hover:brightness-50;
   }
 
   p {
-    @apply leading-7 text-xl my-5;
+    @apply my-5 text-xl leading-7;
   }
 
   details {
-    @apply bg-secondary text-onSecondary p-5 mt-5 rounded-lg hover:brightness-105;
+    @apply mt-5 rounded-lg bg-secondary p-5 text-onSecondary hover:brightness-105;
   }
 
   details[open] {
@@ -28,7 +28,7 @@
   }
 
   details summary {
-    @apply font-bold cursor-pointer;
+    @apply cursor-pointer font-bold;
   }
   details summary::marker {
     @apply pe-4;

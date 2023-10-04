@@ -19,7 +19,7 @@ const {loadIcon} = require('./shortcode/alwatr-icon.js');
 const {image} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const {minifyHtml} = require('./config/minify-html');
-const {countKeywords} = require('./config/blog.js')
+const {countKeywords} = require('./config/blog.js');
 
 const directoryOutputPluginConfig = {
   columns: {

@@ -24,12 +24,5 @@
   "prettier.useEditorConfig": true,
   "cSpell.language": "en,fa,fa-IR",
   "cSpell.ignoreRegExpList": ["{% end.*%}"],
-  "cSpell.words": [
-    "cssnano",
-    "decap",
-    "esbuild",
-    "Strapi",
-    "tailwindcss",
-    "treeshake"
-  ]
+  "cSpell.words": ["cssnano", "decap", "esbuild", "Strapi", "tailwindcss", "treeshake"]
 }
