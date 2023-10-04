@@ -2,6 +2,10 @@ function countKeywords(posts) {
   const keywordCounts = {};
 
   posts.forEach((post) => {
+    if (typeof post.data.keywords === 'string') {
+      post.data.keywords = post.data.keywords.split('\n').map((keyword) => keyword.trim());
+    }
+
     post.data.keywords.forEach((keyword) => {
       if (!keywordCounts[keyword]) {
         keywordCounts[keyword] = 1;
