@@ -13,11 +13,13 @@ const {
   humanReadableDate,
   simpleDate,
   normalizeKeyword,
+  getHostname,
 } = require('./config/util.js');
 const {loadIcon} = require('./shortcode/alwatr-icon.js');
 const {image} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const {minifyHtml} = require('./config/minify-html');
+const {countKeywords} = require('./config/blog.js')
 
 const directoryOutputPluginConfig = {
   columns: {
@@ -54,6 +56,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('humanReadableDate', humanReadableDate);
   eleventyConfig.addFilter('simpleDate', simpleDate);
   eleventyConfig.addFilter('normalizeKeyword', normalizeKeyword);
+  eleventyConfig.addFilter('countKeywords', countKeywords);
+  eleventyConfig.addFilter('getHostname', getHostname);
   eleventyConfig.addAsyncFilter('postcss', postcssProcess);
   eleventyConfig.addAsyncFilter('downloadImage', downloadImage);
   eleventyConfig.addAsyncFilter('esbuild', esbuildTransform);

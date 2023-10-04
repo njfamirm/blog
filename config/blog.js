@@ -1,9 +1,3 @@
-function keywordSplit(keyword) {
-  return keyword.split('\n').map((word) => {
-    return word.trim().toLowerCase();
-  });
-}
-
 function countKeywords(posts) {
   const keywordCounts = {};
 
@@ -26,4 +20,4 @@ function countKeywords(posts) {
   return keywordList;
 }
 
-module.exports = {keywordSplit, countKeywords};
+module.exports = {countKeywords};

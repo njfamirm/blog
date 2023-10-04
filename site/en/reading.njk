@@ -35,7 +35,7 @@ eleventyNavigation:
             {{ item.url | getHostname }}
           </span>
           <span>
-            {% for tag in item.keyword | keywordSplit %}
+            {% for tag in item.keyword | normalizeKeyword %}
               <span>
                 <span class="text-tertiary">{{ tag }}</span>{% if not loop.last %},{% endif %}
               </span>

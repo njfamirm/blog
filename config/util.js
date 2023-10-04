@@ -38,6 +38,12 @@ function jsonStringify(content) {
   return JSON.stringify(content);
 }
 
+function getHostname(url) {
+  const urlObj = new URL(url);
+  return urlObj.hostname;
+}
+
+
 module.exports = {
   trimer,
   humanReadableDate,
@@ -46,4 +52,5 @@ module.exports = {
   normalizeKeyword,
   jsonParse,
   jsonStringify,
+  getHostname
 };
