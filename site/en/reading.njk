@@ -31,13 +31,7 @@ permalink: /en/reading/{{ pagination.pageNumber }}/index.html
           <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.url | getHostname }}">
             {{ item.url | getHostname }}
           </span>
-          <span>
-            {% for tag in item.keyword | normalizeKeyword %}
-              <span>
-                <span class="text-tertiary">{{ tag }}</span>{% if not loop.last %},{% endif %}
-              </span>
-            {% endfor %}
-          </span>
+          <span class="text-tertiary">{{item.keyword | normalizeKeyword}}</span>
         </div>
       </a>
     {% endfor %}
