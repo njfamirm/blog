@@ -1141,6 +1141,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/quicklink@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@types/quicklink@npm:2.3.1"
+  checksum: 3ff295bb61528a5ba494faf2ff66ad27219a7c86d9782dee36220629caec13032bee8647f300538bf86c7cdbed91d7843a6c9c9fcabaa69431e34186ba0ca802
+  languageName: node
+  linkType: hard
+
 "@types/semver@npm:^7.5.0":
   version: 7.5.3
   resolution: "@types/semver@npm:7.5.3"
@@ -4686,6 +4693,7 @@ __metadata:
     "@alwatr/style": ^1.2.0
     "@swc/html": ^0.0.28
     "@types/node": ^20.8.2
+    "@types/quicklink": ^2.3.1
     "@typescript-eslint/eslint-plugin": ^6.7.4
     "@typescript-eslint/parser": ^6.7.4
     cssnano: ^6.0.1
