@@ -32,7 +32,7 @@ pre[class*='language-'] {
 
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
-  @apply dark:brightness-90 bg-surfaceContainer;
+  @apply bg-surfaceContainer dark:brightness-90;
 }
 
 /* Inline code */

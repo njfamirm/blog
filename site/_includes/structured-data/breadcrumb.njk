@@ -1,4 +1,4 @@
-{% if eleventyNavigation.parent %}
+{% if navigationParent %}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -7,8 +7,8 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "{{ eleventyNavigation.parent }}",
-          "item": "{{ env.siteUrl }}/post"
+          "name": "{{ navigationParent.name }}",
+          "item": "{{ env.siteUrl }}/{{ navigationParent.url }}"
         }
       ]
     }

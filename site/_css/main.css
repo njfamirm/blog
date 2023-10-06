@@ -24,6 +24,11 @@ body {
   font-family: var(--ref-font-family-vazirmatn), var(--ref-font-family-system);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--ref-font-family-kalameh), var(--ref-font-family-vazirmatn), var(--ref-font-family-system);
 }

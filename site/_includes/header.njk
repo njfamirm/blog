@@ -3,8 +3,8 @@
     <i>njfamirm</i>
   </a>
   <div class="flex flex-row justify-end grow gap-8 items-center text-md font-bold">
-    {% for menu in collections.all | eleventyNavigation %}
-      <a class="hidden lg:block hover:brightness-200 hover:no-underline {% if page.url == menu.url %} brightness-150 {% endif %}" href="{{ menu.url }}">
+    {% for menu in navigation.topAppBar %}
+      <a class="text-neutral-700 hidden lg:block hover:text-neutral-700 hover:no-underline {% if page.url == menu.url %} text-neutral-950 {% endif %}" href="{{ menu.url }}">
         {{ menu.key }}
       </a>
     {% endfor %}

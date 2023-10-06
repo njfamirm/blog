@@ -1,19 +1,26 @@
-const image = require('@11ty/eleventy-img');
+const imagePlugin = require('@11ty/eleventy-img');
 
-async function imageShortcode(src, alt) {
-  let metadata = await image('assets' + src, {
-    hashLength: 8,
-    urlPath: '/img/',
-    outputDir: 'dist/img',
-    widths: ['auto'],
-    formats: ['avif', 'webp', 'jpeg'],
-  });
+const imageOptions = {
+  hashLength: 8,
+  urlPath: '/img/',
+  outputDir: 'dist/img',
+  widths: ['auto'],
+  formats: ['avif', 'webp', 'jpeg'],
+};
+
+async function image(src, alt = '') {
+  if (!imagePlugin.Util.isRemoteUrl(src)) {
+    src = './assets/' + src;
+  }
+
+  const metadata = await imagePlugin(src, imageOptions);
+
   let imageAttributes = {
     alt,
     loading: 'lazy',
     decoding: 'async',
   };
-  return image.generateHTML(metadata, imageAttributes);
+  return imagePlugin.generateHTML(metadata, imageAttributes);
 }
 
-module.exports = {imageShortcode};
+module.exports = {image, imageOptions};

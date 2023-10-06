@@ -1,12 +1,13 @@
 const fetch = require('@11ty/eleventy-fetch');
 
 const apiToken = process.env.cmsApiToken;
-const url = 'https://admin.njfamirm.ir/api/reading-list-search/';
+const cmsDomain = process.env.cmsDomain ?? 'https://admin.njfamirm.ir';
+const url = cmsDomain + '/api/blog-posts?populate=*';
 
 async function list() {
   const response = await fetch(url, {
     directory: '.cache',
-    duration: '2h',
+    duration: '1h',
     type: 'json',
     fetchOptions: {
       headers: {
@@ -15,7 +16,7 @@ async function list() {
     },
   });
 
-  return response;
+  return response.data;
 }
 
 module.exports = list;

@@ -36,6 +36,9 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: 🚀 Build Typescript
+        run: yarn build:tsc
+
+      - name: ✅ Build eleventy
         run: yarn build
         env:
           cmsApiToken: ${{ secrets.cmsApiToken }}

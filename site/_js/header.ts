@@ -25,13 +25,16 @@ if (menuButton != null && bodyOverlay != null && navigationDrawer != null) {
 
     bodyOverlay.style.display = 'block';
     bodyOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
-    bodyOverlay.addEventListener('click', () => {
+    bodyOverlay.addEventListener(
+      'click',
+      () => {
         if (document.documentElement.dir === 'ltr') navigationDrawer.style.transform = 'translateX(-100%)';
         else navigationDrawer.style.transform = 'translateX(100%)';
 
         bodyOverlay.style.display = 'none';
         bodyOverlay.style.backgroundColor = 'transparent';
-      }, {once: true}
+      },
+      {once: true},
     );
   });
 }

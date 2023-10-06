@@ -40,8 +40,8 @@
 {% set socialImagePath = socialImage or sharing_image or thumbnail or hero or site.defaultSocialImage %}
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="/{{ socialImagePath }}"/>
-<meta property="og:image" content="/{{ socialImagePath }}"/>
+<meta name="twitter:image" content="{{ socialImagePath }}"/>
+<meta property="og:image" content="{{ socialImagePath }}"/>
 
 {% if coverAlt %}
   <meta property="og:image:alt" content="{{ coverAlt }}"/>
