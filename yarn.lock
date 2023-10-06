@@ -71,6 +71,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@11ty/eleventy-img@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@11ty/eleventy-img@npm:3.1.1"
+  dependencies:
+    "@11ty/eleventy-fetch": ^4.0.0
+    debug: ^4.3.4
+    entities: ^4.5.0
+    image-size: ^1.0.2
+    p-queue: ^6.6.2
+    sharp: ^0.32.6
+  checksum: 8440240b14c8d016fdda313efc8156077c69ced28e270d63cec38fc610b735ebc3711e0afdac5ae1532fcb961dfb0eeef1f8088334087fdea7c6df69fc5602ac
+  languageName: node
+  linkType: hard
+
 "@11ty/eleventy-plugin-directory-output@npm:^1.0.1":
   version: 1.0.1
   resolution: "@11ty/eleventy-plugin-directory-output@npm:1.0.1"
@@ -2554,7 +2568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.2.0, entities@npm:^4.4.0":
+"entities@npm:^4.2.0, entities@npm:^4.4.0, entities@npm:^4.5.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 853f8ebd5b425d350bffa97dd6958143179a5938352ccae092c62d1267c4e392a039be1bae7d51b6e4ffad25f51f9617531fedf5237f15df302ccfb452cbf2d7
@@ -4685,7 +4699,7 @@ __metadata:
   dependencies:
     "@11ty/eleventy": ^2.0.1
     "@11ty/eleventy-fetch": ^4.0.0
-    "@11ty/eleventy-img": ^3.1.0
+    "@11ty/eleventy-img": ^3.1.1
     "@11ty/eleventy-plugin-directory-output": ^1.0.1
     "@11ty/eleventy-plugin-rss": ^1.2.0
     "@11ty/eleventy-plugin-syntaxhighlight": ^5.0.0
@@ -6632,6 +6646,23 @@ __metadata:
     tar-fs: ^3.0.4
     tunnel-agent: ^0.6.0
   checksum: 3cd6dc037c9ba126a30af90ac94043c4418bbb4228e15fd446638ff43fc9b14eabb553037988e484162c318f7baff21d896a5bef7dcc453f608e247d468f41e0
+  languageName: node
+  linkType: hard
+
+"sharp@npm:^0.32.6":
+  version: 0.32.6
+  resolution: "sharp@npm:0.32.6"
+  dependencies:
+    color: ^4.2.3
+    detect-libc: ^2.0.2
+    node-addon-api: ^6.1.0
+    node-gyp: latest
+    prebuild-install: ^7.1.1
+    semver: ^7.5.4
+    simple-get: ^4.0.1
+    tar-fs: ^3.0.4
+    tunnel-agent: ^0.6.0
+  checksum: 0cca1d16b1920800c0e22d27bc6305f4c67c9ebe44f67daceb30bf645ae39e7fb7dfbd7f5d6cd9f9eebfddd87ac3f7e2695f4eb906d19b7a775286238e6a29fc
   languageName: node
   linkType: hard
 
