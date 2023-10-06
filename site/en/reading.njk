@@ -20,7 +20,7 @@ permalink: /en/reading/{{ pagination.pageNumber }}/index.html
 
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
     {% for item in reading %}
-      <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-sm bg-surface brightness-125 hover:shadow-md transition-shadow cursor-pointer group" href="{{ item.data.url }}">
+      <a class="flex flex-col gap-4 justify-between grow p-4 rounded w-full md:w-2/5 shadow-sm bg-surface brightness-125 hover:shadow-md transition-shadow cursor-pointer group" target="_blank" href="{{ item.url }}">
         <span class="text-2xl font-bold text-primary italic group-hover:brightness-90">
           <h3 class="inline underline underline-offset-1">{{ item.title }}</h3>
           <span class="font-lg text-secondary opacity-40">, {{ item.type }}</span>
@@ -31,7 +31,7 @@ permalink: /en/reading/{{ pagination.pageNumber }}/index.html
           <span class="font-mono font-bold inline-flex p-1 rounded leading-4 text-tertiary" style="font-size: 0.8em" href="https://{{ item.url | getHostname }}">
             {{ item.url | getHostname }}
           </span>
-          <span class="text-tertiary">{{item.keyword | normalizeKeyword}}</span>
+          <span class="text-tertiary">{{ item.keyword | normalizeKeyword }}</span>
         </div>
       </a>
     {% endfor %}
