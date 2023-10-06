@@ -8,7 +8,11 @@
       },
       {
         "key": "Blog",
-        "url": "/en/blog.html"
+        "url": "/en/blog/"
+      },
+      {
+        "key": "Reading",
+        "url": "/en/reading/0"
       }
     ]
   }
