@@ -5,8 +5,8 @@ const debugMode = env.NODE_ENV !== 'production';
 async function esbuildBuild() {
   try {
     await build({
-      entryPoints: ['site/_js/script.ts', 'site/_js/service-worker.ts'],
-      outdir: 'dist/',
+      entryPoints: ['site/_ts/*.ts'],
+      outdir: 'dist/es/',
       logLevel: 'info',
       platform: 'browser',
       target: 'es2018',
@@ -17,7 +17,7 @@ async function esbuildBuild() {
       bundle: true,
       charset: 'utf8',
       legalComments: 'none',
-      // splitting: true,
+      splitting: true,
     });
   } catch (err) {
     console.error('esbuildBuild Error: ', err);

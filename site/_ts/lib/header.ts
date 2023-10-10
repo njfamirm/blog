@@ -1,24 +1,10 @@
-// // set background color on scroll
-// const header = document.querySelector('.header') as HTMLElement | null;
-// if (header != null) {
-//   window.addEventListener('scroll', function () {
-//     if (window.scrollY > 10) {
-//       header.classList.add('bg-surface');
-//       header.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-//     }
-//     if (window.scrollY < 10) {
-//       header.classList.remove('bg-surface');
-//       header.style.boxShadow = 'none';
-//     }
-//   });
-// }
-
 // open/close navigation drawer
 const menuButton = document.querySelector('.menu-button') as HTMLElement | null;
 const bodyOverlay = document.querySelector('.body-overlay') as HTMLElement | null;
 const navigationDrawer = document.querySelector('.navigation-drawer') as HTMLElement | null;
 
 if (menuButton != null && bodyOverlay != null && navigationDrawer != null) {
+  // prettier-ignore
   menuButton.addEventListener('click', function () {
     if (document.documentElement.dir === 'ltr') navigationDrawer.style.transform = 'translateX(0)';
     else navigationDrawer.style.transform = 'translateX(0)';

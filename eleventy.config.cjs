@@ -2,23 +2,24 @@ const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
 const {markdown} = require('./config/markdown.js');
-const {esbuildTransform, esbuildBuild} = require('./config/esbuild.js');
-const {postcssProcess} = require('./config/postcss.js');
 const {downloadImage} = require('./config/download-image.js');
 const {
   slugify,
-  trimer,
+  trim,
   jsonParse,
   jsonStringify,
   humanReadableDate,
   simpleDate,
   normalizeKeyword,
-  getHostname,
+  getHostname
 } = require('./config/util.js');
-const {loadIcon} = require('./shortcode/alwatr-icon.js');
+const {esbuildFilter, esbuildBuild} = require('./config/esbuild.js');
+const {postcssFilter, postcssBuild} = require('./config/postcss.js');
+const {alwatrIcon} = require('./shortcode/alwatr-icon.js');
 const {image} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const {minifyHtml} = require('./config/minify-html');
+const {number} = require('./config/i18n.js');
 const {countKeywords} = require('./config/blog.js');
 
 const directoryOutputPluginConfig = {
@@ -50,6 +51,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(syntaxHighlight);
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPlugin(directoryOutputPlugin, directoryOutputPluginConfig);
+
   eleventyConfig.addFilter('slugify', slugify);
   eleventyConfig.addFilter('jsonParse', jsonParse);
   eleventyConfig.addFilter('jsonStringify', jsonStringify);
@@ -58,16 +60,20 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter('normalizeKeyword', normalizeKeyword);
   eleventyConfig.addFilter('countKeywords', countKeywords);
   eleventyConfig.addFilter('getHostname', getHostname);
-  eleventyConfig.addAsyncFilter('postcss', postcssProcess);
   eleventyConfig.addAsyncFilter('downloadImage', downloadImage);
-  eleventyConfig.addAsyncFilter('esbuild', esbuildTransform);
+  eleventyConfig.addFilter('trim', trim);
+  eleventyConfig.addFilter('number', number);
+  eleventyConfig.addAsyncFilter('postcss', postcssFilter);
+  eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
 
-  eleventyConfig.addShortcode('alwatrIcon', loadIcon);
-  eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
+  eleventyConfig.addShortcode('alwatrIcon', alwatrIcon);
   eleventyConfig.addShortcode('image', image);
+  eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
 
   eleventyConfig.addTransform('minifyHtml', minifyHtml);
-  eleventyConfig.addTransform('trimer', trimer);
+  eleventyConfig.addTransform('trim', trim);
+
+  eleventyConfig.on('eleventy.after', postcssBuild);
 
   return {
     htmlTemplateEngine: 'njk',

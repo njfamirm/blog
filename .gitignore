@@ -18,7 +18,6 @@ Desktop.ini
 dist
 *.map
 *.d.ts
-site/_js/**/*.js
 .tsbuildinfo
 
 # Dependencies

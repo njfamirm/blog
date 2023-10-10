@@ -4,36 +4,36 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
     /* Basic Options */
-    "incremental": true,
     "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true, // temporary for fix import json issue
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "noEmit": true,
     // "allowJs": true,
     // "checkJs": true,
     // "jsx": "preserve",
-    "declaration": true,
-    "declarationMap": true,
+    // "declaration": true,
+    // "declarationMap": true,
     // "outFile": "./",
-    "outDir": "./",
+    // "outDir": "./",
     // "rootDir": "./src",
-    "composite": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
-    "removeComments": false,
+    // "composite": true,
+    // "tsBuildInfoFile": ".tsbuildinfo",
+    // "removeComments": false,
     // "noEmit": true,
-    "importHelpers": true,
+    // "importHelpers": true,
     // "downlevelIteration": true,
     "isolatedModules": true, // need for esbuild
 
     /* Strict Type-Checking Options */
     "strict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "strictBindCallApply": true,
+    // "strictBindCallApply": true,
     "strictPropertyInitialization": true,
-    "noImplicitThis": true,
+    // "noImplicitThis": true,
     "alwaysStrict": true,
 
     /* Additional Checks */
@@ -56,11 +56,11 @@
     // "allowUmdGlobalAccess": true,
 
     /* Source Map Options */
-    "sourceMap": true,
+    // "sourceMap": true,
     // "sourceRoot": "",
     // "mapRoot": "",
     // "inlineSourceMap": true,
-    "inlineSources": true,
+    // "inlineSources": true,
 
     /* Experimental Options */
     "experimentalDecorators": true,
@@ -75,5 +75,5 @@
     // "diagnostics": true,
   },
   "exclude": [],
-  "include": ["site/_js/*.ts"]
+  "include": ["site/_ts/**/*.ts"]
 }

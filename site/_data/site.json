@@ -3,8 +3,7 @@
   "description": "S. Amir Mohammad Najafi personal blog and portfolio.",
   "author": {"name": "S. Amir Mohammad Najafi", "email": "njfamirm@gmail.com", "url": "https://twitter.com/njfamirm"},
   "defaultSocialImage": "img/meta/social.jpg",
-  "locale": "en-US",
-  "dir": "ltr",
+  "defaultLocale": "en",
   "theme": {
     "dark": "#9c82db",
     "light": "#684fa4",

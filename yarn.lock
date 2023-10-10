@@ -200,12 +200,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@alwatr/logger@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@alwatr/logger@npm:1.1.5"
+  dependencies:
+    "@alwatr/type": ^1.1.4
+    tslib: ^2.6.2
+  checksum: 0879cbe316dda91ff724fd94515941d715ee7c8df762436c8ade525408c1d1eeebae6643c2a6cf535f25215a0b4134aae7dd322a030ea30f110ad6c257505b3a
+  languageName: node
+  linkType: hard
+
 "@alwatr/style@npm:^1.2.0":
   version: 1.2.0
   resolution: "@alwatr/style@npm:1.2.0"
   dependencies:
     tslib: ^2.6.2
   checksum: 7be05b5c7fa474c52306effe5639792fa88fa1dc4528fecd5416c81f67ce30d917a8fc1a8bbba0a6adf4873eb75314724ba856ef4c9de1b44304e9ebbc00604f
+  languageName: node
+  linkType: hard
+
+"@alwatr/type@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@alwatr/type@npm:1.1.4"
+  checksum: 28b418e3d509d581d4e850e65c256f8818e9b38335e2a1e3da11f7d04776465884e84bd7d2dd943f58694d2d188550012387bef748d13c04a14cb52a023a8dad
   languageName: node
   linkType: hard
 
@@ -4704,6 +4721,7 @@ __metadata:
     "@11ty/eleventy-plugin-rss": ^1.2.0
     "@11ty/eleventy-plugin-syntaxhighlight": ^5.0.0
     "@alwatr/icon-set-material": ^0.1.1
+    "@alwatr/logger": ^1.1.5
     "@alwatr/style": ^1.2.0
     "@swc/html": ^0.0.28
     "@types/node": ^20.8.2

@@ -1,4 +1,4 @@
-function trimer(content) {
+function trim(content) {
   return content.trim();
 }
 
@@ -9,7 +9,7 @@ function simpleDate(date) {
 function humanReadableDate(date) {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   });
 }
@@ -44,7 +44,7 @@ function getHostname(url) {
 }
 
 module.exports = {
-  trimer,
+  trim,
   humanReadableDate,
   simpleDate,
   slugify,

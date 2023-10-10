@@ -1,5 +1,7 @@
 {
   "layout": "base.njk",
+  "locale": "en",
+  "dir": "ltr",
   "navigation": {
     "topAppBar": [
       {

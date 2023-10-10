@@ -1,9 +1,0 @@
----
-permalink: /style.css
-eleventyExcludeFromCollections: true
----
-
-{% set css %}
-  {% include "./_css/main.css" %}
-{% endset %}
-{{ css | postcss | safe }}

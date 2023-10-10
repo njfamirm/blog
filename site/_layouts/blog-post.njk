@@ -2,6 +2,9 @@
 layout: base.njk
 ---
 
+<link rel="preload" as="style" href="/css/blog.css?v={{ git.shortSha }}" fetchpriority="high" />
+<link rel="stylesheet" href="/css/blog.css?v={{ git.shortSha }}" />
+
 <main class="p-10 mt-24 lg:px-48 box-border">
   <div class="flex flex-row gap-2 font-black mb-2">
     {% for type in type %}

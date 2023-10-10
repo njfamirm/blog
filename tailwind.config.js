@@ -1,5 +1,5 @@
 import {tailwindConfig} from '@alwatr/style';
 
-tailwindConfig.content = ['site/**/*', 'shortcode/**/*'];
+tailwindConfig.content = ['dist/**/*.html', 'site/_css/**/*.css'];
 
 export default tailwindConfig;

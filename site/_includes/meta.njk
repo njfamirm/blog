@@ -1,4 +1,4 @@
-{% set pageTitle = title + ' - ' + site.title %}
+{% set pageTitle = title + ' | ' + site.title %}
 
 {% set currentUrl = env.siteUrl + page.url %}
 
@@ -12,11 +12,6 @@
 <meta charset="utf-8"/>
 
 <meta name="generator" content="{{ eleventy.generator }}">
-
-<link rel="preload" as="script" href="/script.js?v={{ git.shortSha }}" fetchpriority="high"/>
-
-<link rel="preload" as="style" href="/style.css?v={{ git.shortSha }}" fetchpriority="high"/>
-<link media="print" rel="stylesheet" href="/style.css?v={{ git.shortSha }}" onload="this.media='all';this.onload=null;"/>
 
 <link rel="manifest" href="/manifest.webmanifest"/>
 
