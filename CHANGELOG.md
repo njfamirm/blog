@@ -1,27 +1,33 @@
 Changelog
-## [1.1.0](https://github.com/njfamirm/njfamirm.ir/compare/v1.0.0...v1.1.0) (2023-09-26)
+## [1.2.0](https://github.com/njfamirm/njfamirm.ir/compare/v1.1.0...v1.2.0) (2023-10-10)
 
 
 ### Features
 
-* load reading list from strapi ([#48](https://github.com/njfamirm/njfamirm.ir/issues/48)) ([aefb5dc](https://github.com/njfamirm/njfamirm.ir/commit/aefb5dc94cf8475cf4a9f5c94209e49a0cfcea7a))
-* **reading:** load from strapi ([d67fc5e](https://github.com/njfamirm/njfamirm.ir/commit/d67fc5edbf8c47fa5709562e58b25973f1a4b088))
-* **reading:** make pagination reverse ([86da452](https://github.com/njfamirm/njfamirm.ir/commit/86da45251f421bc50118d05ee3e3882218c14236))
+* add badge ([d70d5a3](https://github.com/njfamirm/njfamirm.ir/commit/d70d5a399b19075154ca6deab9165f4ef6e218eb))
+* **blog:** tag box ([3704333](https://github.com/njfamirm/njfamirm.ir/commit/3704333effeef167515655472e47c24322d32a2e))
+* update from base ([fbcdf9b](https://github.com/njfamirm/njfamirm.ir/commit/fbcdf9bb2a94a492dfa2e878eb74e4e3924b7536))
+* update from base ([#53](https://github.com/njfamirm/njfamirm.ir/issues/53)) ([a340cdc](https://github.com/njfamirm/njfamirm.ir/commit/a340cdc1cc84626f45eb5eb3bd04661550c75bf9))
+* **workflow:** add ts build ([6bf6d0e](https://github.com/njfamirm/njfamirm.ir/commit/6bf6d0eb88f9a060a6373205685ffaf929d19fcb))
 
 
 ### Bug Fixes
 
-* **workflow:** pass env to build ([10e9ddf](https://github.com/njfamirm/njfamirm.ir/commit/10e9ddf086ed99381a4f30e8559f9777e59f7ea6))
-* **workflow:** pass env to publish ([dfca5cd](https://github.com/njfamirm/njfamirm.ir/commit/dfca5cd4497af125dbcda729a2702ffb87447d89))
+* **filter:** split keyword ([df6385c](https://github.com/njfamirm/njfamirm.ir/commit/df6385c7fc038c441886a52793c2cb23e13d03bc))
+* header color ([12645e3](https://github.com/njfamirm/njfamirm.ir/commit/12645e35246568a13416dbc8bc397d6c8b35e977))
+* install quick link types ([7b9159b](https://github.com/njfamirm/njfamirm.ir/commit/7b9159b366c173058eb7893226be3621f2e54d0d))
+* menu ([f1795ea](https://github.com/njfamirm/njfamirm.ir/commit/f1795ea3e31bb92a40ecb0821926decbf2d320d3))
+* **reading:** keyword ([235c5e9](https://github.com/njfamirm/njfamirm.ir/commit/235c5e9a55cfc79b8a8088eef3f287530d9d32ab))
+* **reading:** link ([217d49b](https://github.com/njfamirm/njfamirm.ir/commit/217d49bc59195fc34b224ed76d06d3a81ebfc469))
+* remove 11ty naivgation data ([a2313ca](https://github.com/njfamirm/njfamirm.ir/commit/a2313caf0e929138337dc90188155cfeb8150ce5))
+* remove scripts template ([9014613](https://github.com/njfamirm/njfamirm.ir/commit/901461350dd5086fb71e7156cbde2a2af3dae6d2))
 
 
 ### Blog Post
 
-* **blog:** improve strapi-custom-api to fix some best practices ([#36](https://github.com/njfamirm/njfamirm.ir/issues/36)) ([bbd0b21](https://github.com/njfamirm/njfamirm.ir/commit/bbd0b213bba160cf14df670f15efdeb88924a8f3))
-* **blog:** revert some change in strapi custom api ([6858071](https://github.com/njfamirm/njfamirm.ir/commit/6858071981f4874de66237c105cda9b720f4ea5b))
+* **blog:** thanks contributor ([8da0722](https://github.com/njfamirm/njfamirm.ir/commit/8da0722271546a15277315592e2996b59a4c2827))
 
 
 ### Refactor
 
-* **reading:** rename api token ([c0d632e](https://github.com/njfamirm/njfamirm.ir/commit/c0d632eec88589902ba17c091b8f7644287f9fe1))
-* **style:** use new @alwatr/style config ([e38411d](https://github.com/njfamirm/njfamirm.ir/commit/e38411d25becf383ce44944423239a22da44dd74))
+* change folder structure ([64f74b2](https://github.com/njfamirm/njfamirm.ir/commit/64f74b2487f0dccaf4c6600a3856b4e9c31f3c74))
