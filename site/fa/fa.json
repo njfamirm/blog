@@ -1,0 +1,13 @@
+{
+  "layout": "base.njk",
+  "locale": "fa-IR",
+  "dir": "rtl",
+  "navigation": {
+    "topAppBar": [
+      {
+        "key": "زیارات",
+        "url": "/fa/prayer/"
+      }
+    ]
+  }
+}

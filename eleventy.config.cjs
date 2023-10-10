@@ -11,7 +11,7 @@ const {
   humanReadableDate,
   simpleDate,
   normalizeKeyword,
-  getHostname
+  getHostname,
 } = require('./config/util.js');
 const {esbuildFilter, esbuildBuild} = require('./config/esbuild.js');
 const {postcssFilter, postcssBuild} = require('./config/postcss.js');
