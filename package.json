@@ -11,8 +11,8 @@
   "scripts": {
     "f": "yarn format",
     "s": "yarn start",
-    "w": "run-s clean start",
-    "b": "run-s clean build",
+    "w": "yarn start",
+    "b": "yarn build",
     "c": "yarn clean",
     "pl": "git pull",
     "p": "git push --follow-tags",
