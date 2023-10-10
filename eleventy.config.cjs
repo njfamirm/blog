@@ -21,6 +21,7 @@ const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const {minifyHtml} = require('./config/minify-html');
 const {number} = require('./config/i18n.js');
 const {countKeywords} = require('./config/blog.js');
+const {indexContent} = require('./config/pagefind.js');
 
 const directoryOutputPluginConfig = {
   columns: {
@@ -74,6 +75,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addTransform('trim', trim);
 
   eleventyConfig.on('eleventy.after', postcssBuild);
+  eleventyConfig.on('eleventy.after', indexContent);
 
   return {
     htmlTemplateEngine: 'njk',
