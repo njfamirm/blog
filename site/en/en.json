@@ -19,6 +19,10 @@
       {
         "key": "Search",
         "url": "/en/search/"
+      },
+      {
+        "key": "Changelog",
+        "url": "/en/changelog/"
       }
     ]
   }

@@ -1,0 +1,29 @@
+---
+pagination:
+  data: collections.changelog
+  size: 10
+  alias: changelogList
+  reverse: true
+title: Changelog
+---
+
+<main class="flex flex-col justify-between items-center mt-10 gap-20 px-20 mx-auto md:w-1/2">
+
+  <h1 class="text-4xl md:text-7xl lg:text-6xl font-bold leading-none">Blog Changelog</h1>
+
+  <ol class="relative border-l border-secondary 700">
+    {% for changelog in changelogList %}
+    <li class="mb-4 ml-8">
+      <div class="absolute w-2 h-2 bg-secondary rounded-full mt-[10px] -left-1">
+      </div>
+      <time class="mb-1 text-sm font-normal leading-none text-neutral-400">
+        {{ changelog.date | humanReadableDate }}
+      </time>
+      <h3 class="text-xl font-semibold text-primary mb-2">{{ changelog.data.title }}</h3>
+      <p class="text-base font-normal">
+        {{ changelog.content | safe }}
+      </p>
+    </li>
+    {% endfor %}
+  </ol>
+</main>
