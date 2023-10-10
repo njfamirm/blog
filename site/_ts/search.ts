@@ -5,7 +5,7 @@ new PagefindUI({
   baseUrl: '/',
   showSubResults: true,
   showImages: false,
-  debounceTimeoutMs: 500,
+  debounceTimeoutMs: 250,
   translations: {
     placeholder: 'Search',
     zero_results: 'No result found...',
