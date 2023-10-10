@@ -1,0 +1,11 @@
+@import '@pagefind/default-ui/css/ui.css';
+
+:root {
+  --pagefind-ui-scale: 0.9;
+  --pagefind-ui-primary: var(--sys-color-primary);
+  --pagefind-ui-text: var(--sys-color-onBackground);
+  --pagefind-ui-background: var(--sys-color-background);
+  --pagefind-ui-border: var(--sys-color-secondary);
+  --pagefind-ui-tag: var(--sys-color-primary);
+  --pagefind-ui-image-box-ratio: 3 / 2;
+}
