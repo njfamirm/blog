@@ -12,3 +12,7 @@ h5,
 h6 {
   font-family: var(--ref-font-family-kalameh), var(--ref-font-family-vazirmatn), var(--ref-font-family-system);
 }
+
+a {
+  @apply font-bold text-tertiary hover:brightness-50;
+}
