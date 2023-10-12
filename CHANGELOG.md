@@ -1,8 +1,6 @@
 Changelog
-## [1.4.0](https://github.com/njfamirm/njfamirm.ir/compare/v1.3.0...v1.4.0) (2023-10-10)
+### [1.4.1](https://github.com/njfamirm/njfamirm.ir/compare/v1.4.0...v1.4.1) (2023-10-12)
 
+### Bug Fixes
 
-### Features
-
-* **changelog:** add 1.3 & 1.4 ([59ef372](https://github.com/njfamirm/njfamirm.ir/commit/59ef3725081e0f54d892b47a564716a1c71b9b6f))
-* **changelog:** aff base page ([6b38e10](https://github.com/njfamirm/njfamirm.ir/commit/6b38e10844451c9ae85cabe0c02c3a85b590f2ff))
+* styles ([571f7b5](https://github.com/njfamirm/njfamirm.ir/commit/571f7b5f2352d604bd10dfb79522491d64d7a5b0))
