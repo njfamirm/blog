@@ -14,5 +14,5 @@ h6 {
 }
 
 a {
-  @apply font-bold text-tertiary hover:brightness-50;
+  @apply font-bold text-tertiary state-primary;
 }
