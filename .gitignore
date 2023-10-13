@@ -34,3 +34,4 @@ package-lock.json
 !.yarn/versions
 
 .cache
+_data
