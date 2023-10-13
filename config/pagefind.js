@@ -1,4 +1,5 @@
 async function indexContent() {
+  if (process.env.NODE_ENV !== 'production') return;
   const currentTime = new Date();
   const {createIndex, close} = await import('pagefind');
   const {index} = await createIndex();
