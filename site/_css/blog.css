@@ -14,23 +14,22 @@
   }
 
   blockquote {
-    @apply my-5 px-5 py-[1px] border-l-2 border-primary bg-secondary bg-opacity-5 text-secondary italic;
+    @apply my-5 border-l-2 border-primary bg-secondary bg-opacity-5 px-5 py-[1px] italic text-secondary;
   }
 
-
-  p, ul {
+  p,
+  ul {
     @apply my-5 text-xl leading-7;
   }
 
   ul {
     li {
-      @apply my-1 list-disc list-inside;
+      @apply my-1 list-inside list-disc;
 
       &::marker {
-        @apply text-primary font-light text-2xl;
+        @apply text-2xl font-light text-primary;
       }
     }
-
   }
 
   details {

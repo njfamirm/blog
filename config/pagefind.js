@@ -7,7 +7,7 @@ async function indexContent() {
   await index.writeFiles({outputPath: 'dist/pagefind'});
   await close();
 
-  console.log(`\n⚡️ indexContent done in ${new Date() - currentTime}ms\n` )
+  console.log(`\n⚡️ indexContent done in ${new Date() - currentTime}ms\n`);
 }
 
 module.exports = {indexContent};

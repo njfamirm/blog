@@ -68,4 +68,3 @@ services:
       traefik.frontend.rule: Host:${DOMAIN}; PathPrefix:/cdn/
       traefik.frontend.entryPoints: http, https
       traefik.frontend.redirect.entryPoint: https
-
