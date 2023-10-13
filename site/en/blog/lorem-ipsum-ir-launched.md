@@ -13,7 +13,7 @@ Hi everyone 🙌🏻
 
 Recently I was looking for a website that would simply generate lorem ipsum text to use in my project. Suddenly I realized a disaster!
 
-<img src="/img/blog/lorem-ipsum-ir-launched/lorem-example.gif" alt="Lorem ipsum website example" loading="lazy" decoding="async" />
+<img src="/cdn/blog/lorem-ipsum-ir-launched/lorem-example.gif" alt="Lorem ipsum website example" loading="lazy" decoding="async" />
 
 A request has been sent to the backend service to generate any lorem text! Unfortunately, this was not the only case, perhaps the best of its kind. At least this website had more features.
 
