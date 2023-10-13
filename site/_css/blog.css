@@ -13,8 +13,24 @@
     @apply rounded-sm bg-tertiary bg-opacity-10 font-mono text-lg italic text-tertiary selection:p-0;
   }
 
-  p {
+  blockquote {
+    @apply my-5 px-5 py-[1px] border-l-2 border-primary bg-secondary bg-opacity-5 text-secondary italic;
+  }
+
+
+  p, ul {
     @apply my-5 text-xl leading-7;
+  }
+
+  ul {
+    li {
+      @apply my-1 list-disc list-inside;
+
+      &::marker {
+        @apply text-primary font-light text-2xl;
+      }
+    }
+
   }
 
   details {
