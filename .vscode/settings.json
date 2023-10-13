@@ -30,6 +30,7 @@
     "cssnano",
     "decap",
     "esbuild",
+    "jamstack",
     "kalameh",
     "pagefind",
     "quicklink",
