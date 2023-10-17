@@ -2,7 +2,7 @@
   "layout": "blog-post.njk",
   "tags": ["blog"],
   "date": "git Created",
-  "navigationParent": {"name": "Blog", "url": "en/blog.html"},
+  "navigationParent": {"name": "Blog", "url": "en/blog/"},
   "author": {
     "name": "S. Amir Mohammad Najafi",
     "url": "https://www.njfamirm.ir",
