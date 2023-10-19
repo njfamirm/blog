@@ -38,6 +38,8 @@ jobs:
 
       - name: 🚀 Build
         run: yarn build
+        env:
+          cmsApiToken: ${{ secrets.cmsApiToken }}
 
       - name: ✅ Lint
         run: yarn lint
