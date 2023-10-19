@@ -15,6 +15,7 @@
     "b": "yarn build",
     "c": "yarn clean",
     "cf": "git clean -d -x -f --exclude=node_modules --exclude=cloud --exclude=.yarn",
+    "rl": "run-s pl clean build release p",
     "cb": "run-s clean build",
     "l": "yarn lint",
     "lint": "run-s lint:ts lint:es",
@@ -27,7 +28,8 @@
     "watch": "yarn start",
     "clean": "rm -rfv dist",
     "build": "yarn build:eleventy",
-    "build:eleventy": "eleventy"
+    "build:eleventy": "eleventy",
+    "release": "standard-version --sign"
   },
   "standard-version": {
     "scripts": {
