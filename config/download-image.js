@@ -1,5 +1,6 @@
-const {basename} = require('path');
 const {writeFileSync} = require('fs');
+const {basename} = require('path');
+
 const fetch = require('@11ty/eleventy-fetch');
 
 async function download(url, path) {

@@ -1,10 +1,12 @@
-const postcss = require('postcss');
-const postcssPresetEnv = require('postcss-preset-env');
-const postcssImport = require('postcss-import');
+const {existsSync} = require('node:fs');
+const {readFile, writeFile, mkdir, readdir} = require('node:fs/promises');
+
 const cssnano = require('cssnano');
+const postcss = require('postcss');
+const postcssImport = require('postcss-import');
+const postcssPresetEnv = require('postcss-preset-env');
 const tailwindcss = require('tailwindcss');
 const postcssNesting = require('tailwindcss/nesting/index.js');
-const {readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync} = require('fs');
 
 const postCss = postcss([
   postcssImport({root: 'site/_css'}),
@@ -32,10 +34,10 @@ async function postcssBuild() {
   const outputDir = 'dist/css/';
 
   if (!existsSync(outputDir)) {
-    mkdirSync(outputDir, {recursive: true});
+    await mkdir(outputDir, {recursive: true});
   }
 
-  const dirFileList = readdirSync(inputDir);
+  const dirFileList = await readdir(inputDir);
 
   for (const fileName of dirFileList) {
     if (!fileName.endsWith('.css')) {
@@ -45,9 +47,9 @@ async function postcssBuild() {
     const inputFilePath = inputDir + fileName;
     const outputFilePath = outputDir + fileName;
 
-    const fileContent = readFileSync(inputFilePath, 'utf8');
-    const output = cleanupOutput(await postCss.process(fileContent));
-    writeFileSync(outputFilePath, output, {encoding: 'utf8'});
+    const fileContent = await readFile(inputFilePath, 'utf8');
+    const output = cleanupOutput(await postCss.process(fileContent, {from: inputFilePath, to: outputFilePath}));
+    await writeFile(outputFilePath, output, {encoding: 'utf8'});
 
     const fileSize = new Blob([output]).size / 1024;
     console.log(`⚡️ ${outputFilePath}\t${fileSize.toFixed(1)}kb`);
@@ -55,7 +57,7 @@ async function postcssBuild() {
 }
 
 async function postcssFilter(code) {
-  return cleanupOutput(await postCss.process(fileContent));
+  return cleanupOutput(await postCss.process(code));
 }
 
 module.exports = {postcssFilter, postcssBuild};

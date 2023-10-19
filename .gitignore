@@ -18,7 +18,6 @@ Desktop.ini
 dist
 *.map
 *.d.ts
-.tsbuildinfo
 
 # Dependencies
 node_modules
@@ -34,4 +33,5 @@ package-lock.json
 !.yarn/versions
 
 .cache
-_data
+cloud/_data
+.eslintcache

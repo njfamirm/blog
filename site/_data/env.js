@@ -4,6 +4,4 @@ const env = {
   production: process.env.NODE_ENV === 'production',
 };
 
-console.log(JSON.stringify(env));
-
 module.exports = env;

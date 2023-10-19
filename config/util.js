@@ -6,17 +6,21 @@ function simpleDate(date) {
   return new Date(date).toISOString().split('T')[0];
 }
 
-function humanReadableDate(date) {
-  return new Date(date).toLocaleDateString('en-US', {
+function dateString(date, locale) {
+  return new Date(date).toLocaleDateString(locale, {
     year: 'numeric',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
   });
 }
 
+function timeString(time, locale) {
+  return new Date(time).toLocaleTimeString(locale);
+}
+
 function slugify(string) {
   // return encodeURIComponent(String(string).trim().toLowerCase().replace(/\s+/g, '-'));
-  return String(string).trim().toLowerCase().replace(/\s+/g, '-').replace(/\'/g, '');
+  return String(string).trim().toLowerCase().replace(/\s+/g, '-').replace(/'/g, '');
 }
 
 function normalizeKeyword(keyword) {
@@ -45,11 +49,12 @@ function getHostname(url) {
 
 module.exports = {
   trim,
-  humanReadableDate,
   simpleDate,
-  slugify,
   normalizeKeyword,
+  getHostname,
+  dateString,
+  timeString,
+  slugify,
   jsonParse,
   jsonStringify,
-  getHostname,
 };

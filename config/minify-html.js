@@ -27,7 +27,8 @@ async function minifyHtml(content) {
   try {
     const result = await swcHtml.minify(Buffer.from(content), swcHtmlOptions);
     return result.code;
-  } catch (err) {
+  }
+  catch (err) {
     console.error('minifyHtml Error: ', err);
     return content;
   }

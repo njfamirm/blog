@@ -9,7 +9,8 @@ function countKeywords(posts) {
     post.data.keywords.forEach((keyword) => {
       if (!keywordCounts[keyword]) {
         keywordCounts[keyword] = 1;
-      } else {
+      }
+      else {
         keywordCounts[keyword]++;
       }
     });

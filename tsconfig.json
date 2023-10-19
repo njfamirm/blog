@@ -9,7 +9,6 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true, // temporary for fix import json issue
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "noEmit": true,
     // "allowJs": true,
     // "checkJs": true,
     // "jsx": "preserve",
@@ -21,7 +20,7 @@
     // "composite": true,
     // "tsBuildInfoFile": ".tsbuildinfo",
     // "removeComments": false,
-    // "noEmit": true,
+    "noEmit": true,
     // "importHelpers": true,
     // "downlevelIteration": true,
     "isolatedModules": true, // need for esbuild

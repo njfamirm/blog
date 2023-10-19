@@ -1,3 +1,13 @@
 {
-  "recommendations": ["ginfuru.better-nunjucks"]
+  "recommendations": [
+    "ginfuru.better-nunjucks",
+    "christian-kohler.path-intellisense",
+    "davidanson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "jgclark.vscode-todo-highlight",
+    "streetsidesoftware.code-spell-checker-persian",
+    "streetsidesoftware.code-spell-checker"
+  ]
 }

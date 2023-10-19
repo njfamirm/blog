@@ -10,31 +10,75 @@
     "plugin:import/typescript"
   ],
   "env": {
-    "shared-node-browser": true,
-    "es2022": true
+    "es2023": true,
+    "browser": true
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": true,
-    "ecmaVersion": 2021,
-    "sourceType": "module"
+    "ecmaVersion": 2023
   },
   "plugins": ["@typescript-eslint", "import"],
   "settings": {
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true
+        "alwaysTryTypes": true,
+        "ecmaVersion": 2023
       },
       "node": true
     }
   },
+  "overrides": [
+    {
+      "files": ["*.{js,cjs}"],
+      "env": {
+        "es2023": true,
+        "browser": false,
+        "node": true
+      },
+      "parserOptions": {
+        "project": null,
+        "ecmaVersion": 2023
+      },
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "indent": ["error", 2, {"SwitchCase": 1, "VariableDeclarator": 1, "outerIIFEBody": 1}]
+      }
+    }
+  ],
   "rules": {
-    "max-len": ["error", {"code": 300}],
+    "max-len": ["error", {"code": 120}],
     "no-eval": ["error", {"allowIndirect": true}],
     "no-floating-decimal": "error",
     "space-infix-ops": "error",
     "new-cap": ["error", {"capIsNewExceptionPattern": "Mixin$"}],
     "brace-style": ["error", "stroustrup", {"allowSingleLine": true}],
+    "indent": "off",
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": 1,
+        "outerIIFEBody": 1,
+        "MemberExpression": 1,
+        "FunctionDeclaration": {"parameters": 1, "body": 1},
+        "FunctionExpression": {"parameters": 1, "body": 1},
+        "CallExpression": {"arguments": 1},
+        "ArrayExpression": 1,
+        "ObjectExpression": 1,
+        "ImportDeclaration": 1,
+        "flatTernaryExpressions": false,
+        "ignoreComments": false,
+        "ignoredNodes": [
+          "TemplateLiteral *",
+          "TSTypeParameterInstantiation",
+          "FunctionExpression > .params[decorators.length > 0]",
+          "FunctionExpression > .params > :matches(Decorator, :not(:first-child))",
+          "ClassBody.body > PropertyDefinition[decorators.length > 0] > .key"
+        ]
+      }
+    ],
     "operator-linebreak": ["error", "after", {"overrides": {"?": "before", ":": "before"}}],
     "import/order": [
       "error",

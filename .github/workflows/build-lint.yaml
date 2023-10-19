@@ -1,23 +1,23 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: Build
+name: Build & Lint
 
 on:
   workflow_dispatch:
-
-  pull_request:
 
   push:
     branches:
       - main
       - next
 
+  pull_request:
+
 env:
   NODE_VERSION: lts/*
 
 jobs:
-  build-lint-ts:
-    name: Build
+  build-lint:
+    name: Build & Lint
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: ⤵️ Checkout repository
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4.1.1
 
       - name: 🏗 Setup nodejs
         uses: actions/setup-node@v3.8.1
@@ -36,10 +36,8 @@ jobs:
       - name: 🏗 Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: 🚀 Build Typescript
-        run: yarn build:tsc
-
-      - name: ✅ Build eleventy
+      - name: 🚀 Build
         run: yarn build
-        env:
-          cmsApiToken: ${{ secrets.cmsApiToken }}
+
+      - name: ✅ Lint
+        run: yarn lint

@@ -4,7 +4,8 @@
   "files.exclude": {
     "**/*.map": true,
     "**/*.d.ts": true,
-    "**/*.tsbuildinfo": true
+    "**/*.tsbuildinfo": true,
+    ".yarn": true
   },
   "files.associations": {
     "*.njk": "html"
@@ -36,6 +37,7 @@
     "quicklink",
     "Strapi",
     "tailwindcss",
-    "treeshake"
+    "treeshake",
+    "shortcode"
   ]
 }

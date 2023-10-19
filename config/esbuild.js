@@ -1,5 +1,6 @@
-const {build, transform} = require('esbuild');
 const {env} = require('process');
+
+const {build, transform} = require('esbuild');
 
 const debugMode = env.NODE_ENV !== 'production';
 async function esbuildBuild() {
@@ -19,7 +20,8 @@ async function esbuildBuild() {
       legalComments: 'none',
       splitting: true,
     });
-  } catch (err) {
+  }
+  catch (err) {
     console.error('esbuildBuild Error: ', err);
   }
 }
@@ -41,8 +43,9 @@ async function esbuildFilter(content) {
     });
 
     return result.code;
-  } catch (err) {
-    console.error('esbuildFilter Error: ', err);
+  }
+  catch (err) {
+    console.error('esbuildTransform Error: ', err);
     return content;
   }
 }

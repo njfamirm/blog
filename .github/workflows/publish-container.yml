@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: Publish Containers
+name: Publish Container
 
 on:
   workflow_dispatch:
@@ -13,13 +13,11 @@ on:
   pull_request:
     paths:
       - 'cloud/Dockerfile'
-      - '.github/workflows/publish-alwatr-container.yml'
+      - '.github/workflows/publish-container.yml'
 
 env:
   REGISTRY: ghcr.io
   USERNAME: ${{github.repository_owner}}
-  # USERNAME: ${{github.actor}}
-  # USERNAME: Alwatr
 
 jobs:
   build:
@@ -47,7 +45,7 @@ jobs:
 
     steps:
       - name: ⤵️ Checkout repository
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4.1.1
 
       - name: 🏗 Setup Docker Buildx
         uses: docker/setup-buildx-action@v3.0.0
@@ -73,10 +71,11 @@ jobs:
             org.opencontainers.image.description=${{ matrix.description }}
 
           tags: |
-            type=semver,enable=true,pattern={{major}}
-            type=semver,enable=true,pattern={{major}}.{{minor}}
             type=semver,enable=true,pattern={{version}}
-            type=ref,enable=true,event=branch
+            type=semver,enable=false,pattern={{major}}
+            type=semver,enable=true,pattern={{major}}.{{minor}}
+            type=ref,enable=false,event=branch
+            type=raw,enable=true,value=latest
 
       - name: 🚀 Build and push container image
         id: build-and-push

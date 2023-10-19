@@ -32,7 +32,7 @@ layout: base.njk
       </span>
     {% endif %}
 
-    <p class="whitespace-nowrap">{{ (publishedAt or page.date) | humanReadableDate }}</p>
+    <p class="whitespace-nowrap">{{ (publishedAt or page.date) | dateString }}</p>
   </div>
 
   <div class="bg-primary w-full h-[2px] mt-4 mb-10"></div>

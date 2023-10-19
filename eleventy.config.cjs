@@ -1,27 +1,29 @@
 const directoryOutputPlugin = require('@11ty/eleventy-plugin-directory-output');
 const pluginRss = require('@11ty/eleventy-plugin-rss');
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight');
-const {markdown} = require('./config/markdown.js');
+
+const {countKeywords} = require('./config/blog.js');
 const {downloadImage} = require('./config/download-image.js');
+const {esbuildFilter, esbuildBuild} = require('./config/esbuild.js');
+const {number} = require('./config/i18n.js');
+const {markdown} = require('./config/markdown.js');
+const {minifyHtml} = require('./config/minify-html');
+const {indexContent} = require('./config/pagefind.js');
+const {postcssFilter, postcssBuild} = require('./config/postcss.js');
 const {
-  slugify,
   trim,
+  dateString,
+  timeString,
+  slugify,
   jsonParse,
   jsonStringify,
-  humanReadableDate,
   simpleDate,
   normalizeKeyword,
   getHostname,
 } = require('./config/util.js');
-const {esbuildFilter, esbuildBuild} = require('./config/esbuild.js');
-const {postcssFilter, postcssBuild} = require('./config/postcss.js');
 const {alwatrIcon} = require('./shortcode/alwatr-icon.js');
-const {image} = require('./shortcode/image.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
-const {minifyHtml} = require('./config/minify-html');
-const {number} = require('./config/i18n.js');
-const {countKeywords} = require('./config/blog.js');
-const {indexContent} = require('./config/pagefind.js');
+const {image} = require('./shortcode/image.js');
 
 const directoryOutputPluginConfig = {
   columns: {
@@ -43,7 +45,6 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.setQuietMode(true);
-  eleventyConfig.addWatchTarget('./site/');
 
   eleventyConfig.on('eleventy.before', esbuildBuild);
 
@@ -53,29 +54,44 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPlugin(directoryOutputPlugin, directoryOutputPluginConfig);
 
-  eleventyConfig.addFilter('slugify', slugify);
-  eleventyConfig.addFilter('jsonParse', jsonParse);
-  eleventyConfig.addFilter('jsonStringify', jsonStringify);
-  eleventyConfig.addFilter('humanReadableDate', humanReadableDate);
-  eleventyConfig.addFilter('simpleDate', simpleDate);
-  eleventyConfig.addFilter('normalizeKeyword', normalizeKeyword);
-  eleventyConfig.addFilter('countKeywords', countKeywords);
-  eleventyConfig.addFilter('getHostname', getHostname);
-  eleventyConfig.addAsyncFilter('downloadImage', downloadImage);
   eleventyConfig.addFilter('trim', trim);
   eleventyConfig.addFilter('number', number);
+  eleventyConfig.addFilter('slugify', slugify);
+  eleventyConfig.addFilter('jsonParse', jsonParse);
+  eleventyConfig.addFilter('countKeywords', countKeywords);
+  eleventyConfig.addFilter('jsonStringify', jsonStringify);
+  eleventyConfig.addFilter('simpleDate', simpleDate);
+  eleventyConfig.addFilter('getHostname', getHostname);
+  eleventyConfig.addFilter('normalizeKeyword', normalizeKeyword);
+  eleventyConfig.addAsyncFilter('downloadImage', downloadImage);
   eleventyConfig.addAsyncFilter('postcss', postcssFilter);
   eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
+  eleventyConfig.addFilter('dateString', dateString);
+  eleventyConfig.addFilter('timeString', timeString);
 
-  eleventyConfig.addShortcode('alwatrIcon', alwatrIcon);
   eleventyConfig.addShortcode('image', image);
   eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
+  eleventyConfig.addAsyncShortcode('alwatrIcon', alwatrIcon);
 
   eleventyConfig.addTransform('minifyHtml', minifyHtml);
   eleventyConfig.addTransform('trim', trim);
 
   eleventyConfig.on('eleventy.after', postcssBuild);
   eleventyConfig.on('eleventy.after', indexContent);
+
+  eleventyConfig.setServerOptions({
+    liveReload: true,
+    port: 8080,
+    showAllHosts: true,
+
+    /**
+     * Whether DOM diffing updates are applied where possible instead of page reloads
+     */
+    domDiff: false,
+  });
+
+  eleventyConfig.addWatchTarget('./site/');
+  eleventyConfig.addWatchTarget('./shortcode/');
 
   return {
     htmlTemplateEngine: 'njk',
