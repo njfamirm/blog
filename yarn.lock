@@ -193,20 +193,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/icon-set-material@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@alwatr/icon-set-material@npm:0.1.1"
-  checksum: d130a8c85721343f751096d19a51cd2abdfa170ca8f04b2eceb073be699a4afa6b195ddcc3973adf96c457834cd1b4d502a11c767cf182b16a0859e2eb3fe206
+"@alwatr/icon-set-material@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@alwatr/icon-set-material@npm:1.0.0"
+  checksum: 37ceabec66cdd60de7ace15d8e3e870a8d545a067b0ee2eb0d429ab2b7f210e8b5b9fe229b7ddece4237ef3df01f1051af0bae626e16953436cfd6b95f4ac82a
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@alwatr/logger@npm:1.1.5"
+"@alwatr/logger@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@alwatr/logger@npm:2.1.1"
   dependencies:
-    "@alwatr/type": ^1.1.4
     tslib: ^2.6.2
-  checksum: 0879cbe316dda91ff724fd94515941d715ee7c8df762436c8ade525408c1d1eeebae6643c2a6cf535f25215a0b4134aae7dd322a030ea30f110ad6c257505b3a
+  checksum: 6f09dbe148de5f72396ce9c4f3ce7f56cd4ba70c970cf7a8921cfafb48b2c1ec1436298fe19ada90ae2f6469ec35aee2bf28ddf30deb0615d81b7d73c7c0e9bc
   languageName: node
   linkType: hard
 
@@ -216,13 +215,6 @@ __metadata:
   dependencies:
     tslib: ^2.6.2
   checksum: 7be05b5c7fa474c52306effe5639792fa88fa1dc4528fecd5416c81f67ce30d917a8fc1a8bbba0a6adf4873eb75314724ba856ef4c9de1b44304e9ebbc00604f
-  languageName: node
-  linkType: hard
-
-"@alwatr/type@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "@alwatr/type@npm:1.1.4"
-  checksum: 28b418e3d509d581d4e850e65c256f8818e9b38335e2a1e3da11f7d04776465884e84bd7d2dd943f58694d2d188550012387bef748d13c04a14cb52a023a8dad
   languageName: node
   linkType: hard
 
@@ -4837,8 +4829,8 @@ __metadata:
     "@11ty/eleventy-plugin-directory-output": ^1.0.1
     "@11ty/eleventy-plugin-rss": ^1.2.0
     "@11ty/eleventy-plugin-syntaxhighlight": ^5.0.0
-    "@alwatr/icon-set-material": ^0.1.1
-    "@alwatr/logger": ^1.1.5
+    "@alwatr/icon-set-material": ^1.0.0
+    "@alwatr/logger": ^2.1.1
     "@alwatr/style": ^1.2.0
     "@pagefind/default-ui": ^1.0.3
     "@swc/html": ^0.0.28
