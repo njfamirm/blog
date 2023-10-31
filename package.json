@@ -39,7 +39,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
-    "@11ty/eleventy-img": "^3.1.1",
+    "@11ty/eleventy-img": "^3.1.6",
     "@11ty/eleventy-plugin-directory-output": "^1.0.1",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
@@ -49,7 +49,7 @@
     "@pagefind/default-ui": "^1.0.3",
     "@swc/html": "^0.0.28",
     "@types/alpinejs": "^3.13.3",
-    "@types/node": "^20.8.7",
+    "@types/node": "^20.8.10",
     "@types/quicklink": "^2.3.1",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
@@ -72,7 +72,7 @@
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "quicklink": "^2.3.0",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
   },
