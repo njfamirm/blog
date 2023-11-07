@@ -48,7 +48,7 @@
     "@alwatr/style": "^1.2.0",
     "@pagefind/default-ui": "^1.0.3",
     "@swc/html": "^0.0.28",
-    "@types/alpinejs": "^3.13.3",
+    "@types/alpinejs": "^3.13.5",
     "@types/node": "^20.8.7",
     "@types/quicklink": "^2.3.1",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
