@@ -69,7 +69,7 @@
     "postcss": "^8.4.31",
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^9.2.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "quicklink": "^2.3.0",
     "tailwindcss": "^3.3.3",
