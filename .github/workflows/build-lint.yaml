@@ -53,6 +53,8 @@ jobs:
 
       - name: 🚀 Build
         run: yarn build
+        env:
+          cmsApiToken: ${{ secrets.cmsApiToken }}
 
       - name: 🚀 Run ESLint
         run: yarn lint

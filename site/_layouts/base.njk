@@ -10,12 +10,11 @@
     <script type="module" src="/es/main.js?v={{ git.shortSha }}" defer async></script>
   </head>
 
-  <body class="m-0 touch-pan-x touch-pan-y touch-pinch-zoom break-words bg-background p-0 text-onBackground selection:bg-secondary selection:text-onSecondary font-vazirmatn">
-    {% include "header.njk" %}
-    {% include "navigation-drawer.njk" %}
+  <body
+    class="hide-scrollbar-in-mobile m-0 touch-pan-x touch-pan-y touch-pinch-zoom break-words bg-background p-0 font-vazirmatn text-onBackground color-scheme-auto selection:bg-secondary selection:text-onSecondary"
+  >
+    {% include "header.njk" %} {% include "navigation-drawer.njk" %}
     {{ content | safe }}
-    {% include "footer.njk" %}
-    {% include "google-analytics.njk" %}
-    {% include "structured-data/breadcrumb.njk" %}
+    {% include "footer.njk" %} {% include "google-analytics.njk" %} {% include "structured-data/breadcrumb.njk" %}
   </body>
 </html>
