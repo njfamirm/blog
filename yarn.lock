@@ -193,36 +193,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/icon-set-material@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@alwatr/icon-set-material@npm:0.1.1"
-  checksum: d130a8c85721343f751096d19a51cd2abdfa170ca8f04b2eceb073be699a4afa6b195ddcc3973adf96c457834cd1b4d502a11c767cf182b16a0859e2eb3fe206
+"@alwatr/icon-set-material@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@alwatr/icon-set-material@npm:2.0.1"
+  checksum: 4d143a66b09927f490d78ea13861f68575e8b6f1ddd10ea6bd973c2a4ababef135f9ed2df4d109a7e3c4cb9531df3bf6717f62b84e835d72f4e91d0f5a224f62
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@alwatr/logger@npm:1.1.5"
-  dependencies:
-    "@alwatr/type": ^1.1.4
-    tslib: ^2.6.2
-  checksum: 0879cbe316dda91ff724fd94515941d715ee7c8df762436c8ade525408c1d1eeebae6643c2a6cf535f25215a0b4134aae7dd322a030ea30f110ad6c257505b3a
-  languageName: node
-  linkType: hard
-
-"@alwatr/style@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@alwatr/style@npm:1.2.0"
+"@alwatr/logger@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@alwatr/logger@npm:2.2.0"
   dependencies:
     tslib: ^2.6.2
-  checksum: 7be05b5c7fa474c52306effe5639792fa88fa1dc4528fecd5416c81f67ce30d917a8fc1a8bbba0a6adf4873eb75314724ba856ef4c9de1b44304e9ebbc00604f
+  checksum: 283a3e6dfd89c7f9006d864e98a2460ff5ea1d4349ee7e32b221afe6a768df30e6a668b9b32baefcb72bf846cf23da70ead2696e0586b23e3e24794290fca6b4
   languageName: node
   linkType: hard
 
-"@alwatr/type@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "@alwatr/type@npm:1.1.4"
-  checksum: 28b418e3d509d581d4e850e65c256f8818e9b38335e2a1e3da11f7d04776465884e84bd7d2dd943f58694d2d188550012387bef748d13c04a14cb52a023a8dad
+"@alwatr/style@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@alwatr/style@npm:2.0.1"
+  dependencies:
+    tailwindcss: ^3.3.5
+    tslib: ^2.6.2
+  checksum: 8a649bbff942637b4da022b1b39d0e5e3d46676a105d3e7a2ef962505dbddd7506061afc6671c29171467c75beb6f3743228dfb8ddc5e0f27ce5e5608a4d0596
   languageName: node
   linkType: hard
 
@@ -3222,6 +3215,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-glob@npm:^3.3.0":
+  version: 3.3.2
+  resolution: "fast-glob@npm:3.3.2"
+  dependencies:
+    "@nodelib/fs.stat": ^2.0.2
+    "@nodelib/fs.walk": ^1.2.3
+    glob-parent: ^5.1.2
+    merge2: ^1.3.0
+    micromatch: ^4.0.4
+  checksum: 900e4979f4dbc3313840078419245621259f349950411ca2fa445a2f9a1a6d98c3b5e7e0660c5ccd563aa61abe133a21765c6c0dec8e57da1ba71d8000b05ec1
+  languageName: node
+  linkType: hard
+
 "fast-json-stable-stringify@npm:^2.0.0":
   version: 2.1.0
   resolution: "fast-json-stable-stringify@npm:2.1.0"
@@ -4174,6 +4180,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jiti@npm:^1.19.1":
+  version: 1.21.0
+  resolution: "jiti@npm:1.21.0"
+  bin:
+    jiti: bin/jiti.js
+  checksum: a7bd5d63921c170eaec91eecd686388181c7828e1fa0657ab374b9372bfc1f383cf4b039e6b272383d5cb25607509880af814a39abdff967322459cca41f2961
+  languageName: node
+  linkType: hard
+
 "js-stringify@npm:^1.0.2":
   version: 1.0.2
   resolution: "js-stringify@npm:1.0.2"
@@ -4837,9 +4852,9 @@ __metadata:
     "@11ty/eleventy-plugin-directory-output": ^1.0.1
     "@11ty/eleventy-plugin-rss": ^1.2.0
     "@11ty/eleventy-plugin-syntaxhighlight": ^5.0.0
-    "@alwatr/icon-set-material": ^0.1.1
-    "@alwatr/logger": ^1.1.5
-    "@alwatr/style": ^1.2.0
+    "@alwatr/icon-set-material": ^2.0.1
+    "@alwatr/logger": ^2.2.0
+    "@alwatr/style": ^2.0.1
     "@pagefind/default-ui": ^1.0.3
     "@swc/html": ^0.0.28
     "@types/alpinejs": ^3.13.3
@@ -7324,6 +7339,39 @@ __metadata:
     tailwind: lib/cli.js
     tailwindcss: lib/cli.js
   checksum: 0195c7a3ebb0de5e391d2a883d777c78a4749f0c532d204ee8aea9129f2ed8e701d8c0c276aa5f7338d07176a3c2a7682c1d0ab9c8a6c2abe6d9325c2954eb50
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:^3.3.5":
+  version: 3.3.5
+  resolution: "tailwindcss@npm:3.3.5"
+  dependencies:
+    "@alloc/quick-lru": ^5.2.0
+    arg: ^5.0.2
+    chokidar: ^3.5.3
+    didyoumean: ^1.2.2
+    dlv: ^1.1.3
+    fast-glob: ^3.3.0
+    glob-parent: ^6.0.2
+    is-glob: ^4.0.3
+    jiti: ^1.19.1
+    lilconfig: ^2.1.0
+    micromatch: ^4.0.5
+    normalize-path: ^3.0.0
+    object-hash: ^3.0.0
+    picocolors: ^1.0.0
+    postcss: ^8.4.23
+    postcss-import: ^15.1.0
+    postcss-js: ^4.0.1
+    postcss-load-config: ^4.0.1
+    postcss-nested: ^6.0.1
+    postcss-selector-parser: ^6.0.11
+    resolve: ^1.22.2
+    sucrase: ^3.32.0
+  bin:
+    tailwind: lib/cli.js
+    tailwindcss: lib/cli.js
+  checksum: e04bb3bb7f9f17e9b6db0c7ace755ef0d6d05bff36ebeb9e5006e13c018ed5566f09db30a1a34380e38fa93ebbb4ae0e28fe726879d5e9ddd8c5b52bffd26f14
   languageName: node
   linkType: hard
 
