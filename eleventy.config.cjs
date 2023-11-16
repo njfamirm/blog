@@ -68,7 +68,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addAsyncFilter('esbuild', esbuildFilter);
   eleventyConfig.addFilter('dateString', dateString);
   eleventyConfig.addFilter('timeString', timeString);
-
   eleventyConfig.addShortcode('image', image);
   eleventyConfig.addShortcode('editOnGitHub', editOnGitHub);
   eleventyConfig.addAsyncShortcode('alwatrIcon', alwatrIcon);

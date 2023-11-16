@@ -1,13 +1,25 @@
 const {readFile} = require('node:fs/promises');
 
-async function alwatrIcon(iconName, customClass = '') {
-  let icon;
+async function alwatrIcon(icon, customClass = '') {
+  if (icon.indexOf('/') === -1) {
+    icon = 'material/' + icon;
+  }
+
+  if (icon.indexOf(':') === -1) {
+    icon = icon + ':main';
+  }
+
+  // icon = material/home:main
+  const [iconPack, iconExtra] = icon.split('/');
+  const [iconName, iconType] = iconExtra.replaceAll('_', '-').split(':');
+
+  const path = `node_modules/@alwatr/icon-set-${iconPack}/svg/${iconType}/${iconName}.svg`;
 
   try {
-    icon = await readFile(`node_modules/@alwatr/icon-set-material/svg/outline/${iconName}.svg`, 'utf8');
+    icon = await readFile(path, 'utf8');
   }
   catch {
-    const err = new Error(`alwatrIcon, icon not found: ${iconName}`);
+    const err = new Error(`alwatrIcon, icon not found: ${icon, path}`);
 
     if (process.env.NODE_ENV === 'production') {
       throw err;

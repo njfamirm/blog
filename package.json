@@ -1,5 +1,6 @@
 {
-  "name": "njfamirm-ws",
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+  "name": "njfamirm-blog",
   "version": "1.4.4",
   "description": "S. Amir Mohammad Najafi personal website.",
   "main": "index.js",
@@ -10,26 +11,26 @@
   "browserslist": "> 1.5%, not dead",
   "scripts": {
     "f": "yarn format",
-    "s": "yarn start",
-    "w": "yarn start",
+    "l": "yarn lint",
+    "w": "yarn watch",
     "b": "yarn build",
     "c": "yarn clean",
-    "cf": "git clean -d -x -f --exclude=node_modules --exclude=cloud --exclude=.yarn",
-    "rl": "run-s pl clean build release p",
     "cb": "run-s clean build",
-    "l": "yarn lint",
+    "rl": "run-s pl clean build release p",
     "lint": "run-s lint:ts lint:es",
     "lint:es": "eslint . --cache",
     "lint:ts": "tsc --build --pretty",
     "format": "run-s format:prettier format:eslint",
     "format:eslint": "yarn lint:es --fix",
     "format:prettier": "prettier . --ignore-path .eslintignore --write",
-    "start": "eleventy --serve",
-    "watch": "yarn start",
-    "clean": "rm -rfv dist",
-    "build": "yarn build:eleventy",
-    "build:eleventy": "eleventy",
-    "release": "standard-version --sign"
+    "clean": "run-s clean:cache clean:dist",
+    "clean:cache": "rm -rfv .cache",
+    "clean:dist": "rm -rfv dist",
+    "release": "standard-version --sign",
+    "clean:full": "git clean -d -x -f --exclude=node_modules --exclude=cloud --exclude=.yarn* --exclude=.pnp*",
+    "watch": "yarn 11ty --serve",
+    "build": "yarn 11ty",
+    "11ty": "eleventy"
   },
   "standard-version": {
     "scripts": {
@@ -69,6 +70,7 @@
     "postcss": "^8.4.31",
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^9.2.0",
+    "postcss-variable-compress": "^3.0.0",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "quicklink": "^2.3.0",
@@ -76,5 +78,5 @@
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
   },
-  "packageManager": "yarn@3.6.3"
+  "packageManager": "yarn@4.0.2"
 }

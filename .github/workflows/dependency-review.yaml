@@ -5,15 +5,7 @@ name: Dependency Review
 on:
   workflow_dispatch:
 
-  schedule:
-    - cron: '5 8 * * *'
-    #        * * * * *
-    #        │ │ │ │ │
-    #        │ │ │ │ └───── day of the week (0 - 6 or SUN-SAT)
-    #        │ │ │ └─────── month (1 - 12 or JAN-DEC)
-    #        │ │ └───────── day of the month (1 - 31)
-    #        │ └─────────── hour (0 - 23)
-    #        └───────────── minute (0 - 59)
+  pull_request:
 
 jobs:
   dependency-review:
@@ -28,4 +20,4 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       - name: 🚀 Dependency Review
-        uses: actions/dependency-review-action@v3.1.0
+        uses: actions/dependency-review-action@v3.1.3

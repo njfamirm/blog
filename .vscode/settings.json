@@ -4,8 +4,7 @@
   "files.exclude": {
     "**/*.map": true,
     "**/*.d.ts": true,
-    "**/*.tsbuildinfo": true,
-    ".yarn": true
+    "**/*.tsbuildinfo": true
   },
   "files.associations": {
     "*.njk": "html"
@@ -25,19 +24,5 @@
   "prettier.useEditorConfig": true,
   "cSpell.language": "en,fa,fa-IR",
   "cSpell.ignoreRegExpList": ["{% end.*%}"],
-  "cSpell.words": [
-    "alpinejs",
-    "alwatr",
-    "cssnano",
-    "decap",
-    "esbuild",
-    "jamstack",
-    "kalameh",
-    "pagefind",
-    "quicklink",
-    "Strapi",
-    "tailwindcss",
-    "treeshake",
-    "shortcode"
-  ]
+  "cSpell.words": ["alpinejs", "alwatr", "cssnano", "esbuild", "shortcode", "tailwindcss"]
 }

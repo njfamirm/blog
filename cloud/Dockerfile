@@ -1,7 +1,4 @@
-ARG NODE_VERSION=20
-ARG ALWATR_NGINX_VERSION=1
-
-FROM docker.io/library/node:${NODE_VERSION}-alpine as builder
+FROM docker.io/library/node:20-alpine as builder
 
 ARG siteUrl=/
 ARG noIndex=0
@@ -16,8 +13,7 @@ ENV cmsApiToken $cmsApiToken
 
 RUN apk add --no-cache git
 
-COPY package.json *.lock .yarnrc.yml ./
-COPY .yarn .yarn
+COPY package.json *.lock .yarn* ./
 
 RUN if [ -f *.lock ]; then \
       yarn install --immutable; \
@@ -33,9 +29,9 @@ RUN yarn build
 
 # ---
 
-FROM ghcr.io/alimd/nginx-ws:${ALWATR_NGINX_VERSION} as nginx
+FROM ghcr.io/alwatr/nginx-ws:1.1.1 as nginx
 
 # Copy builded files from last stage
 COPY --from=builder /app/dist/ ./
 
-RUN pwd; ls -lAhF;
+# RUN pwd; ls -lAhF;

@@ -1,18 +1,6 @@
 @import '@alwatr/style/main.css';
-@import '@alwatr/style/palettes/h300.css';
+@import './lib/color-palette.css';
 @import './lib/vazirmatn-font.css';
-@import './lib/kalameh-font.css';
-@import './lib/scrollbar.css';
-@import './lib/alpine.css';
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--ref-font-family-kalameh), var(--ref-font-family-vazirmatn), var(--ref-font-family-system);
-}
 
 a {
   @apply font-bold text-tertiary state-primary;

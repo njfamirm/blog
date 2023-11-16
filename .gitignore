@@ -13,25 +13,35 @@ Desktop.ini
 # Logs
 *.log*
 
-# Build
-.tsbuildinfo
-dist
-*.map
-*.d.ts
-
-# Dependencies
-node_modules
-package-lock.json
-
-# Yarn
-.pnp.*
+# package managers
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+#!.yarn/cache
+.pnp.*
+node_modules
+package-lock.json
 
-.cache
-cloud/_data
+# Build
+dist
+build
+.tsbuildinfo
+*.map
+*.d.ts
+*.js
+!*.config.js
+!**/res/*.js
+
 .eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env
+/cloud/_data
+
+/.cache

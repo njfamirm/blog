@@ -5,6 +5,7 @@ const cssnano = require('cssnano');
 const postcss = require('postcss');
 const postcssImport = require('postcss-import');
 const postcssPresetEnv = require('postcss-preset-env');
+const postcssVariableCompress = require('postcss-variable-compress');
 const tailwindcss = require('tailwindcss');
 const postcssNesting = require('tailwindcss/nesting/index.js');
 
@@ -23,6 +24,7 @@ const postCss = postcss([
       },
     ],
   }),
+  postcssVariableCompress,
 ]);
 
 function cleanupOutput(content) {
