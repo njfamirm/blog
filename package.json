@@ -46,7 +46,7 @@
     "@alwatr/icon-set-material": "^0.1.1",
     "@alwatr/logger": "^1.1.5",
     "@alwatr/style": "^1.2.0",
-    "@pagefind/default-ui": "^1.0.3",
+    "@pagefind/default-ui": "^1.0.4",
     "@swc/html": "^0.0.28",
     "@types/alpinejs": "^3.13.3",
     "@types/node": "^20.8.7",

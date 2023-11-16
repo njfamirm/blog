@@ -1001,10 +1001,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pagefind/default-ui@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@pagefind/default-ui@npm:1.0.3"
-  checksum: 80c1b2edcb0e43b5218472179420bef18e61b37f5c1a5523d00a2f453b0444cc64af0490617a87a6b3f922453954abbdccfcbeb2c84df0308034d3b1bb9bd653
+"@pagefind/default-ui@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@pagefind/default-ui@npm:1.0.4"
+  checksum: 1d2f565fae911598991b7d542d0b6b7c810237afe8c88b09398026790ca95ee1a274c2f1785e22290886730b879f2379994ab9b90d16b84ebe18653a025eaa40
   languageName: node
   linkType: hard
 
@@ -4840,7 +4840,7 @@ __metadata:
     "@alwatr/icon-set-material": ^0.1.1
     "@alwatr/logger": ^1.1.5
     "@alwatr/style": ^1.2.0
-    "@pagefind/default-ui": ^1.0.3
+    "@pagefind/default-ui": ^1.0.4
     "@swc/html": ^0.0.28
     "@types/alpinejs": ^3.13.3
     "@types/node": ^20.8.7
