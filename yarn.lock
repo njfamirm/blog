@@ -1509,12 +1509,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alpinejs@npm:^3.13.2":
-  version: 3.13.2
-  resolution: "alpinejs@npm:3.13.2"
+"alpinejs@npm:^3.13.3":
+  version: 3.13.3
+  resolution: "alpinejs@npm:3.13.3"
   dependencies:
     "@vue/reactivity": "npm:~3.1.1"
-  checksum: f914c296e176bddace6bb1e573dcf91e0073b5c85abcbbee26a6986f90128408b4fa0455c3c8de407dab41c98092e588253dd9cff05091906493999a8b4cc4d5
+  checksum: f8fde1b47fc4a697ba688d4510c52a91502ed79aea8e0a7c84b8b01c4008e30328f99cb1aefd2608b8ee9d8380e9714804e0e319c5353ab4e34be91fab37eb55
   languageName: node
   linkType: hard
 
@@ -4716,7 +4716,7 @@ __metadata:
     "@types/quicklink": "npm:^2.3.3"
     "@typescript-eslint/eslint-plugin": "npm:^6.11.0"
     "@typescript-eslint/parser": "npm:^6.11.0"
-    alpinejs: "npm:^3.13.2"
+    alpinejs: "npm:^3.13.3"
     cssnano: "npm:^6.0.1"
     eleventy-plugin-time-to-read: "npm:^1.3.0"
     esbuild: "npm:^0.19.5"
