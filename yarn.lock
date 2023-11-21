@@ -1245,13 +1245,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/markdown-it@npm:^13.0.6":
-  version: 13.0.6
-  resolution: "@types/markdown-it@npm:13.0.6"
+"@types/markdown-it@npm:^13.0.7":
+  version: 13.0.7
+  resolution: "@types/markdown-it@npm:13.0.7"
   dependencies:
     "@types/linkify-it": "npm:*"
     "@types/mdurl": "npm:*"
-  checksum: bd936a1c2774b1021a17b70fa7b2f4cfad69b941baa176548716b778c010465c5c5ddcea431349787b64773d6330f6b846f688c203a3d7ebae4fe73fc2f6acce
+  checksum: 8a0fda0eb518ca2b25fcb5da32398930729270e9095cd4f7f3e379098b9d0f9e6336974becf2f36e69bbdbdc57818fef731149988c9e98e9f3f47501fefd9d39
   languageName: node
   linkType: hard
 
@@ -4711,7 +4711,7 @@ __metadata:
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
     "@types/alpinejs": "npm:^3.13.5"
-    "@types/markdown-it": "npm:^13.0.6"
+    "@types/markdown-it": "npm:^13.0.7"
     "@types/node": "npm:^20.9.0"
     "@types/quicklink": "npm:^2.3.3"
     "@typescript-eslint/eslint-plugin": "npm:^6.11.0"

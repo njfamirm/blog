@@ -50,7 +50,7 @@
     "@pagefind/default-ui": "^1.0.4",
     "@swc/html": "^0.0.28",
     "@types/alpinejs": "^3.13.5",
-    "@types/markdown-it": "^13.0.6",
+    "@types/markdown-it": "^13.0.7",
     "@types/node": "^20.9.0",
     "@types/quicklink": "^2.3.3",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
