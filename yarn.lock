@@ -1278,10 +1278,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/quicklink@npm:^2.3.3":
-  version: 2.3.3
-  resolution: "@types/quicklink@npm:2.3.3"
-  checksum: 7309fe8003fdb2485174e657a842519570d7edec391011892671927fc403ccae82bddb9a7ff4bcdc2755addf47de7356098d7134c5c039b010305b5e8633b253
+"@types/quicklink@npm:^2.3.4":
+  version: 2.3.4
+  resolution: "@types/quicklink@npm:2.3.4"
+  checksum: 21a5e0642762178b4ba036dc121a39a42645f0d5ef0ab2ed6211a8ff67c6a50bdbea7e248e3c63ea04bbd82f99507f4698f970f541f007548ee8563a8d0367d6
   languageName: node
   linkType: hard
 
@@ -4713,7 +4713,7 @@ __metadata:
     "@types/alpinejs": "npm:^3.13.5"
     "@types/markdown-it": "npm:^13.0.6"
     "@types/node": "npm:^20.9.0"
-    "@types/quicklink": "npm:^2.3.3"
+    "@types/quicklink": "npm:^2.3.4"
     "@typescript-eslint/eslint-plugin": "npm:^6.11.0"
     "@typescript-eslint/parser": "npm:^6.11.0"
     alpinejs: "npm:^3.13.2"
