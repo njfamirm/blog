@@ -210,13 +210,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/style@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@alwatr/style@npm:2.0.1"
+"@alwatr/style@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@alwatr/style@npm:2.0.2"
   dependencies:
     tailwindcss: "npm:^3.3.5"
     tslib: "npm:^2.6.2"
-  checksum: 91e440cdfb98b1c1398b30e526db127ef9b138b300655f6371e77aed27049bdbdf65ef4b1287f039ab2d7ac308ebc14b72062ffde23bde7d6708025a94b06a82
+  checksum: 500c1dcd64708f3ef02eb93f7004f128534e3662d666639cc2f082c98b0580f2f5ac1ab6013ef9d70d7ab5a19bc9cfc6232ee6eb250461eb41784718ed846f5d
   languageName: node
   linkType: hard
 
@@ -4707,7 +4707,7 @@ __metadata:
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@alwatr/icon-set-material": "npm:^2.0.1"
     "@alwatr/logger": "npm:^2.2.0"
-    "@alwatr/style": "npm:^2.0.1"
+    "@alwatr/style": "npm:^2.0.2"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
     "@types/alpinejs": "npm:^3.13.5"
