@@ -201,12 +201,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@alwatr/logger@npm:2.2.0"
+"@alwatr/logger@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@alwatr/logger@npm:2.3.0"
   dependencies:
     tslib: "npm:^2.6.2"
-  checksum: a3e95d67fcc09b54b38a967f15dc297128d8e6749b2123092f3f70343cb57bd7bb65dbb6434e8605f8f88dbe751d4c7be446042ffb4db9c70167bb87af0f0e43
+  checksum: b3cda1eeb2fd0d8f16c26ded5931277fd34b303205d02a7dd2731c44b5f86cdaa9cc17b77d285fd77959e75637ac641ef0ff4081b1c34a5bde8c7e9c27ba0452
   languageName: node
   linkType: hard
 
@@ -4706,7 +4706,7 @@ __metadata:
     "@11ty/eleventy-plugin-rss": "npm:^1.2.0"
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@alwatr/icon-set-material": "npm:^2.0.1"
-    "@alwatr/logger": "npm:^2.2.0"
+    "@alwatr/logger": "npm:^2.3.0"
     "@alwatr/style": "npm:^2.0.2"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
