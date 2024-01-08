@@ -194,6 +194,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@alwatr/dedupe@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@alwatr/dedupe@npm:1.0.0"
+  checksum: 9ed98707376250e1159ed485e14347d3b322ca3a04e67eb012d4f39197472f4dd7da5af3bc6376ffb3d29086a25101ab412e666f291437d294ad71db1d449346
+  languageName: node
+  linkType: hard
+
 "@alwatr/icon-set-material@npm:^2.0.1":
   version: 2.0.1
   resolution: "@alwatr/icon-set-material@npm:2.0.1"
@@ -201,20 +208,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "@alwatr/logger@npm:2.3.1"
-  checksum: 38f52911d566dd879f02fe41d039bdadb8f200568827566effaf9c7cb67252726ed589710d116137d4c3792306600fd6c55e1b66dfa2b549055003dd1d1e980a
+"@alwatr/logger@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@alwatr/logger@npm:3.1.0"
+  dependencies:
+    "@alwatr/dedupe": "npm:^1.0.0"
+    "@alwatr/platform-info": "npm:^1.1.0"
+  checksum: 7644558fdf7c7db510502ca956de15a0d51d6a10514b0890645bcbc4a3cf39f228564ef1141edccff7f6ee9f78690e67958ce920b1f079a1d2580ddaa04489d6
   languageName: node
   linkType: hard
 
-"@alwatr/style@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@alwatr/style@npm:2.0.2"
+"@alwatr/platform-info@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@alwatr/platform-info@npm:1.1.0"
+  checksum: f90f78aa279dec037d69e347048a71bdef0216e964107d2044d850111b6be63031a689f3b4e90d09f7f7d3283afeb8b68a1734c472dfbc7d4d188a6876eb38b2
+  languageName: node
+  linkType: hard
+
+"@alwatr/style@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@alwatr/style@npm:2.0.3"
   dependencies:
-    tailwindcss: "npm:^3.3.5"
+    tailwindcss: "npm:^3.3.7"
     tslib: "npm:^2.6.2"
-  checksum: 500c1dcd64708f3ef02eb93f7004f128534e3662d666639cc2f082c98b0580f2f5ac1ab6013ef9d70d7ab5a19bc9cfc6232ee6eb250461eb41784718ed846f5d
+  checksum: 62393db6b811e3cca05d39256ab34cb83c1cab34e4a1470bf4e9b1aeeb49057a4be3d5d791adee3d7175bdea26c89f811c0a9283c96efa9866045cb0ca643dc8
   languageName: node
   linkType: hard
 
@@ -4704,8 +4721,8 @@ __metadata:
     "@11ty/eleventy-plugin-rss": "npm:^1.2.0"
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@alwatr/icon-set-material": "npm:^2.0.1"
-    "@alwatr/logger": "npm:^2.3.1"
-    "@alwatr/style": "npm:^2.0.2"
+    "@alwatr/logger": "npm:^3.1.0"
+    "@alwatr/style": "npm:^2.0.3"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
     "@types/alpinejs": "npm:^3.13.5"
@@ -7085,6 +7102,39 @@ __metadata:
     tailwind: lib/cli.js
     tailwindcss: lib/cli.js
   checksum: a57c0a9cdba9db19097e34e25b7e4690fab43f31ba200afc3bb9635a03036ca93e9884a17b616fb8a2486d57d2ecc9a06862ce4685b3ace57f7a67436e7594a0
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:^3.3.7":
+  version: 3.4.1
+  resolution: "tailwindcss@npm:3.4.1"
+  dependencies:
+    "@alloc/quick-lru": "npm:^5.2.0"
+    arg: "npm:^5.0.2"
+    chokidar: "npm:^3.5.3"
+    didyoumean: "npm:^1.2.2"
+    dlv: "npm:^1.1.3"
+    fast-glob: "npm:^3.3.0"
+    glob-parent: "npm:^6.0.2"
+    is-glob: "npm:^4.0.3"
+    jiti: "npm:^1.19.1"
+    lilconfig: "npm:^2.1.0"
+    micromatch: "npm:^4.0.5"
+    normalize-path: "npm:^3.0.0"
+    object-hash: "npm:^3.0.0"
+    picocolors: "npm:^1.0.0"
+    postcss: "npm:^8.4.23"
+    postcss-import: "npm:^15.1.0"
+    postcss-js: "npm:^4.0.1"
+    postcss-load-config: "npm:^4.0.1"
+    postcss-nested: "npm:^6.0.1"
+    postcss-selector-parser: "npm:^6.0.11"
+    resolve: "npm:^1.22.2"
+    sucrase: "npm:^3.32.0"
+  bin:
+    tailwind: lib/cli.js
+    tailwindcss: lib/cli.js
+  checksum: eec3d758f1cd4f51ab3b4c201927c3ecd18e55f8ac94256af60276aaf8d1df78f9dddb5e9fb1e057dfa7cea3c1356add4994cc3d42da9739df874e67047e656f
   languageName: node
   linkType: hard
 
