@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "njfamirm-blog",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "S. Amir Mohammad Najafi personal website.",
   "main": "index.js",
   "repository": "git@github.com:njfamirm/blog.git",
