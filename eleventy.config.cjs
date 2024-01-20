@@ -21,6 +21,7 @@ const {
   normalizeKeyword,
   getHostname,
 } = require('./config/util.js');
+const {generateServiceWorker} = require('./config/workbox.js');
 const {alwatrIcon} = require('./shortcode/alwatr-icon.js');
 const {editOnGitHub} = require('./shortcode/edit-on-github.js');
 const {image} = require('./shortcode/image.js');
@@ -77,6 +78,7 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.on('eleventy.after', postcssBuild);
   eleventyConfig.on('eleventy.after', indexContent);
+  eleventyConfig.on('eleventy.after', generateServiceWorker);
 
   eleventyConfig.setServerOptions({
     liveReload: true,
