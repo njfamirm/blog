@@ -24,5 +24,13 @@
   "prettier.useEditorConfig": true,
   "cSpell.language": "en,fa,fa-IR",
   "cSpell.ignoreRegExpList": ["{% end.*%}"],
-  "cSpell.words": ["alpinejs", "alwatr", "cssnano", "esbuild", "shortcode", "tailwindcss"]
+  "cSpell.words": [
+    "alpinejs",
+    "alwatr",
+    "cssnano",
+    "decap",
+    "esbuild",
+    "shortcode",
+    "tailwindcss"
+  ]
 }
