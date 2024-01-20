@@ -3,7 +3,7 @@ const {writeFile} = require('fs').promises;
 const {generateSW} = require('workbox-build');
 
 const deploymentServiceWorkerContent = "console.log('service worker not build in deployment.')";
-const serviceWorkerDest = 'dist/es/service-worker.js';
+const serviceWorkerDest = 'dist/service-worker.js';
 
 async function generateServiceWorker() {
   if (process.env.NODE_ENV !== 'production') {
@@ -18,6 +18,7 @@ async function generateServiceWorker() {
     swDest: serviceWorkerDest,
     sourcemap: false,
     mode: 'production',
+    offlineGoogleAnalytics: true,
   });
 }
 

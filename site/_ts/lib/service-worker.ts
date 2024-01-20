@@ -6,7 +6,7 @@ logger_.logModule?.('register-service-worker');
 
 const logger = createLogger('service-worker')
 
-const serviceWorkerPath = '/es/service-worker.js';
+const serviceWorkerPath = '/service-worker.js';
 
 /**
  * Register the service worker and listen for the 'updatefound' event
