@@ -40,13 +40,13 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
-    "@11ty/eleventy-img": "^3.1.1",
+    "@11ty/eleventy-img": "^3.1.8",
     "@11ty/eleventy-plugin-directory-output": "^1.0.1",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
     "@alwatr/icon-set-material": "^2.0.1",
-    "@alwatr/logger": "^2.3.1",
-    "@alwatr/style": "^2.0.2",
+    "@alwatr/logger": "^3.2.3",
+    "@alwatr/style": "^2.0.3",
     "@pagefind/default-ui": "^1.0.4",
     "@swc/html": "^0.0.28",
     "@types/alpinejs": "^3.13.6",
@@ -77,7 +77,8 @@
     "quicklink": "^2.3.0",
     "tailwindcss": "^3.4.1",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "workbox-build": "^7.0.0"
   },
   "packageManager": "yarn@4.0.2"
 }

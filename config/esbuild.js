@@ -1,24 +1,29 @@
-const {env} = require('process');
-
 const {build, transform} = require('esbuild');
 
-const debugMode = env.NODE_ENV !== 'production';
 async function esbuildBuild() {
   try {
     await build({
       entryPoints: ['site/_ts/*.ts'],
-      outdir: 'dist/es/',
       logLevel: 'info',
-      platform: 'browser',
-      target: 'es2018',
-      format: 'esm',
       minify: true,
-      treeShaking: true,
-      sourcemap: debugMode,
       bundle: true,
+      splitting: false,
       charset: 'utf8',
       legalComments: 'none',
-      splitting: true,
+      outdir: 'dist/es',
+      platform: 'browser',
+      format: 'iife',
+      mangleProps: /_$/,
+      treeShaking: true,
+      sourcemap: false,
+      sourcesContent: false,
+      target: [
+        'es2018',
+        'chrome62',
+        'edge79',
+        'firefox78',
+        'safari11',
+      ],
     });
   }
   catch (err) {
@@ -30,16 +35,22 @@ async function esbuildFilter(content) {
   try {
     const result = await transform(content, {
       logLevel: 'info',
-      platform: 'browser',
-      target: 'es2018',
-      format: 'esm',
       minify: true,
-      treeShaking: true,
-      sourcemap: debugMode,
-      // bundle: true,
-      // splitting: true,
       charset: 'utf8',
       legalComments: 'none',
+      platform: 'browser',
+      format: 'iife',
+      mangleProps: /_$/,
+      treeShaking: true,
+      sourcemap: false,
+      sourcesContent: false,
+      target: [
+        'es2018',
+        'chrome62',
+        'edge79',
+        'firefox78',
+        'safari11',
+      ]
     });
 
     return result.code;
