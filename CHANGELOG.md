@@ -1,5 +1,5 @@
 Changelog
-### [1.5.2](https://github.com/njfamirm/blog/compare/v1.5.1...v1.5.2) (2024-01-21)
+### [1.5.3](https://github.com/njfamirm/blog/compare/v1.5.1...v1.5.3) (2024-01-21)
 
 
 ### Bug Fixes
