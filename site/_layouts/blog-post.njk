@@ -17,7 +17,7 @@ layout: base.njk
   </h1>
   <p class="mt-4">{{ description }}</p>
   {% if socialImage %}
-    <div class="dark:brightness-90 rounded-lg overflow-clip select-none my-10 text-center drop-shadow-lg [&_*]:w-full">
+    <div class="brightness-90 rounded-lg overflow-clip select-none my-10 text-center drop-shadow-lg [&_*]:w-full">
       {% image socialImage, socialImageAlt or "Cover post" %}
     </div>
   {%endif%}

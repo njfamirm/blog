@@ -2,7 +2,7 @@
 
 .blog-post-container {
   img {
-    @apply mx-auto my-10 select-none rounded-lg text-center drop-shadow-lg dark:brightness-90;
+    @apply mx-auto my-10 select-none rounded-lg text-center drop-shadow-lg brightness-90;
   }
 
   h2 {
