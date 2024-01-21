@@ -14,7 +14,7 @@ async function generateServiceWorker() {
     globDirectory: 'dist',
     clientsClaim: true,
     skipWaiting: true,
-    globPatterns: ['**/*.{ttf,woff,woff2,html,js}'],
+    globPatterns: ['**/*.{ttf,woff,woff2,js,css}'],
     swDest: serviceWorkerDest,
     sourcemap: false,
     mode: 'production',
