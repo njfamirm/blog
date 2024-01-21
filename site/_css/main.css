@@ -1,6 +1,8 @@
 @import '@alwatr/style/main.css';
 @import './lib/color-palette.css';
 @import './lib/vazirmatn-font.css';
+@import './lib/syntax-highlighter.css';
+@import './lib/blog.css';
 
 a {
   @apply font-bold text-tertiary state-primary;

@@ -2,5 +2,6 @@ import {tailwindConfig} from '@alwatr/style';
 
 export default {
   ...tailwindConfig,
-  content: ['dist/**/*.html']
+  content: ['dist/**/*.html'],
+  darkMode: 'class',
 };
