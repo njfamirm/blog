@@ -1,7 +1,7 @@
 Changelog
-### [1.5.1](https://github.com/njfamirm/blog/compare/v1.5.0...v1.5.1) (2024-01-20)
+### [1.5.2](https://github.com/njfamirm/blog/compare/v1.5.1...v1.5.2) (2024-01-21)
 
 
 ### Bug Fixes
 
-* service worker path ([b980cec](https://github.com/njfamirm/blog/commit/b980cec16134e6b8dd70a688c53774d8d17779ff))
+* colors ([e5cddf1](https://github.com/njfamirm/blog/commit/e5cddf138963a379016c64f69b2f48d4c3c6ac35))
