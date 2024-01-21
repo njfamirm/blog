@@ -1,8 +1,7 @@
 Changelog
-### [1.5.3](https://github.com/njfamirm/blog/compare/v1.5.1...v1.5.3) (2024-01-21)
+## [1.6.0](https://github.com/njfamirm/blog/compare/v1.5.3...v1.6.0) (2024-01-21)
 
 
-### Bug Fixes
+### Features
 
-* dark color and css bundle ([8dd5277](https://github.com/njfamirm/blog/commit/8dd52770c4313426bf4e43614bdbc6b3807c319e))
-* make service worker precache smallest ([b29f92a](https://github.com/njfamirm/blog/commit/b29f92aa9b16106ab4a138176446cae949c0dedf))
+* **blog:** use giscuss as comment system ([923326a](https://github.com/njfamirm/blog/commit/923326aeb5cfb1b6665b86f1ebe04ebcf4d7c283))
