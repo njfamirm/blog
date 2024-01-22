@@ -30,6 +30,7 @@
     "cssnano",
     "decap",
     "esbuild",
+    "giscus",
     "shortcode",
     "tailwindcss",
     "vazirmatn"
