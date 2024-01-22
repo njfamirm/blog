@@ -1,7 +1,7 @@
 Changelog
-## [1.6.0](https://github.com/njfamirm/blog/compare/v1.5.3...v1.6.0) (2024-01-21)
+### [1.6.1](https://github.com/njfamirm/blog/compare/v1.6.0...v1.6.1) (2024-01-22)
 
 
-### Features
+### Bug Fixes
 
-* **blog:** use giscuss as comment system ([923326a](https://github.com/njfamirm/blog/commit/923326aeb5cfb1b6665b86f1ebe04ebcf4d7c283))
+* **blog:** prevent loading comment in all page ([749672d](https://github.com/njfamirm/blog/commit/749672dc37e40e72973b75bd77e410a0cd3febea))
