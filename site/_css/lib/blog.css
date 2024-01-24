@@ -4,11 +4,15 @@
   }
 
   h2 {
-    @apply mb-5 mt-10 text-2xl font-bold text-primary sm:text-4xl md:text-4xl;
+    @apply mb-5 mt-10 text-primary font-bold text-titleLarge;
+  }
+
+  h3 {
+    @apply mb-4 mt-6 text-primary text-opacity-90 font-bold text-titleMedium;
   }
 
   code:not(pre code) {
-    @apply rounded-sm bg-tertiary bg-opacity-10 font-mono text-lg italic text-tertiary selection:p-0;
+    @apply rounded-sm bg-tertiary bg-opacity-10 font-mono italic text-tertiary selection:p-0;
   }
 
   blockquote {
@@ -17,7 +21,7 @@
 
   p,
   ul {
-    @apply my-5 text-xl leading-7;
+    @apply my-2 leading-7;
   }
 
   ul {
