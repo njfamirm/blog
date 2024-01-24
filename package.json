@@ -45,7 +45,7 @@
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
     "@alwatr/icon-set-material": "^2.0.1",
-    "@alwatr/logger": "^3.2.3",
+    "@alwatr/logger": "^3.2.4",
     "@alwatr/style": "^2.0.3",
     "@pagefind/default-ui": "^1.0.4",
     "@swc/html": "^0.0.28",
