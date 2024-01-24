@@ -1,5 +1,5 @@
 ---
-title: 'Separating Commits in Git: A Guide to Streamlining Your Workflow'
+title: 'Split a large Pull Request into multiple smaller ones using separating Commits in Git'
 description: Explain git-separate for a better experience when using trunk-based deployment.
 socialImage: /img/blog/git-separate/cover.jpg
 type:
