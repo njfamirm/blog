@@ -20,29 +20,29 @@ Welcome to the exciting world of Eleventy, a powerful and flexible static site g
 
 Eleventy, known for its simplicity and flexibility, starts users off with a straightforward folder structure. This design is particularly appealing to beginners or those looking to quickly set up a static site without the complexity often associated with such setups. Let's delve deeper into each component of this default structure:
 
-### 1. Input: `.` (Current Directory)
+### 1. Input
 
-The input directory is denoted by a dot (`.`), representing the current directory where the Eleventy command is run. This approach means that all the files and subdirectories within this directory are considered part of your project's source. It simplifies the process by not requiring a specific folder for your source files, allowing Eleventy to work with your project's root directory directly.
+The input directory is the current directory where the Eleventy command is run. This approach means that all the files and subdirectories within this directory are considered part of your project's source. It simplifies the process by not requiring a specific folder for your source files, allowing Eleventy to work with your project's root directory directly.
 
-### 2. Includes: `_includes`
+### 2. Includes
 
 The `_includes` directory is where Eleventy looks for templating parts – reusable pieces of your templates, like headers, footers, and navigation bars. This feature is crucial for avoiding repetition, as it allows you to maintain consistent elements across various parts of your website easily. By default, Eleventy treats this folder as the go-to place for these template snippets, helping you to organize your project better. this folder where is you can use the `include` tag to include a template part in another template.
 
-### 3. Layouts: Mirrors `_includes`
+### 3. Layouts
 
 In Eleventy's default setup, [layouts](https://www.11ty.dev/docs/layouts/){target="_blank"} are often placed in the same `_includes` directory. Layouts are essentially templates that define the structure of a webpage. By placing layouts in the `_includes` folder, Eleventy offers a streamlined approach, keeping all template-related files in one location. However, as projects grow, some developers prefer to separate layouts into their own directory for clearer distinction and organization.
 
-### 4. Data: `_data`
+### 4. Data
 
 The `_data` folder is a powerful feature in Eleventy. It's used for storing [global data](https://www.11ty.dev/docs/data-global/){target="_blank"} files that can be accessed by any template across the site. This could include site metadata, configuration settings, or any other data that needs to be available site-wide. The data in these files can be written in various formats like JSON, JavaScript, or YAML, providing flexibility in how you manage your site's content and settings.
 
-### 5. Output: `_site`
+### 5. Output
 
 Finally, the `_site` directory is the default output location where Eleventy generates the final, built version of your site. After running Eleventy, this folder contains the HTML, CSS, JavaScript, and other assets that make up your website, ready to be deployed to a web server or CDN. This separation of source and output is critical for maintaining a clean workspace, ensuring that your development files are kept separate from the deployable, built site.
 
 Here’s the visual representation of this structure:
 
-```txt
+```bash
 ├── _data        # Global data files
 ├── _includes    # Template parts and layouts
 ├── .            # Main input directory (root of your project)
@@ -61,37 +61,37 @@ Crucially, in implementing this structure, remember that the essence lies in the
 
 ### Rethinking Input and Output
 
-- **Input (`site`)**: Shifting from the current directory to a dedicated `site` folder offers better organization and clarity.
-- **Output (`dist`)**: Using `dist` for the output directory is a common practice in web development, clearly distinguishing the build output.
+- **Input**: Shifting from the current directory to a dedicated `/site` folder offers better organization and clarity.
+- **Output**: Using `/dist` for the output directory is a common practice in web development, clearly distinguishing the build output.
 
 ### Organizing Templates and Layouts
 
-Refining the structure by distinguishing includes and layouts into separate folders, namely `_include` for partial templates and `_layout` for full-page layouts, greatly clarifies their distinct functions. This separation not only enhances the maintainability of the project but also brings a clear organizational hierarchy. Additionally, I employ a `_` prefix for all folders that exclusively house templates or similar non-content elements, further streamlining the folder structure for efficient project navigation and management.
+Refining the structure by distinguishing includes and layouts into separate folders, namely `site/_include` for partial templates and `site/_layout` for full-page layouts, greatly clarifies their distinct functions. This separation not only enhances the maintainability of the project but also brings a clear organizational hierarchy. Additionally, I employ a `_` prefix for all folders that exclusively house templates or similar non-content elements, further streamlining the folder structure for efficient project navigation and management.
 
 ### Optimizing Data Management
 
-No changes are needed to the `_data` folder, as it's already well-organized and optimized for global data management.
+No changes are needed to the `site/_data` folder, as it's already well-organized and optimized for global data management.
 
 ### Managing Assets
 
-An `assets` folder, placed outside the `site` directory, streamlines the management of static files like images and fonts.
+An `asset` folder, placed outside the `site` directory, streamlines the management of static files like images and fonts.
 
 ### Styles and Scripts
 
-- **Styles (`_style`)**: A dedicated folder for CSS, particularly when using PostCSS, keeps stylesheets organized.
-- **Scripts (`_script`)**: Similarly, a separate folder for JavaScript/Typescript, especially with esbuild integration, ensures a clean separation from other content.
+- **Styles**: A dedicated folder for CSS at `/style`, particularly when using CSS transformer, keeps stylesheets organized.
+- **Scripts**: Similarly, a separate folder for JavaScript/Typescript at `/scripts`, especially with ES builder integration, ensures a clean separation from other content.
 
 Here's how your advanced Eleventy folder structure should look:
 
 ```bash
-├── dist                   # Output folder
-└── site                   # Main input folder
-    ├── _include           # Partial templates
-    ├── _layout            # Page layouts
-    ├── _data              # Global data files
-    ├── _style             # CSS files
-    └── _script            # JavaScript/Typescript files
-└── assets                 # Static resources
+├── dist           # Output folder
+├── style          # CSS files
+├── script         # JavaScript/Typescript files
+├── asset          # Static resources
+└── site           # Main input folder
+    ├── _include   # Partial templates
+    ├── _layout    # Page layouts
+    └── _data      # Global data files
 ```
 
 ## Conclusion
