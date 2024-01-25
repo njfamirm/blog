@@ -4,11 +4,11 @@
   }
 
   h2 {
-    @apply mb-5 mt-10 text-primary font-bold text-titleLarge;
+    @apply mt-10 text-primary font-bold text-titleLarge;
   }
 
   h3 {
-    @apply mb-4 mt-6 text-primary text-opacity-90 font-bold text-titleMedium;
+    @apply mt-6 text-primary text-opacity-90 font-bold text-titleMedium;
   }
 
   code:not(pre code) {
@@ -16,12 +16,12 @@
   }
 
   blockquote {
-    @apply my-5 border-l-2 border-primary bg-secondary bg-opacity-5 px-5 py-[1px] italic text-secondary;
+    @apply my-5 border-l-2 border-primary bg-secondary bg-opacity-5 px-5 py-[1px] italic text-secondary pb-4;
   }
 
   p,
   ul {
-    @apply my-2 leading-7;
+    @apply mt-4 leading-7;
   }
 
   ul {
