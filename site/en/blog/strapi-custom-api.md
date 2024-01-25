@@ -1,6 +1,6 @@
 ---
 title: Creating a Searchable Reading List with Strapi CMS Custom API
-description: In this article, one of our big problems is investigated and to solve it, we create a reading-list with Strapi and make them searchable with Strapi custom API.
+description: "Uncover the efficient way to create a searchable reading list using Strapi CMS in this tutorial. Ideal for programmers who want to efficiently manage and access their valuable learning resources, this guide simplifies the process, enhancing your programming lifestyle with organized and easily retrievable information."
 socialImage: /img/blog/strapi-custom-api/cover.jpg
 type:
   - Training

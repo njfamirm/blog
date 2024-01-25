@@ -1,12 +1,13 @@
 ---
 title: Lorem-ipsum.ir launched!
-description: Our lorem ipsum website project launched
+description: Discover the ultimate Lorem Ipsum generator at lorem-ipsum.ir, a client-side, Jamstack-powered website offering fast, efficient, and user-friendly text generation for your projects. Built with Eleventy!
 socialImage: /img/blog/lorem-ipsum-ir-launched/cover.jpg
 type:
   - Project
 keywords:
   - 11ty
   - jamstack
+  - static-site-generator
 ---
 
 Hi everyone 🙌🏻

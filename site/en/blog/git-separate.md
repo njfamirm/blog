@@ -1,6 +1,6 @@
 ---
 title: 'Split a large Pull Request into multiple smaller ones using separating Commits in Git'
-description: Explain git-separate for a better experience when using trunk-based deployment.
+description: "Explore the nuances of managing Git in trunk-based deployment patterns, where I'll share effective strategies and commands to overcome common challenges. This guide focuses on practical solutions to streamline your daily Git workflow, enhancing collaboration and efficiency in development projects."
 socialImage: /img/blog/git-separate/cover.jpg
 type:
   - Training

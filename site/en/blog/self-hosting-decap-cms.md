@@ -1,6 +1,6 @@
 ---
 title: A Step-by-Step Guide to Self-Hosting Decap CMS without Netlify
-description: Simple guide to host Decap CMS backend on your own server.
+description: Learn to self-host the Decap CMS backend, formerly Netlify-CMS, without relying on external services. This step-by-step guide simplifies setting up a git-based CMS for static site generators, perfect for those seeking an independent and streamlined content management system.
 socialImage: /img/blog/self-hosting-decap-cms/cover.jpg
 type:
   - Training
