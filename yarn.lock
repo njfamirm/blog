@@ -7273,7 +7273,6 @@ __metadata:
     postcss-variable-compress: "npm:^3.0.0"
     prettier: "npm:^3.2.4"
     prettier-plugin-tailwindcss: "npm:^0.5.11"
-    quicklink: "npm:^2.3.0"
     standard-version: "npm:^9.5.0"
     tailwindcss: "npm:^3.4.1"
     tslib: "npm:^2.6.2"
@@ -8994,19 +8993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quicklink@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "quicklink@npm:2.3.0"
-  dependencies:
-    route-manifest: "npm:^1.0.0"
-    throttles: "npm:^1.0.0"
-  peerDependencies:
-    react: ^16.8.0
-    react-dom: ^16.8.0
-  checksum: 1b7b1e680004174f32b2c15d9a357ceec34e238ce7982d91ae4b7de202733997818bfe0b0b7b05500a24664e2c907b62b8ac81cbd566595564268ea3b79ff84c
-  languageName: node
-  linkType: hard
-
 "randombytes@npm:^2.1.0":
   version: 2.1.0
   resolution: "randombytes@npm:2.1.0"
@@ -9188,13 +9174,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regexparam@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "regexparam@npm:1.3.0"
-  checksum: 9d5bcaf81e1a823f300f8486e09e66ac3f05e5ad46c8e8b8cf30f1a3b6be6fdc006f087d1ac47ae7f5412e89285e3cbfdf07d106d35c20b537459aebf91deafa
-  languageName: node
-  linkType: hard
-
 "regexpu-core@npm:^5.3.1":
   version: 5.3.2
   resolution: "regexpu-core@npm:5.3.2"
@@ -9335,15 +9314,6 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 421418687f5dcd7324f4387f203c6bfc7118b7ace789e30f5da022471c43e037a76f5fd93837052754eeeae798a4fb266ac05ccee1e594406d912a59af98dde9
-  languageName: node
-  linkType: hard
-
-"route-manifest@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "route-manifest@npm:1.0.0"
-  dependencies:
-    regexparam: "npm:^1.3.0"
-  checksum: d9440574b1040b4f1635e29197f112eec9891d197173113d658b899d59ba1c535d9ac01f709201a3674dd47375767a5fcb6ed3805e612c9ffd753df2a2e0962b
   languageName: node
   linkType: hard
 
@@ -10210,13 +10180,6 @@ __metadata:
   dependencies:
     any-promise: "npm:^1.0.0"
   checksum: f375aeb2b05c100a456a30bc3ed07ef03a39cbdefe02e0403fb714b8c7e57eeaad1a2f5c4ecfb9ce554ce3db9c2b024eba144843cd9e344566d9fcee73b04767
-  languageName: node
-  linkType: hard
-
-"throttles@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "throttles@npm:1.0.1"
-  checksum: a9427aa198473d0edc50d58ffddc832bf68144661e8a0e87d58800d77d988e35a07eccfb5668180f0147929f009d51f39a5eac3ea3b0ad6fb74213fbc981a4b4
   languageName: node
   linkType: hard
 
