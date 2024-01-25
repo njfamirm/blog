@@ -1,6 +1,6 @@
 .blog-post-container {
   img {
-    @apply mx-auto my-10 select-none rounded-lg text-center drop-shadow-lg dark:brightness-90;
+    @apply mx-auto my-10 select-none rounded-3xl text-center drop-shadow-lg dark:brightness-90;
   }
 
   h2 {
@@ -12,7 +12,7 @@
   }
 
   code:not(pre code) {
-    @apply rounded-sm bg-tertiary bg-opacity-10 font-mono italic text-tertiary selection:p-0;
+    @apply rounded-3xl bg-tertiary bg-opacity-10 font-mono italic text-tertiary selection:p-0;
   }
 
   blockquote {
@@ -35,7 +35,7 @@
   }
 
   details {
-    @apply mt-5 rounded-lg bg-secondary p-5 text-onSecondary hover:brightness-105;
+    @apply mt-5 rounded-3xl bg-secondary p-5 text-onSecondary hover:brightness-105;
   }
 
   details[open] {

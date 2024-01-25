@@ -9,8 +9,8 @@
   </div>
   <div class="flex flex-row flex-wrap justify-center gap-2 md:gap-8 w-full">
     {% for post in collections.prayer %}
-      <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 md:w-2/5 group rounded-md p-1 shadow-md  bg-surface brightness-125 hover:shadow-lg transition-shadow">
-        <div class="rounded-lg overflow-clip mb-2 brightness-75">
+      <a href="{{ post.url }}" class="cursor-pointer lg:w-2/5 md:w-2/5 group rounded-3xl p-1 shadow-md  bg-surface brightness-125 hover:shadow-lg transition-shadow">
+        <div class="rounded-3xl overflow-clip mb-2 brightness-75">
           {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
         </div>
 

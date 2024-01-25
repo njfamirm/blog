@@ -2,7 +2,7 @@
   code[class*='language-'],
   pre[class*='language-'] {
     color: rgb(var(--sys-color-on-surface));
-    background: none;
+    filter: brightness(120%);
     text-shadow: 0 0.5px rgba(0, 0, 0, 0.3);
     @apply font-mono;
     font-size: 1em;

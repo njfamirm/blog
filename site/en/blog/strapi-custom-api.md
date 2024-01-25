@@ -7,6 +7,7 @@ type:
 keywords:
   - strapi
   - idea
+date: 2023-09-19
 ---
 
 Hi everyone!

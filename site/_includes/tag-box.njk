@@ -3,7 +3,7 @@
   <span class="flex flex-row flex-wrap justify-center items-end gap-1 ring-1 ring-tertiary p-2">
     {% set keywordList = collections.blog | countKeywords %}
     {% for keyword in keywordList %}
-    <a class="bg-tertiary text-onTertiary p-1 font-mono" style="font-size: {{ 12 + keyword.count }}px" title="{{ keyword.count }} post(s)">{{ keyword.keyword }}</a>
+    <a class="bg-tertiary text-onTertiary p-1 font-mono text-center" style="font-size: {{ 10 + keyword.count * 2 }}px" title="{{ keyword.count }} post(s)">{{ keyword.keyword }}</a>
     {% endfor %}
   </span>
 </div>

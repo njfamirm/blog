@@ -9,6 +9,7 @@ keywords:
   - netlify-cms
   - self-hosting
   - oauth
+date: 2023-08-18
 ---
 
 Hi everyone!
