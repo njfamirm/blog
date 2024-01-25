@@ -9,9 +9,9 @@
   </div>
   <div class="flex flex-row flex-wrap justify-center items-start gap-2 md:gap-8 w-full">
     {% for post in collections.blog | reverse %}
-      <a href="{{ post.url }}" class="rounded-3xl p-2 flex flex-col sm:flex-row gap-4 hover:bg-transparent hover:brightness-100">
+      <a href="{{ post.url }}" class="rounded-3xl p-2 flex flex-col sm:flex-row gap-4 hover:bg-transparent">
         {% if post.data.socialImage %}
-          <div class="rounded-3xl overflow-clip mb-2 [&_*]:w-full sm:w-1/2">
+          <div class="rounded-3xl overflow-clip mb-2 [&_*]:w-full sm:w-1/2 aspect-[1200/600]">
             {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
           </div>
         {% endif %}

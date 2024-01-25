@@ -9,12 +9,12 @@ layout: base.njk
     {% endfor %}
   </div>
 
-  <h1 class="text-displayLarge font-black text-primary">
+  <h1 class="text-displaySmall md:text-displayLarge font-black text-primary">
     {{ title }}
   </h1>
-  <p class="mt-4 text-headlineLarge opacity-80">{{ description }}</p>
+  <p class="mt-4 text-headlineSmall md:text-headlineLarge opacity-80">{{ description }}</p>
   {% if socialImage %}
-    <div class="dark:brightness-90 rounded-3xl overflow-clip select-none my-10 text-center drop-shadow-lg [&_*]:w-full">
+    <div class="dark:brightness-90 rounded-3xl overflow-clip select-none my-10 text-center drop-shadow-lg [&_*]:w-full aspect-[1200/600]">
       {% image socialImage, socialImageAlt or "Cover post" %}
     </div>
   {%endif%}
