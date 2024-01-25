@@ -231,7 +231,3 @@ Congratulations 🎉, we create a custom API for searching in our reading-list u
 {% image "/img/blog/strapi-custom-api/api-result.jpg", "Screenshot of reading list custom API response" %}
 
 I hope this article is useful for you, and it is a step towards a society where we grow together ♥️
-
-<hr class="m-10" />
-
-Thanks [@derrickmehaffy](https://github.com/derrickmehaffy) for improve this article.

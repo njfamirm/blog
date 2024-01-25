@@ -14,7 +14,7 @@ date: 2024-01-24
 
 ## Introduction
 
-Welcome to the exciting world of Eleventy, a powerful and flexible static site generator based on jamstack! Whether you're a seasoned developer or just starting out, understanding how to effectively organize your Eleventy project is crucial for efficiency and scalability. In this guide, we'll embark on a journey from the simplicity of Eleventy's default folder structure to the sophistication of a customized setup tailored for more complex projects.
+Welcome to the exciting world of [Eleventy](https://www.11ty.dev/){target="_blank"}, a powerful and flexible static site generator based on jamstack! Whether you're a seasoned developer or just starting out, understanding how to effectively organize your Eleventy project is crucial for efficiency and scalability. In this guide, we'll embark on a journey from the simplicity of Eleventy's default folder structure to the sophistication of a customized setup tailored for more complex projects.
 
 ## In-Depth Look at Eleventy's Basic Setup
 
@@ -34,7 +34,7 @@ In Eleventy's default setup, [layouts](https://www.11ty.dev/docs/layouts/){targe
 
 ### 4. Data
 
-The `_data` folder is a powerful feature in Eleventy. It's used for storing [global data](https://www.11ty.dev/docs/data-global/){target="_blank"} files that can be accessed by any template across the site. This could include site metadata, configuration settings, or any other data that needs to be available site-wide. The data in these files can be written in various formats like JSON, JavaScript, or YAML, providing flexibility in how you manage your site's content and settings.
+The `_data` folder is a powerful feature in Eleventy. It's used for storing [Global Data](https://www.11ty.dev/docs/data-global/){target="_blank"} files that can be accessed by any template across the site. This could include site metadata, configuration settings, or any other data that needs to be available site-wide. The data in these files can be written in various formats like JSON, JavaScript, or YAML, providing flexibility in how you manage your site's content and settings.
 
 ### 5. Output
 
@@ -43,9 +43,9 @@ Finally, the `_site` directory is the default output location where Eleventy gen
 Here’s the visual representation of this structure:
 
 ```bash
+├── .            # Main input directory (root of your project)
 ├── _data        # Global data files
 ├── _includes    # Template parts and layouts
-├── .            # Main input directory (root of your project)
 └── _site        # Output directory for the built website
 ```
 
@@ -61,8 +61,8 @@ Crucially, in implementing this structure, remember that the essence lies in the
 
 ### Rethinking Input and Output
 
-- **Input**: Shifting from the current directory to a dedicated `/site` folder offers better organization and clarity.
-- **Output**: Using `/dist` for the output directory is a common practice in web development, clearly distinguishing the build output.
+**Input**: Shifting from the current directory to a dedicated `/site` folder offers better organization and clarity.
+**Output**: Using `/dist` for the output directory is a common practice in web development, clearly distinguishing the build output.
 
 ### Organizing Templates and Layouts
 
@@ -74,25 +74,32 @@ No changes are needed to the `site/_data` folder, as it's already well-organized
 
 ### Managing Assets
 
-An `asset` folder, placed outside the `site` directory, streamlines the management of static files like images and fonts.
+An `asset` folder, placed outside the `site` directory, streamlines the management of [static files](https://www.11ty.dev/docs/assets/){target="_blank"} like images and fonts.
 
 ### Styles and Scripts
 
-- **Styles**: A dedicated folder for CSS at `/style`, particularly when using CSS transformer, keeps stylesheets organized.
-- **Scripts**: Similarly, a separate folder for JavaScript/Typescript at `/scripts`, especially with ES builder integration, ensures a clean separation from other content.
+**Styles**: A dedicated folder for CSS at `/style`, particularly when using CSS transformer, keeps stylesheets organized.
+**Scripts**: Similarly, a separate folder for EcmaScript at `/es`, especially with ES builder integration, ensures a clean separation from other content.
+
+### Shortcodes and Filters
+
+[Shortcodes](https://www.11ty.dev/docs/shortcodes/){target="_blank"} and [Filters](https://www.11ty.dev/docs/filters/){target="_blank"} significantly enhance Eleventy's templating capabilities, offering custom functionality and dynamic content processing. To maintain an organized codebase, it's best practice to store these tools in a designated `/scripts` folder. This not only segregates them from your main content but also centralizes all script-related utilities in one place for ease of management and maintenance.
 
 Here's how your advanced Eleventy folder structure should look:
 
 ```bash
-├── dist           # Output folder
-├── style          # CSS files
-├── script         # JavaScript/Typescript files
-├── asset          # Static resources
-└── site           # Main input folder
-    ├── _include   # Partial templates
-    ├── _layout    # Page layouts
-    └── _data      # Global data files
+├── dist            # Output folder
+├── scripts         # Shortcodes, filters, and other scripts for Eleventy
+├── style           # CSS files
+├── es              # Ecmascript files
+├── asset           # Static resources
+└── site            # Main input folder
+    ├── _include    # Partial templates
+    ├── _layout     # Page layouts
+    └── _data       # Global data files
 ```
+
+This is pure example of advanced folder structure, you can customize subfolder as you want.
 
 ## Conclusion
 
