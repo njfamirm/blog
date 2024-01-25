@@ -1,4 +1,4 @@
-<div class="space-y-16 container xl:max-w-7xl mx-auto px-4 py-16 extended:px-8 extended:py-32">
+<div class="space-y-16 container xl:max-w-5xl mx-auto px-4 py-16 extended:px-8 extended:py-32">
   <div class="text-center">
     <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-primary">
       My posts
@@ -9,29 +9,22 @@
   </div>
   <div class="flex flex-row flex-wrap justify-center items-start gap-2 md:gap-8 w-full">
     {% for post in collections.blog | reverse %}
-      <a href="{{ post.url }}" class="cursor-pointer extended:w-2/5 group rounded-md p-1 shadow-md hover:shadow-lg transition-shadow">
+      <a href="{{ post.url }}" class="rounded-3xl p-2 flex flex-col sm:flex-row gap-4 hover:bg-transparent hover:brightness-100">
         {% if post.data.socialImage %}
-          <div class="rounded-lg overflow-clip mb-2 [&_*]:w-full">
+          <div class="rounded-3xl overflow-clip mb-2 [&_*]:w-full sm:w-1/2">
             {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
           </div>
         {% endif %}
 
-        <div class="mx-4">
-          <h2 style="letter-spacing: -0.03em" class="font-extrabold my-2 md:text-[2em] text-[2.5em] leading-none text-primary transition-colors">
+        <div class="sm:w-1/2">
+          <span class="flex flex-row gap-2 font-bold text-secondary font-mono">
+            {% for type in post.data.type %}
+              <span>{{ type }}</span>
+            {% endfor %}
+          </span>
+          <h2 class="font-bold text-headlineLarge text-primary transition-colors">
             {{ post.data.title }}
           </h2>
-          <p class="leading-relaxed text-secondary mb-5">
-            {{ post.data.description }}
-          </p>
-          <div class="flex flex-row justify-between w-full">
-            <span class="flex flex-row gap-2 font-bold text-primary mb-2">
-              {% for type in post.data.type %}
-                <span>{{ type }}</span>
-              {% endfor %}
-            </span>
-
-            <span class="text-tertiary">{{ post.data.keywords | normalizeKeyword }}</span>
-          </div>
         </div>
       </a>
     {% endfor %}

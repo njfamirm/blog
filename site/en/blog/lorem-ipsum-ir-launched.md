@@ -8,6 +8,7 @@ keywords:
   - 11ty
   - jamstack
   - static-site-generator
+date: 2023-10-13
 ---
 
 Hi everyone 🙌🏻

@@ -6,6 +6,7 @@ type:
   - Training
 keywords:
   - git
+date: 2023-08-30
 ---
 
 Hi everyone,
