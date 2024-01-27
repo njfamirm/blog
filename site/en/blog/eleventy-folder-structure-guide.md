@@ -16,6 +16,8 @@ date: 2024-01-24
 
 Welcome to the exciting world of [Eleventy](https://www.11ty.dev/){target="_blank"}, a powerful and flexible static site generator based on jamstack! Whether you're a seasoned developer or just starting out, understanding how to effectively organize your Eleventy project is crucial for efficiency and scalability. In this guide, we'll embark on a journey from the simplicity of Eleventy's default folder structure to the sophistication of a customized setup tailored for more complex projects.
 
+> ✅ Over the past six months at [Alwatr](https://github.com/Alwatr){target="_blank"}, we've embraced Eleventy for its exceptional speed and ease of maintenance, finding it an ideal tool for a variety of projects. This guide is a culmination of our real-world experience, offering practical strategies and examples that demonstrate how Eleventy's default structures can be adeptly adapted to the intricate needs of modern web development.
+
 ## In-Depth Look at Eleventy's Basic Setup
 
 Eleventy, known for its simplicity and flexibility, starts users off with a straightforward folder structure. This design is particularly appealing to beginners or those looking to quickly set up a static site without the complexity often associated with such setups. Let's delve deeper into each component of this default structure:
