@@ -51,7 +51,7 @@
     "@swc/html": "^0.0.28",
     "@types/alpinejs": "^3.13.6",
     "@types/markdown-it": "^13.0.7",
-    "@types/node": "^20.11.21",
+    "@types/node": "^20.11.23",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "alpinejs": "^3.13.5",
