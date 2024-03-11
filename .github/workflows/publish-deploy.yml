@@ -1,28 +1,28 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: Publish and Deploy
+name: Build & Publish & Deploy Containers
 
 on:
   workflow_dispatch:
+    inputs:
+      siteUrl:
+        description: Website URL
+        type: string
 
   push:
-    branches:
-      - main
-      - next
-    tags:
-      - v*
 
-  pull_request:
-    paths:
-      - 'cloud/Dockerfile'
-      - '.github/workflows/publish-deploy.yml'
+  # pull_request:
+
+  release:
+    types:
+      - created
 
 env:
-  REGISTRY: ghcr.io
-  USER: njfamirm
+  user: njfamirm
+  siteUrl: ${{ github.event.inputs.siteUrl || secrets.SITE_URL }}
 
 jobs:
-  publish:
+  build:
     if: github.repository_owner == 'njfamirm'
 
     name: Build & Publish Containers
@@ -35,7 +35,7 @@ jobs:
           - name: njfamirm-ws
             description: Njfamirm personal website.
             siteUrl: https://www.njfamirm.ir
-            noIndex: 0
+            context: .
 
     permissions:
       contents: read
@@ -46,94 +46,110 @@ jobs:
       - name: ⤵️ Checkout repository
         uses: actions/checkout@v4.1.1
 
+      - name: ❔ Check Container files changed
+        id: file_change
+        if: ${{ github.event_name != 'release' && github.event_name != 'workflow_dispatch' }}
+        uses: dorny/paths-filter@v3.0.1
+        with:
+          filters: |
+            container_folder:
+              ${{ matrix.context }}/**
+
       - name: 🏗 Install cosign
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
         uses: sigstore/cosign-installer@v3.4.0
 
       - name: 🏗 Setup Docker Buildx
+        if: ${{ steps.file_change.outputs.container_folder != 'false' }}
         uses: docker/setup-buildx-action@v3.1.0
 
       - name: 🏗 Cache Docker Layers
-        uses: actions/cache@v4
+        if: ${{ steps.file_change.outputs.container_folder != 'false' }}
+        uses: actions/cache@v4.0.0
         with:
-          path: |
-            /tmp/.buildx-cache
-            dist/img
-          key: alwatr-${{ matrix.name }}
+          path: /tmp/.buildx-cache
+          key: container/${{ matrix.name }}
 
-      - name: 🏗 Log into registry ${{env.REGISTRY}}
-        if: ${{ github.event_name != 'pull_request' }}
+      # - name: 🏗 Log into docker hub registry
+      #   if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
+      #   uses: docker/login-action@v3.0.0
+      #   with:
+      #     username: ${{'njfamirm'}}
+      #     password: ${{secrets.DOCKER_HUB_TOKEN}}
+
+      - name: 🏗 Log into ghcr.io registry
+        if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
         uses: docker/login-action@v3.0.0
         with:
-          registry: ${{env.REGISTRY}}
-          username: ${{github.repository_owner}}
+          registry: ghcr.io
+          username: ${{'njfamirm'}}
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: 🏗 Extract metadata
+        if: ${{ steps.file_change.outputs.container_folder != 'false' }}
         id: meta
         uses: docker/metadata-action@v5.5.1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
-          images: name=${{env.REGISTRY}}/${{env.USER}}/${{matrix.name}},enable=true
-
-          labels: |
-            org.opencontainers.image.authors=njfamirm@gmail.com
-            org.opencontainers.image.title=${{ matrix.name }}
-            org.opencontainers.image.description=${{ matrix.description }}
+          images: |
+            name=ghcr.io/${{'njfamirm'}}/${{matrix.name}},enable=true
+            name=docker.io/${{'njfamirm'}}/${{matrix.name}},enable=false
           tags: |
-            type=semver,enable=true,pattern={{version}}
             type=semver,enable=true,pattern={{major}}
             type=semver,enable=true,pattern={{major}}.{{minor}}
+            type=semver,enable=true,pattern={{version}}
             type=ref,enable=true,event=branch
-            type=raw,enable=true,value=latest
+          labels: |
+            org.opencontainers.image.title="njfamirm/${{matrix.name}}"
+            org.opencontainers.image.vendor="Njfamirm"
+            org.opencontainers.image.documentation="https://github.com/njfamirm/blog"
+            org.opencontainers.image.authors="S. Amir Mohammad Najafi <njfamirm@gmail.com> (https://www.njfamirm.ir)"
 
       - name: 🚀 Build and push container image
+        if: ${{ steps.file_change.outputs.container_folder != 'false' }}
         id: build_and_push
         uses: docker/build-push-action@v5.2.0
         with:
-          context: ./
-          file: ./cloud/Dockerfile
+          context: ${{matrix.context}}
+          file: cloud/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{steps.meta.outputs.tags}}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
             cmsApiToken=${{ secrets.cmsApiToken }}
-            siteUrl=${{ matrix.siteUrl }}
-            noIndex=${{ matrix.noIndex }}
-          #   BUILD_DATE=${{github.event.repository.updated_at}}
-          #   BUILD_REV=${{github.sha}}
+            siteUrl=${{ env.siteUrl }}
 
-      - name: 🏗 Sign the image with GitHub OIDC Token
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          COSIGN_EXPERIMENTAL: 'true'
-        run: echo "${{steps.meta.outputs.tags}}" | xargs -I {} cosign sign --yes {}@${{steps.build_and_push.outputs.digest}}
+      # - name: 🏗 Sign the image with GitHub OIDC Token
+      #   if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
+      #   env:
+      #     COSIGN_EXPERIMENTAL: 'true'
+      #   run: echo "${{steps.meta.outputs.tags}}" | xargs -I {} cosign sign --yes {}@${{steps.build_and_push.outputs.digest}}
 
-  # deploy:
-  #   # needs: publish
-  #   name: Deploy
-  #   runs-on: ubuntu-latest
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
 
-  #   permissions:
-  #     contents: read
+    permissions:
+      contents: read
 
-  #   # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-  #   steps:
-  #     - name: ⤵️ Checkout repository
-  #       uses: actions/checkout@v4.1.1
+    steps:
+      - name: ⤵️ Checkout repository
+        uses: actions/checkout@v4.1.1
 
-  #     - name: Deploy on server
-  #       uses: appleboy/ssh-action@v1.0.0
-  #       with:
-  #         host: fl.njfamirm.ir
-  #         username: root
-  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         key_path: ~/.ssh/id_ed25519
-  #         port: ${{ secrets.SSH_PORT }}
-  #         script: |
-  #           cd /srv/njfamirm-ws
-  #           docker compose pull
-  #           docker compose up -d
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-auth-sock: /home/runner/.ssh/auth_sock
 
+      - name: Add Server to known hosts
+        run: |
+          ssh-keyscan -p 404 -t rsa fl.njfamirm.ir >> ~/.ssh/known_hosts;
+
+      - name: Deploy
+        run: |
+          cd cloud;
+          ./deploy.sh env/njfamirm-ws.env up -b;
