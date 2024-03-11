@@ -1,37 +1,23 @@
-FROM docker.io/library/node:20-alpine as builder
+FROM ghcr.io/alwatr/node:20.10.0 as builder
 
-ARG siteUrl=/
-ARG noIndex=0
+RUN apk add --no-cache git;
+RUN set -ex; corepack enable;
+
+ARG siteUrl=${siteUrl}
 ARG cmsApiToken
-
-WORKDIR /app
-
-ENV MY_ENVIRONMENT production
 ENV siteUrl $siteUrl
-ENV noIndex $noIndex
 ENV cmsApiToken $cmsApiToken
-
-RUN apk add --no-cache git
-
-COPY package.json *.lock .yarn* ./
-
-RUN if [ -f *.lock ]; then \
-      yarn install --immutable; \
-    else \
-      yarn install; \
-    fi;
-
 COPY . .
 
-ENV NODE_ENV production
-
-RUN yarn build
+RUN set -eux; \
+  yarn install --immutable; \
+  yarn build; \
+  ls -lahF .;
 
 # ---
 
-FROM ghcr.io/alwatr/nginx-ws:1.1.1 as nginx
+FROM ghcr.io/alwatr/nginx-ws:2.4.2
+LABEL org.opencontainers.image.base.name="ghcr.io/alwatr/nginx-ws:2.4.2"
 
-# Copy builded files from last stage
-COPY --from=builder /app/dist/ ./
-
-# RUN pwd; ls -lAhF;
+COPY --from=builder /app/dist/ .
+# RUN set -eux; ls -RlahF /data;
