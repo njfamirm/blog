@@ -2891,10 +2891,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/alpinejs@npm:^3.13.6":
-  version: 3.13.6
-  resolution: "@types/alpinejs@npm:3.13.6"
-  checksum: ace89f304fd673f8e4fcef8ba2ccd662b7511ae4830e2c1201aba44b319e948f0f38c1fae14957e74c426c8a4dc90a74ec059b6852ca6c771c9eadcfd63df52e
+"@types/alpinejs@npm:^3.13.7":
+  version: 3.13.7
+  resolution: "@types/alpinejs@npm:3.13.7"
+  checksum: 457caa8c14d6153393427bde7e0e383849a70da3fc44f99ec184d928719653f78a14e93ab1a15d24f05e127b672a5617fca5e8edd1cf950aa12c08b1c0ce791e
   languageName: node
   linkType: hard
 
@@ -7307,7 +7307,7 @@ __metadata:
     "@alwatr/style": "npm:^2.2.0"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
-    "@types/alpinejs": "npm:^3.13.6"
+    "@types/alpinejs": "npm:^3.13.7"
     "@types/markdown-it": "npm:^13.0.7"
     "@types/node": "npm:^20.11.25"
     "@typescript-eslint/eslint-plugin": "npm:^7.1.1"
