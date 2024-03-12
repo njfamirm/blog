@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       - name: 🚀 Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           body_path: CHANGELOG.md
           token: ${{ secrets.BOT_TOKEN }}
