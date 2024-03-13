@@ -44,7 +44,7 @@ jobs:
 
     steps:
       - name: ⤵️ Checkout repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: ❔ Check Container files changed
         id: file_change
@@ -137,7 +137,7 @@ jobs:
 
     steps:
       - name: ⤵️ Checkout repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
