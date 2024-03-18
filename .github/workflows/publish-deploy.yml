@@ -61,7 +61,7 @@ jobs:
 
       - name: 🏗 Setup Docker Buildx
         if: ${{ steps.file_change.outputs.container_folder != 'false' }}
-        uses: docker/setup-buildx-action@v3.1.0
+        uses: docker/setup-buildx-action@v3.2.0
 
       - name: 🏗 Cache Docker Layers
         if: ${{ steps.file_change.outputs.container_folder != 'false' }}
@@ -72,14 +72,14 @@ jobs:
 
       # - name: 🏗 Log into docker hub registry
       #   if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
-      #   uses: docker/login-action@v3.0.0
+      #   uses: docker/login-action@v3.1.0
       #   with:
       #     username: ${{'njfamirm'}}
       #     password: ${{secrets.DOCKER_HUB_TOKEN}}
 
       - name: 🏗 Log into ghcr.io registry
         if: ${{ github.event_name != 'pull_request' && steps.file_change.outputs.container_folder != 'false' }}
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3.1.0
         with:
           registry: ghcr.io
           username: ${{'njfamirm'}}
@@ -108,7 +108,7 @@ jobs:
       - name: 🚀 Build and push container image
         if: ${{ steps.file_change.outputs.container_folder != 'false' }}
         id: build_and_push
-        uses: docker/build-push-action@v5.2.0
+        uses: docker/build-push-action@v5.3.0
         with:
           context: ${{matrix.context}}
           file: cloud/Dockerfile
