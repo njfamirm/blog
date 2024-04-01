@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: Build & Lint
+name: Lint
 
 on:
   workflow_dispatch:
@@ -10,14 +10,13 @@ on:
   push:
     branches:
       - main
-      - next
 
 env:
   NODE_VERSION: lts/*
 
 jobs:
-  build-lint:
-    name: Build & Lint
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     permissions:
@@ -40,21 +39,15 @@ jobs:
         run: echo "cache_folder=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4.0.2
-        # id: yarn_cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: |
             ${{ steps.yarn_config.outputs.cache_folder }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            yarn-
 
       - name: 🏗 Install dependencies
         run: yarn install --immutable
-
-      - name: 🚀 Build
-        run: yarn build
-        env:
-          cmsApiToken: ${{ secrets.cmsApiToken }}
 
       - name: 🚀 Run ESLint
         run: yarn lint

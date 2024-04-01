@@ -9,7 +9,7 @@ on:
     branches:
       main
 
-  # pull_request:
+  pull_request:
 
   release:
     types:
@@ -50,7 +50,6 @@ jobs:
         run: echo "cache_folder=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4.0.0
-        # id: yarn_cache
         with:
           path: ${{ steps.yarn_config.outputs.cache_folder }}
           key: yarn-${{ hashFiles('yarn.lock') }}
