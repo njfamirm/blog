@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Build & Deploy
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      main
+
+  # pull_request:
+
+  release:
+    types:
+      - created
+
+env:
+  NODE_VERSION: lts/*
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: get latest tag
+        id: get_latest_tag
+        run: curl --silent "github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name
+
+      - name: ⤵️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.get_latest_tag.outputs.stdout }}
+
+      - name: 🏗 Setup nodejs
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 🏗 Setup nodejs corepack
+        run: corepack enable
+
+      - name: 🏗 Get yarn config
+        id: yarn_config
+        run: echo "cache_folder=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4.0.0
+        # id: yarn_cache
+        with:
+          path: ${{ steps.yarn_config.outputs.cache_folder }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            yarn-
+
+      - uses: actions/cache@v4.0.0
+        with:
+          path: dist/img
+          key: -eleventy-optimized-images
+          restore-keys: |
+            eleventy-images
+
+      - name: 🏗 Install dependencies
+        # if: steps.yarn_cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+      - name: 🚀 Build Typescript
+        run: yarn build
+        env:
+          NODE_ENV: production
+          siteUrl: 'https://www.astronomy-picture.ir'
+          noIndex: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && '1' || '0' }}
+
+      - name: Deploy on Cloudflare Pages
+        if: github.event_name != 'pull_request'
+        uses: cloudflare/pages-action@v1.5.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          branch: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref || 'main' }}
+          projectName: njfamirm-ws
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
