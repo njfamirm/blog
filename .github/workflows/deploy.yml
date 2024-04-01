@@ -72,7 +72,8 @@ jobs:
         run: yarn build
         env:
           NODE_ENV: production
-          siteUrl: 'https://www.astronomy-picture.ir'
+          siteUrl: 'https://www.njfamirm.ir'
+          cmsApiToken: ${{ secrets.cmsApiToken }}
           noIndex: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && '1' || '0' }}
 
       - name: Deploy on Cloudflare Pages
