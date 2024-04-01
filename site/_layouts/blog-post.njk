@@ -50,7 +50,9 @@ layout: base.njk
     </div>
   </article>
 
-  <div class="giscus mt-20 md:px-24"></div>
+  {% if disableComment != true %}
+    <div class="giscus mt-20 md:px-24"></div>
+  {% endif %}
 </script>
 </main>
 
