@@ -32,6 +32,7 @@
     "esbuild",
     "giscus",
     "jamstack",
+    "postrelease",
     "shortcode",
     "shortcodes",
     "strapi",

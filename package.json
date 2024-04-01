@@ -30,11 +30,12 @@
     "clean:full": "git clean -d -x -f --exclude=node_modules --exclude=cloud --exclude=.yarn* --exclude=.pnp*",
     "watch": "yarn 11ty --serve",
     "build": "yarn 11ty",
+    "p": "git push --follow-tags origin main",
     "11ty": "eleventy"
   },
   "standard-version": {
     "scripts": {
-      "prerelease": "rm -f CHANGELOG.md"
+      "prechangelog": "rm -f CHANGELOG.md"
     }
   },
   "devDependencies": {
