@@ -11,7 +11,7 @@ keywords:
 <!-- audio -->
 <div class="text-center w-full mb-8">
   <audio class="w-full" controls>
-    <source src="https://njfamirm.ir/cdn/ziyarat-ale-yasin.m4a" type="audio/mpeg">
+    <source src="https://cdn.njfamirm.ir/ziyarat-ale-yasin.m4a" type="audio/mpeg">
   </audio>
 </div>
 
