@@ -19,7 +19,15 @@ async function generateServiceWorker() {
     sourcemap: false,
     mode: 'production',
     offlineGoogleAnalytics: true,
+    runtimeCaching: [{
+      urlPattern: /.*\.m4a$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'audio-cache',
+      },
+    }],
   });
 }
+
 
 module.exports = {generateServiceWorker};
