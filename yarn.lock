@@ -180,10 +180,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/dedupe@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@alwatr/dedupe@npm:1.0.6"
-  checksum: 5c926f60074894b9011c88731a6cb451b79e0ed72a0a1223043cd14ba912f9d17e0aeb653942f7900b01e16eed8334ba8d64d953dbc4786ca33e9a88ac5f2899
+"@alwatr/dedupe@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@alwatr/dedupe@npm:1.0.8"
+  checksum: 5b28539743337941fa3750b5917d650336734ec7bc82ac3193290a8cedc1c77c9d4345845152326c21bacf036abda6c857705d1fb1cc8944ef804d55358364d5
   languageName: node
   linkType: hard
 
@@ -194,20 +194,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^3.2.6":
-  version: 3.2.6
-  resolution: "@alwatr/logger@npm:3.2.6"
+"@alwatr/logger@npm:^3.2.8":
+  version: 3.2.8
+  resolution: "@alwatr/logger@npm:3.2.8"
   dependencies:
-    "@alwatr/dedupe": "npm:^1.0.6"
-    "@alwatr/platform-info": "npm:^1.1.6"
-  checksum: e030f96cf72fdfe2dedf37f7903ebf59f284d1e8e4f1f0e045f44847b9a916a73f357d097d5917792e7637bc752342b0f53b0b3118d441cf4c33c9a486231196
+    "@alwatr/dedupe": "npm:^1.0.8"
+    "@alwatr/platform-info": "npm:^1.1.8"
+  checksum: 12c0f0e6dbf6e6f708d01a5f17ed04a7e6d698739ceb8cac034f705c6411aebbd5c25f87ba66f6ab567c6e56f93b59222c8610f2799abb658bdc4a6be89bbc2d
   languageName: node
   linkType: hard
 
-"@alwatr/platform-info@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "@alwatr/platform-info@npm:1.1.6"
-  checksum: 02dc1d125854d86911d43a2037553c4a77e11ca9dd6238306c957b27b1954de7e2638c06588f1ed593036a178b56f971d6b84fa234ed9c1c5a33c75c2ba9b1c8
+"@alwatr/platform-info@npm:^1.1.8":
+  version: 1.1.8
+  resolution: "@alwatr/platform-info@npm:1.1.8"
+  checksum: cc6f2fc22ca176d9a0a8da6e06f0fb00478af8121d69160bc100b188652abc344fc6c55f4002a8e2a419ac804a914836c74ea8ab3701e78ab82462252c9cf64f
   languageName: node
   linkType: hard
 
@@ -7303,7 +7303,7 @@ __metadata:
     "@11ty/eleventy-plugin-rss": "npm:^1.2.0"
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@alwatr/icon-set-material": "npm:^2.0.1"
-    "@alwatr/logger": "npm:^3.2.6"
+    "@alwatr/logger": "npm:^3.2.8"
     "@alwatr/style": "npm:^2.2.0"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
