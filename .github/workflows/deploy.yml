@@ -38,7 +38,7 @@ jobs:
           ref: ${{ steps.get_latest_tag.outputs.stdout }}
 
       - name: 🏗 Setup nodejs
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -49,14 +49,14 @@ jobs:
         id: yarn_config
         run: echo "cache_folder=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4.0.0
+      - uses: actions/cache@v4.0.2
         with:
           path: ${{ steps.yarn_config.outputs.cache_folder }}
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             yarn-
 
-      - uses: actions/cache@v4.0.0
+      - uses: actions/cache@v4.0.2
         with:
           path: dist/img
           key: -eleventy-optimized-images
