@@ -7,7 +7,7 @@ on:
 
   push:
     branches:
-      main
+      - main
 
   pull_request:
 
@@ -73,15 +73,14 @@ jobs:
           NODE_ENV: production
           siteUrl: 'https://www.njfamirm.ir'
           cmsApiToken: ${{ secrets.cmsApiToken }}
-          noIndex: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && '1' || '0' }}
+          noIndex: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'pull_request') && '1' || '0' }}
 
       - name: Deploy on Cloudflare Pages
-        if: github.event_name != 'pull_request'
         uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          branch: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref || 'main' }}
+          branch: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'pull_request') && github.ref || 'main' }}
           projectName: njfamirm-ws
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
