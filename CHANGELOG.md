@@ -1,7 +1,7 @@
 Changelog
-### [1.8.1](https://github.com/njfamirm/blog/compare/v1.8.0...v1.8.1) (2024-11-02)
+## [1.9.0](https://github.com/njfamirm/blog/compare/v1.8.1...v1.9.0) (2025-01-10)
 
 
-### Bug Fixes
+### Features
 
-* **cloud:** cdn image name ([2d40abd](https://github.com/njfamirm/blog/commit/2d40abde49e0fc74e39cf0b6a0f4a0b076239bb2))
+* example blog ([cb7f3cb](https://github.com/njfamirm/blog/commit/cb7f3cbe144e3510106f047dce2c17caa2956f3a))
