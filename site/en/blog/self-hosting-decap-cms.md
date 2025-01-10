@@ -93,16 +93,22 @@ Based Decap-CMS [documentation](https://decapcms.org/docs/external-oauth-clients
 you can use an external OAuth client.
 I'm testing [ublabs/netlify-cms-oauth](https://github.com/ublabs/netlify-cms-oauth) with vercel and this work correctly, but our goal was to run on our own servers, not on another PaaS! so I'm rewriting this to run with NodeJS with packages I was using! and publish them to [decap-cms-github-backend](https://github.com/njfamirm/decap-cms-github-backend), this repo also publishes a docker image of Decap CMS GitHub backend to `ghcr.io`, so we can use this to deploy own backend!
 
+You can also customize the scope of the OAuth application in this custom backend by setting the `OAUTH_GITHUB_SCOPE` environment variable. See [Github Documentation](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes).
+
 Now you can add a docker image into your deployment process with this envs:
 
 ```toml
-CMS_GITHUB_BACKEND_IMAGE='ghcr.io/njfamirm/decap-cms-github-backend:latest'
-OAUTH_GITHUB_CLIENT_ID='your_oauth_github_client_id'
-OAUTH_GITHUB_CLIENT_SECRET='000_your_oauth_github_client_id_000'
+CMS_BACKEND_IMAGE='ghcr.io/njfamirm/decap-cms-github-backend:1.2.0'
+OAUTH_GITHUB_CLIENT_ID='maybe-secret'
+OAUTH_GITHUB_CLIENT_SECRET='secret'
+DOMAIN='decap-demo.njfamirm.ir'
+OAUTH_GITHUB_SCOPE='public_repo'
 
 # Enable debug logging
 # CMS_BACKEND_DEBUG=1
 ```
+
+> **Note:** Always check the latest releases on the [GitHub repository](https://github.com/njfamirm/decap-cms-github-backend) for the most up-to-date version.
 
 and docker compose like this:
 
@@ -117,6 +123,7 @@ services:
       - OAUTH_GITHUB_CLIENT_SECRET=${OAUTH_GITHUB_CLIENT_SECRET}
       - OAUTH_GITHUB_CLIENT_ID=${OAUTH_GITHUB_CLIENT_ID}
       - ALWATR_DEBUG=${CMS_BACKEND_DEBUG-}
+      - OAUTH_GITHUB_SCOPE=${OAUTH_GITHUB_SCOPE-}
 ```
 
 ## Step 4: Setup Admin config
