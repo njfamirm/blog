@@ -180,13 +180,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/dedupe@npm:^1.0.9":
-  version: 1.0.9
-  resolution: "@alwatr/dedupe@npm:1.0.9"
-  checksum: 1cc1e1339d4ff492e7acee7dbf029434de690112c97533dcf05518614827d3e0510a50120e55c61b991f0b403199c9127f12968940072efeb1e57ac4caebf855
-  languageName: node
-  linkType: hard
-
 "@alwatr/icon-set-material@npm:^2.0.1":
   version: 2.0.1
   resolution: "@alwatr/icon-set-material@npm:2.0.1"
@@ -194,20 +187,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@alwatr/logger@npm:^3.2.9":
-  version: 3.2.9
-  resolution: "@alwatr/logger@npm:3.2.9"
+"@alwatr/logger@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@alwatr/logger@npm:5.0.0"
   dependencies:
-    "@alwatr/dedupe": "npm:^1.0.9"
-    "@alwatr/platform-info": "npm:^1.1.9"
-  checksum: dadcf76413eeacec24024baebfd98e156cf464fa8b4486eaeff150b2af66e40805bede436973e5c528b61f4f0f95a033692391ece63735523fca9a64234ebf91
+    "@alwatr/package-tracer": "npm:^5.0.0"
+    "@alwatr/platform-info": "npm:^5.0.0"
+  checksum: 33a73b0b12985661be6017a6675f157b37b7b052fe4f65f971bb2e66a22f8ab712d95e12b646760cbe0589bc1b9f4eba25ef595d9ac30b85a87e48d4dfd34ed0
   languageName: node
   linkType: hard
 
-"@alwatr/platform-info@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "@alwatr/platform-info@npm:1.1.9"
-  checksum: fd847f3fa58b011739431b48af22870c7caa30b0d595f5d3f96bc5e5f5e4c6c7a3c4138f2a2ab192e32d2a005a530b90ccf0816ebef8c6edaaa5bef0975dfe4d
+"@alwatr/package-tracer@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@alwatr/package-tracer@npm:5.0.0"
+  checksum: 62d5dc8940ab269995020a8bcdcd83a4554da74b397e6404f41631251c1274b34ad45382b0b9a159f57f50ea9ecaccef537b14cb0d7f0c05a1e5023c4e0350a3
+  languageName: node
+  linkType: hard
+
+"@alwatr/platform-info@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@alwatr/platform-info@npm:5.0.0"
+  dependencies:
+    "@alwatr/package-tracer": "npm:^5.0.0"
+  checksum: e9c05fadf8d084da838f2f5323bcaee1fc4af212eacfbc59a232e64f5e96c11a0b5b42a6f6b0f6450f105018caf0c0ad64dea30016622ea547a6b6d4c3b09d07
   languageName: node
   linkType: hard
 
@@ -7303,7 +7305,7 @@ __metadata:
     "@11ty/eleventy-plugin-rss": "npm:^1.2.0"
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@alwatr/icon-set-material": "npm:^2.0.1"
-    "@alwatr/logger": "npm:^3.2.9"
+    "@alwatr/logger": "npm:^5.0.0"
     "@alwatr/style": "npm:^2.2.0"
     "@pagefind/default-ui": "npm:^1.0.4"
     "@swc/html": "npm:^0.0.28"
