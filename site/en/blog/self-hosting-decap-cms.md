@@ -10,6 +10,7 @@ keywords:
   - self-hosting
   - oauth
 date: 2023-08-18
+canonical: https://medium.com/@njfamirm/a-step-by-step-guide-to-self-hosting-decap-cms-5425ab44abca
 ---
 
 Hi everyone!
