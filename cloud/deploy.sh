@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-ALWATR_LIB=../../alwatr/alwatr/cloud/classic/lib
+ALWATR_LIB=../../../nexim/cloud/lib/
 source $ALWATR_LIB/deploy.sh
