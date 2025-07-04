@@ -4,11 +4,11 @@
   }
 
   h2 {
-    @apply mt-10 text-primary font-bold text-titleLarge;
+    @apply mt-10 text-titleLarge font-bold text-primary;
   }
 
   h3 {
-    @apply mt-6 text-primary text-opacity-90 font-bold text-titleMedium;
+    @apply mt-6 text-titleMedium font-bold text-primary text-opacity-90;
   }
 
   code:not(pre code) {
@@ -16,7 +16,7 @@
   }
 
   blockquote {
-    @apply my-5 border-l-2 border-primary bg-secondary bg-opacity-5 px-5 py-[1px] italic text-secondary pb-4;
+    @apply my-5 border-l-2 border-primary bg-secondary bg-opacity-5 px-5 py-[1px] pb-4 italic text-secondary;
   }
 
   p,
@@ -47,5 +47,9 @@
   }
   details summary::marker {
     @apply pe-4;
+  }
+
+  a {
+    @apply font-semibold underline state-tertiary;
   }
 }

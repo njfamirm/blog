@@ -11,7 +11,7 @@
     {% for post in collections.blog | reverse %}
       <a href="{{ post.url }}" class="rounded-3xl p-2 flex flex-col sm:flex-row gap-4 hover:bg-transparent">
         {% if post.data.socialImage %}
-          <div class="rounded-3xl overflow-clip mb-2 [&_*]:w-full sm:w-1/2 aspect-[1200/600]">
+          <div class="rounded-3xl overflow-clip [&_*]:w-full sm:w-1/2 aspect-[1200/600]">
             {% image post.data.socialImage, post.data.socialImageAlt or "Cover post" %}
           </div>
         {% endif %}
@@ -22,7 +22,7 @@
               <span>{{ type }}</span>
             {% endfor %}
           </span>
-          <h2 class="font-bold text-headlineLarge text-primary transition-colors">
+          <h2 class="font-bold text-headlineLarge !text-primary transition-colors">
             {{ post.data.title }}
           </h2>
         </div>
