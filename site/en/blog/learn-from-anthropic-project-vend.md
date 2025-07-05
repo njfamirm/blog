@@ -54,25 +54,16 @@ This approach feels much more robust, predictable, and transparent. And it turns
 
 ![A line of interconnected wooden gears, representing a well-architected AI system where different components work together in a coordinated workflow.](assets/img/blog/learn-from-anthropic-project-vend/2.jpg)
 
-## Bringing the Architecture to Life with Visual Tools
-
-This architectural thinking isn't just for large-scale software projects. You can actually build a prototype of this system using visual workflow automation tools like **n8n**. These platforms are perfect for demonstrating the core concepts we've discussed:
-
-- **Scheduled Tasks:** You can use a "Cron" node in n8n to trigger a workflow at a specific time every day, perfectly replicating the idea of a scheduled AI job like checking supplier prices.
-- **Event-Driven Actions:** These tools excel at this. A webhook from your e-commerce platform (like Shopify) can trigger a workflow the instant a new order is placed, kicking off the LLM task to update inventory.
-- **A Protective Layer:** Before an action is executed (like sending an email or updating a database), you can use built-in logic nodes (like an "IF" node) to validate the LLM's output. This acts as a simple but effective guardrail, ensuring the AI's decisions are checked against your rules.
-
-Using a tool like n8n allows you to visually map out the entire agentic workflow, making it a fantastic way to build a proof-of-concept without writing a single line of code.
-
 ## Keywords for Building Smarter AI: A Learner's Glossary
 
 If you, like me, are curious about building systems like this, knowing the right search terms is half the battle. Here are the keywords that opened up a world of information for me.
 
 ### Core Concepts & Architecture
 
-- **[AI Agent / Autonomous Agent](https://www.ibm.com/think/topics/agentic-workflows):** This is the big-picture concept. An AI Agent is a system designed to perceive its environment, make its own decisions, and take actions to achieve a goal. Our theoretical shopkeeper is a perfect example of an AI Agent.
+- **[AI Agent / Autonomous Agent](https://www.ibm.com/think/topics/agentic-workflows):** This is the big-picture concept. An AI Agent is a system designed to perceive its environment, make its own decisions, and take actions to achieve a goal. Our theoretical shopkeeper is a perfect example of an AI Agent. IBM has a great [video explanation](https://www.youtube.com/watch?v=F8NKVhkZZWI) that breaks down this concept clearly.
 - **[AI Orchestration:](https://www.ibm.com/think/topics/ai-orchestration)** This is the "scheduled tasks and reflexes" idea. Orchestration is all about coordinating different tools, models, and data sources to carry out a complex workflow. It’s the conductor of the AI symphony, making sure everything happens in the right order. Frameworks like LangChain and LlamaIndex are big names in this space.
 - **[Agentic Workflows:](https://www.ibm.com/think/topics/agentic-workflows)** This means designing a process where different specialized agents or tools handle different steps. Instead of one AI doing everything, you might have one agent for analyzing data, another for drafting emails, and a third for validating actions.
+- **[Multi-Agent System](https://www.ibm.com/think/topics/multi-agent-systems):** This is the concept of having multiple specialized agents working together, each with its own focus and expertise.
 - **State Management:** In this architectural approach, the system's "state" (like inventory levels or customer orders) isn't kept in the AI's short-term memory. It's stored safely in an external database. State management is simply the process of how this crucial data is stored, retrieved, and updated reliably.
 
 ### Execution & Internal Logic
@@ -80,10 +71,11 @@ If you, like me, are curious about building systems like this, knowing the right
 - **[Function Calling / Tool Use](https://www.ibm.com/think/topics/tool-calling):** This is how modern LLMs connect to the outside world. It’s the ability that lets you give a model a "tool," like your inventory API or your email client, and allow it to use that tool to get things done. It’s the bridge between the AI’s brain and real-world action.
 - **[Task Decomposition](https://www.amazon.science/blog/how-task-decomposition-and-smaller-llms-can-make-ai-more-affordable):** This is the skill of breaking a big, vague goal (like "make more money") into small, concrete sub-tasks ("1. Check current inventory. 2. Find cheaper suppliers. 3. Analyze competitor prices."). The AI Orchestrator is often in charge of this.
 - **[ReAct (Reason, Act)](https://research.google/blog/react-synergizing-reasoning-and-acting-in-language-models/):** A popular mental model for how an agent should operate. The model first **Reasons** about what it needs to do and which tool it should use, then it **Acts** by using the tool. It repeats this cycle until the job is done.
+- **[CoT (Chain of Thought)](https://research.google/blog/language-models-perform-reasoning-via-chain-of-thought/):** This is a technique where the model explains its reasoning step-by-step before taking action. It’s like having the AI talk through its thought process, which can help catch mistakes before they happen.
 
 ### Safety & Control
 
-- **AI Guardrails:** This is the "supervisor" or "protective layer" we talked about. Guardrails are rules, filters, or even other AI models that check the primary LLM's output _before_ an action is taken. Their job is to prevent harmful, illogical, or just plain silly decisions.
+- **AI Guardrails / Output Filtering:** This is the "supervisor" or "protective layer" we talked about. Guardrails are rules, filters, or even other AI models that check the primary LLM's output _before_ an action is taken. You've probably seen this in action when a chatbot starts writing a response, then suddenly clears it and says "I can't answer this question"—that's guardrails at work. Leading companies often use more specific terms like "AI Safety," "AI Alignment," or "Constitutional AI" when discussing these concepts in their research.
 - **Output Parsing and Validation:** This is a specific type of guardrail. It's a process that makes sure the model's output is in the correct format (e.g., proper JSON) and that the data inside makes sense (e.g., you can't order -5 wheels of cheese).
 - **[Constitutional AI:](https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback)** A concept pioneered by Anthropic itself. It involves giving the LLM a core "constitution"—a set of principles it must always follow. It's like building a moral compass directly into the agent to ensure its behavior stays aligned with its purpose.
 
