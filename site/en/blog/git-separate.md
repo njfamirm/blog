@@ -7,6 +7,7 @@ type:
 keywords:
   - git
 date: 2023-08-30
+canonical: https://medium.com/dev-genius/git-separate-26267193d5f5
 ---
 
 Hi everyone,

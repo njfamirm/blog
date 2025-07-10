@@ -8,6 +8,7 @@ keywords:
   - strapi
   - idea
 date: 2023-09-19
+canonical: https://medium.com/@njfamirm/creating-a-searchable-reading-list-with-strapi-cms-custom-api-5907bb5150a8
 ---
 
 Hi everyone!

@@ -10,6 +10,7 @@ keywords:
   - static-site-generator
   - best-practice
 date: 2024-01-24
+canonical: https://medium.com/@njfamirm/eleventy-folder-structure-guide-89824d1cb5b7
 ---
 
 ## Introduction

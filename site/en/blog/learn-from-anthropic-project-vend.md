@@ -8,6 +8,7 @@ keywords:
   - AI
   - Automation
 date: 2025-07-04
+canonical: https://medium.com/@njfamirm/learn-from-anthropic-project-vend-61f105df1f17
 ---
 
 First off, I really suggest you read Anthropic's original post if you haven't already: **[Project Vend: Can Claude run a small shop? (And why does that matter?)](https://www.anthropic.com/research/project-vend-1)**. Once you're done, come on back. My goal here isn't to critique their work—it was a fascinating research project, not a business plan. Instead, I want to use it as a launchpad for my own thinking, exploring how someone like me might approach building a similar system, focusing on the principles that could make it more robust.

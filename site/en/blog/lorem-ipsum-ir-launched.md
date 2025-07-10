@@ -9,6 +9,7 @@ keywords:
   - jamstack
   - static-site-generator
 date: 2023-10-13
+canonical: https://medium.com/@njfamirm/lorem-ipsum-ir-launched-5e5638565ae7
 ---
 
 Hi everyone 🙌🏻
