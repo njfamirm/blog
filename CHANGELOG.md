@@ -1,7 +1,7 @@
 Changelog
-### [1.9.5](https://github.com/njfamirm/blog/compare/v1.9.4...v1.9.5) (2025-07-10)
+## [1.10.0](https://github.com/njfamirm/blog/compare/v1.9.5...v1.10.0) (2025-07-10)
 
 
-### Bug Fixes
+### Features
 
-* add links ([9329d99](https://github.com/njfamirm/blog/commit/9329d9987903d5f7abae45429181e406057dcb4a))
+* new blog post ([b707def](https://github.com/njfamirm/blog/commit/b707defb6681d021f39d29383f11b2258dc0c9de))
