@@ -1,8 +1,7 @@
 Changelog
-### [1.9.4](https://github.com/njfamirm/blog/compare/v1.9.3...v1.9.4) (2025-07-05)
+### [1.9.5](https://github.com/njfamirm/blog/compare/v1.9.4...v1.9.5) (2025-07-10)
 
 
 ### Bug Fixes
 
-* ui issue ([89229ed](https://github.com/njfamirm/blog/commit/89229edeeb6c65401456197ef3ed3d7afe0b0d36))
-* update blog post description and enhance content clarity ([5c6f379](https://github.com/njfamirm/blog/commit/5c6f3797981e9d4657a80e871a49ec6663a40aee))
+* add links ([9329d99](https://github.com/njfamirm/blog/commit/9329d9987903d5f7abae45429181e406057dcb4a))
