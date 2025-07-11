@@ -8,6 +8,7 @@ keywords:
   - AI
   - LLM
 date: 2025-07-09
+canonical: https://medium.com/@njfamirm/ai-vs-human-brain-6f9da5295f75
 ---
 
 Have you ever wondered if the AI you're chatting with *thinks* like you do? We see them producing poems, writing code, and answering complex questions, and it's easy to assume their internal world is a lot like ours. As it turns out, the way a Large Language Model (LLM) "thinks" is fundamentally different from a human mind.
@@ -87,6 +88,8 @@ An AI's memory structure is much simpler. You can think of it in two main parts:
 
 Think of the context window as a whiteboard. It's the space where your current conversation is written down. The AI can "see" everything on that whiteboard to inform its next response. However, this whiteboard has a fixed size. Once the conversation gets too long, the earliest parts get erased. The AI literally forgets what you talked about at the beginning of the conversation.
 
+This limitation becomes a real problem when building practical AI systems. Imagine an AI trying to run a business for weeks or months—it would eventually forget crucial decisions it made early on. This is exactly the challenge I analyzed in [Anthropic's Project Vend experiment](https://medium.com/@njfamirm/learn-from-anthropic-project-vend-61f105df1f17), where I explored how a single long conversation trying to manage everything led to compounding errors and inconsistent decisions—and proposed architectural solutions to address these issues.
+
 ## 4. Reasoning: Applying Logic vs. Predicting Patterns
 
 Are you a purely logical being? Is the AI truly reasoning with you? Let's look at the difference between finding an answer and predicting what an answer should look like.
@@ -149,3 +152,5 @@ Understanding these fundamental differences between human and AI cognition isn't
 This comparison reveals why AI is extraordinary at tasks like processing vast amounts of information, generating creative content, and recognizing complex patterns across domains. Yet it also explains why AI struggles with common sense, physical reasoning, and tasks that require genuine understanding of lived experience.
 
 You bring meaning, context, and embodied comprehension to every interaction. AI offers incredible speed, computational power, and access to patterns across human knowledge that no individual could ever master. The real magic happens when we stop asking whether AI thinks like us, and start leveraging these complementary strengths—using AI as a powerful thinking partner while contributing the uniquely human elements of wisdom, judgment, and genuine understanding.
+
+> **Inspiration**: The core ideas for this article were inspired by this excellent video that explores similar concepts about AI and human cognition: [AI vs Human Thinking: How Large Language Models Really Work](https://www.youtube.com/watch?v=-ovM0daP6bw).
