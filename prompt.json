@@ -20,13 +20,17 @@
   },
   "design_architecture": {
     "theme": {
-      "palette": "Strict Monochrome. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays for borders. Absolutely NO other colors.",
-      "mode": "System-preference (prefers-color-scheme). Automatic dark/light mode switching based on user's system settings."
+      "palette": "Strict Monochrome for UI. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays. Syntax highlighting in blog code blocks is allowed to use a vibrant, high-contrast color palette for readability.",
+      "mode": "System-preference (prefers-color-scheme). Automatic dark/light mode switching based on user's system settings. Syntax highlighting must be theme-aware (higher contrast in light mode)."
     },
     "typography": {
       "primary": "Inter for body text.",
       "mono": "Fira Code for ALL headings (h1, h2, etc.), technical labels, dates, metadata, and code blocks.",
       "STRICT_RULE": "NO Persian fonts. NO Vazirmatn. Use pure modern sans-serif and monospace fonts."
+    },
+    "scrollbar": {
+      "style": "Minimal custom scrollbar (6px width). Monochrome color matching borders.",
+      "behavior": "Hidden track, border-colored thumb with muted-foreground hover state."
     },
     "background_texture": {
       "type": "Blueprint Grid",
@@ -86,7 +90,7 @@
     "FATAL ERROR if ANY 3D elements or WebGL code is included.",
     "FATAL ERROR if non-clickable blocks (like the hero statement) have hover effects.",
     "FATAL ERROR if Search, Portfolio, or Skills sections are added.",
-    "FATAL ERROR if any colors other than Black, White, or Zinc-Grays are used.",
+    "FATAL ERROR if UI elements (except code blocks) use any colors other than Black, White, or Zinc-Grays.",
     "FATAL ERROR if there is any transition/fade delay on hover states.",
     "FATAL ERROR if Persian fonts are present."
   ]

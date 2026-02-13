@@ -2,7 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
-import html from 'remark-html'
+import remarkRehype from 'remark-rehype'
+import rehypeHighlight from 'rehype-highlight'
+import rehypeStringify from 'rehype-stringify'
 
 const postsDirectory = path.join(process.cwd(), 'content/blog')
 
@@ -72,7 +74,9 @@ export async function getPostData(slug: string): Promise<Post> {
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
-    .use(html)
+    .use(remarkRehype)
+    .use(rehypeHighlight)
+    .use(rehypeStringify)
     .process(matterResult.content)
   const contentHtml = processedContent.toString()
 

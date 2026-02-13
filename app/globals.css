@@ -83,6 +83,17 @@
     --ring: 240 5.9% 10%;
 
     --radius: 0rem; /* Strict Sharp Edges */
+
+    /* Syntax Highlighting - Light */
+    --code-bg: 240 4.8% 95.9%; /* bg-secondary */
+    --code-keyword: #d73a49;
+    --code-string: #22863a;
+    --code-function: #6f42c1;
+    --code-variable: #e36209;
+    --code-comment: #6a737d;
+    --code-number: #005cc5;
+    --code-attribute: #005cc5;
+    --code-built-in: #e36209;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -115,6 +126,17 @@
       --border: 240 3.7% 15.9%; /* Zinc-800 */
       --input: 240 3.7% 15.9%;
       --ring: 240 4.9% 83.9%;
+
+      /* Syntax Highlighting - Dark */
+      --code-bg: 240 3.7% 10%; /* Very dark zinc */
+      --code-keyword: #c678dd;
+      --code-string: #98c379;
+      --code-function: #61afef;
+      --code-variable: #e06c75;
+      --code-comment: #7f848e;
+      --code-number: #d19a66;
+      --code-attribute: #d19a66;
+      --code-built-in: #e5c07b;
     }
   }
   @media (prefers-color-scheme: dark) {
@@ -157,6 +179,31 @@
   body {
     @apply bg-background text-foreground relative;
   }
+
+  /* Minimal Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Firefox Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
 }
 
 /* Blog Post Content Styling */
@@ -187,11 +234,86 @@
 
     /* Code Blocks */
     pre {
-      @apply my-8 bg-secondary border border-border p-6 overflow-x-auto;
+      @apply my-8 border border-border p-6 overflow-x-auto shadow-sm;
+      background-color: hsl(var(--code-bg));
     }
 
     pre code {
-      @apply font-mono text-sm leading-relaxed;
+      @apply font-mono text-[13px] leading-relaxed antialiased;
+      font-feature-settings: "liga" 0;
+      color: var(--foreground);
+    }
+
+    /* Syntax Highlighting (Theme-Aware) */
+    .hljs-comment,
+    .hljs-quote {
+      color: var(--code-comment) !important;
+      @apply italic opacity-60;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: var(--code-keyword) !important;
+      @apply font-bold;
+    }
+
+    .hljs-string,
+    .hljs-type,
+    .hljs-built_in,
+    .hljs-bullet,
+    .hljs-addition {
+      color: var(--code-string) !important;
+    }
+
+    .hljs-number,
+    .hljs-conditional,
+    .hljs-literal,
+    .hljs-symbol {
+      color: var(--code-number) !important;
+    }
+
+    .hljs-function,
+    .hljs-title,
+    .hljs-section,
+    .hljs-selector-id,
+    .hljs-selector-class {
+      color: var(--code-function) !important;
+      @apply font-bold;
+    }
+
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-regexp,
+    .hljs-deletion {
+      color: var(--code-variable) !important;
+    }
+
+    .hljs-attribute,
+    .hljs-attr {
+      color: var(--code-attribute) !important;
+    }
+
+    .hljs-title.function_,
+    .hljs-title.class_,
+    .hljs-title.class_.inherited__ {
+      color: var(--code-function) !important;
+    }
+
+    .hljs-params,
+    .hljs-meta,
+    .hljs-link {
+      color: var(--code-built-in) !important;
+    }
+
+    .hljs-emphasis {
+      @apply italic;
+    }
+
+    .hljs-strong {
+      @apply font-bold;
     }
 
     /* Blockquotes */
