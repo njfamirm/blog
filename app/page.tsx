@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import HeroCanvas from '@/components/HeroCanvas'
 
 // Mock blog posts data - limiting to 5 as requested
 const latestPosts = [
@@ -92,15 +93,11 @@ export default function Page() {
 
         {/* 
           Area: 3D_Canvas
-          Instruction: Empty container with id='canvas-container'.
+          Instruction: Suspense-wrapped 3D component.
           Future behavior: undulating 3D object.
         */}
-        <section className="md:col-span-12 h-64 md:h-96 bg-background relative border-t border-b border-border">
-          <div id="canvas-container" className="absolute inset-0 w-full h-full" />
-          {/* Visual placeholder to indicate area if empty */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="font-mono text-xs uppercase text-muted-foreground/30">[3D_Context_Layer_v1.0]</span>
-          </div>
+        <section className="md:col-span-12 h-64 md:h-96 bg-background relative border-t border-b border-border overflow-hidden">
+          <HeroCanvas />
         </section>
 
         {/* 
