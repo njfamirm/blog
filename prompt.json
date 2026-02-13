@@ -21,12 +21,12 @@
   "design_architecture": {
     "theme": {
       "palette": "Strict Monochrome. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays for borders. Absolutely NO other colors.",
-      "mode": "System-preference ONLY. NO manual toggle."
+      "mode": "System-preference (prefers-color-scheme). Automatic dark/light mode switching based on user's system settings."
     },
     "typography": {
-      "primary": "Geist or Inter (Extra Bold for headings, Regular for body text).",
-      "mono": "Monaspace or Fira Code for ALL technical labels, dates, and metadata.",
-      "STRICT_RULE": "NO Persian fonts. NO Vazirmatn. Use pure modern sans-serif."
+      "primary": "Inter for body text.",
+      "mono": "Fira Code for ALL headings (h1, h2, etc.), technical labels, dates, metadata, and code blocks.",
+      "STRICT_RULE": "NO Persian fonts. NO Vazirmatn. Use pure modern sans-serif and monospace fonts."
     },
     "background_texture": {
       "type": "Blueprint Grid",
@@ -42,10 +42,23 @@
     }
   },
   "interaction_system": {
+    "brightness_button_design": {
+      "description": "All interactive elements use reversed color hover effect (brightness button pattern).",
+      "implementation": "hover:bg-foreground hover:text-background transition-none duration-0",
+      "applies_to": [
+        "Navigation links",
+        "Article cards",
+        "Identity links (GitHub, Medium, Twitter, Email)",
+        "Back navigation buttons",
+        "CTA buttons",
+        "Blog content links",
+        "All clickable elements throughout the app"
+      ]
+    },
     "hover_logic": {
-      "target": "INTERACTIVE_ELEMENTS_ONLY (Article cards and Link-labels).",
+      "target": "INTERACTIVE_ELEMENTS_ONLY (Article cards, buttons, and all links).",
       "static_blocks": "The main Statement block and other non-link containers must remain STATIC. No hover effects.",
-      "effect": "Hard Invert. Instant background/text color flip (duration-0). No fade, no transition."
+      "effect": "Brightness Button Design - Complete color reversal. Background becomes foreground color, text becomes background color. Instant flip (duration-0). No fade, no transition, no opacity changes."
     }
   },
   "page_structure": {
@@ -63,7 +76,7 @@
         },
         {
           "id": "identity_links",
-          "content": "github.com/njfamirm, medium.com/@njfamirm. Monospace text links only.",
+          "content": "linkedin.com/in/njfamirm-me, github.com/njfamirm, medium.com/@njfamirm, njfamirm@gmail.com. Monospace text links only.",
           "interactive": true
         }
       ]

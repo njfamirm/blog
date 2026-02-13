@@ -5,13 +5,13 @@ import { getSortedPostsData } from '@/lib/blog'
 export default function BlogPage() {
   const blogPosts = getSortedPostsData()
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen selection:bg-foreground selection:text-background">
       {/* Header */}
       <header className="border-b border-border">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              AMN
+            <Link href="/" className="text-xl font-bold tracking-tight font-mono">
+              @njfamirm
             </Link>
             <nav className="flex items-center gap-8">
               <Link
@@ -30,7 +30,7 @@ export default function BlogPage() {
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors mb-12"
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:bg-foreground hover:text-background transition-none duration-0 px-3 py-2 border border-transparent hover:border-foreground"
         >
           <ArrowLeft className="h-3 w-3" />
           Back to Home
@@ -38,7 +38,7 @@ export default function BlogPage() {
 
         {/* Page Header */}
         <div className="mb-16 border-b border-border pb-12">
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.9] font-mono">
             Writing
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">

@@ -47,15 +47,15 @@ export default function Page() {
 
           <nav className="flex-1 flex flex-col">
             {[
-              { label: 'github.com/njfamirm', href: 'https://github.com/njfamirm' },
+              { label: 'linkedin.com/in/njfamirm-me', href: 'https://www.linkedin.com/in/njfamirm-me/' },
+              { label: 'github.com/njfamirm', href: 'https://github.com/njfamirm/' },
               { label: 'medium.com/@njfamirm', href: 'https://medium.com/@njfamirm' },
-              { label: 'twitter.com/njfamirm', href: 'https://twitter.com/njfamirm' },
-              { label: 'mailto:hi@example.com', href: 'mailto:hi@example.com' }
+              { label: 'njfamirm@gmail.com', href: 'mailto:njfamirm@gmail.com' }
             ].map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                target={link.label.startsWith('mailto') ? '_self' : '_blank'}
+                target={link.label.startsWith('njfamirm@') ? '_self' : '_blank'}
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center p-8 font-mono text-base border-b border-border last:border-b-0 hover:bg-foreground hover:text-background transition-none duration-0"
               >
