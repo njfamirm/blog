@@ -4,6 +4,20 @@
     "brand_identity": "njfamirm",
     "persona": "Amir Mohammad Najafi (@njfamirm) - Software Architect & Tech Lead at Nexim."
   },
+  "content_architecture": {
+    "source": {
+      "provider": "Local Markdown Files",
+      "path": "content/blog/*.md"
+    },
+    "schema": {
+      "frontmatter": {
+        "title": "String (Required) - The main headline.",
+        "summary": "String (Required) - A concise one-sentence description.",
+        "date": "YYYY-MM-DD (Required) - Publication date.",
+        "tags": "Array<String> (Required) - List of relevant topics."
+      }
+    }
+  },
   "design_architecture": {
     "theme": {
       "palette": "Strict Monochrome. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays for borders. Absolutely NO other colors.",

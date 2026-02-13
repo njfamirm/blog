@@ -1,59 +1,9 @@
 import Link from 'next/link'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
-
-// Mock blog posts data - In production, fetch from CMS or database
-const blogPosts = [
-  {
-    id: 1,
-    title: 'Building Distributed Systems That Scale',
-    summary: 'Lessons learned from architecting microservices at enterprise scale. How to handle failure, design for resilience, and maintain team velocity.',
-    date: '2024-01-15',
-    readingTime: '8 min',
-    tags: ['Architecture', 'Microservices', 'Scale'],
-  },
-  {
-    id: 2,
-    title: 'Technical Debt: Investment, Not Failure',
-    summary: 'Reframing technical debt as strategic investment. When to incur it, how to measure it, and why your business stakeholders should care.',
-    date: '2024-01-10',
-    readingTime: '6 min',
-    tags: ['Leadership', 'Strategy', 'Engineering'],
-  },
-  {
-    id: 3,
-    title: 'Event-Driven Architecture: Beyond the Hype',
-    summary: 'Practical implementation patterns for event-driven systems. Real-world examples, common pitfalls, and when NOT to use events.',
-    date: '2024-01-05',
-    readingTime: '10 min',
-    tags: ['Architecture', 'Patterns', 'Integration'],
-  },
-  {
-    id: 4,
-    title: 'The Cost of Context Switching',
-    summary: 'Quantifying the real cost of multitasking in engineering teams. Data-driven approaches to protect deep work and increase throughput.',
-    date: '2023-12-28',
-    readingTime: '7 min',
-    tags: ['Productivity', 'Teams', 'Leadership'],
-  },
-  {
-    id: 5,
-    title: 'API Design: Contracts as Product',
-    summary: 'Treating APIs as products, not implementation details. How great API design drives adoption, reduces support burden, and creates competitive advantage.',
-    date: '2023-12-20',
-    readingTime: '9 min',
-    tags: ['API', 'Design', 'Product'],
-  },
-  {
-    id: 6,
-    title: 'Observability: Beyond Monitoring',
-    summary: 'Building systems you can understand in production. Structured logging, distributed tracing, and the metrics that actually matter.',
-    date: '2023-12-15',
-    readingTime: '11 min',
-    tags: ['Observability', 'DevOps', 'Operations'],
-  },
-]
+import { getSortedPostsData } from '@/lib/blog'
 
 export default function BlogPage() {
+  const blogPosts = getSortedPostsData()
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -100,8 +50,8 @@ export default function BlogPage() {
         <div className="space-y-px">
           {blogPosts.map((post) => (
             <Link
-              key={post.id}
-              href={`/blog/${post.id}`}
+              key={post.slug}
+              href={`/blog/${post.slug}`}
               className="block border border-border p-8 hover:border-primary transition-colors group bg-background"
             >
               <div className="flex items-start justify-between gap-4 mb-4">
@@ -109,9 +59,6 @@ export default function BlogPage() {
                   <div className="flex items-baseline gap-4 mb-3">
                     <span className="font-mono text-xs text-muted-foreground">
                       {post.date}
-                    </span>
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {post.readingTime}
                     </span>
                   </div>
                   <h2 className="text-3xl font-bold tracking-tight group-hover:text-primary transition-colors mb-3">

@@ -1,45 +1,8 @@
 import Link from 'next/link'
-
-// Mock blog posts data
-const latestPosts = [
-  {
-    id: 1,
-    title: 'Building Distributed Systems That Scale',
-    summary: 'Lessons learned from architecting microservices at enterprise scale.',
-    date: '2024-01-15',
-    readTime: '8 min',
-  },
-  {
-    id: 2,
-    title: 'Technical Debt: Investment, Not Failure',
-    summary: 'Reframing technical debt as strategic investment.',
-    date: '2024-01-10',
-    readTime: '5 min',
-  },
-  {
-    id: 3,
-    title: 'Event-Driven Architecture: Beyond the Hype',
-    summary: 'Practical implementation patterns for event-driven systems.',
-    date: '2024-01-05',
-    readTime: '12 min',
-  },
-  {
-    id: 4,
-    title: 'The Myth of Zero-Config',
-    summary: 'Why abstraction layers often leak and cost more than they save.',
-    date: '2024-01-02',
-    readTime: '6 min',
-  },
-  {
-    id: 5,
-    title: 'Team Topologies in Practice',
-    summary: 'Aligning software architecture with organizational structure.',
-    date: '2023-12-28',
-    readTime: '9 min',
-  },
-]
+import { getSortedPostsData } from '@/lib/blog'
 
 export default function Page() {
+  const latestPosts = getSortedPostsData().slice(0, 5)
   return (
     <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-foreground selection:text-background">
       {/* 
@@ -114,8 +77,8 @@ export default function Page() {
           <div className="grid grid-cols-1 divide-y divide-border">
             {latestPosts.map((post) => (
               <Link
-                key={post.id}
-                href={`/blog/${post.id}`}
+                key={post.slug}
+                href={`/blog/${post.slug}`}
                 className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
               >
                 <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">
@@ -129,7 +92,6 @@ export default function Page() {
                   </div>
                   <div className="flex flex-col items-end gap-2 font-mono text-sm md:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
                     <time>{post.date}</time>
-                    <span>{post.readTime} read</span>
                   </div>
                 </div>
               </Link>
