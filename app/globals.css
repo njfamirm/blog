@@ -199,6 +199,12 @@
     background: hsl(var(--muted-foreground));
   }
 
+  /* Selection Style */
+  ::selection {
+    background-color: hsl(var(--foreground));
+    color: hsl(var(--background));
+  }
+
   /* Firefox Scrollbar */
   * {
     scrollbar-width: thin;

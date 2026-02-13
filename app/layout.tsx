@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   description: 'Signal over noise. Absolute digital minimalism. Form follows pure function.',
 }
 
+import { Header } from '@/components/header'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${firaCode.variable}`}>
-      <body className="font-sans antialiased bg-background text-foreground">{children}</body>
+      <body className="font-sans antialiased bg-background text-foreground">
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }

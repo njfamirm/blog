@@ -20,17 +20,15 @@ export default function Page() {
         */}
         <section className="md:col-span-8 bg-background p-6 md:p-8 flex flex-col justify-between min-h-[50vh]">
           <div className="flex-1 flex flex-col justify-center">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance">
-              Architecting <br /> Clarity.
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance font-sans">
+              NAVIGATING <br /> COMPLEXITY.
             </h1>
           </div>
           <div className="border-t border-border pt-8 mt-8">
             <p className="text-lg md:text-xl lg:text-2xl max-w-[60ch] leading-relaxed font-mono">
-              Shipping Value.
+              Bridging the realities of system architecture with software automation. My focus is on designing stable B2B systems and shipping value alongside a driven team.
               <br />
-              Amir Mohammad Najafi (@njfamirm).
-              <br />
-              Software Architect & Tech Lead at Nexim.
+              Amir Mohammad Najafi (@njfamirm) — Software Architect & Tech Lead at Nexim.
             </p>
           </div>
         </section>

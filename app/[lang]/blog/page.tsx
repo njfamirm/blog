@@ -5,26 +5,7 @@ import { getSortedPostsData } from '@/lib/blog'
 export default function BlogPage() {
   const blogPosts = getSortedPostsData()
   return (
-    <div className="min-h-screen selection:bg-foreground selection:text-background">
-      {/* Header */}
-      <header className="border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg sm:text-xl font-bold tracking-tight font-mono">
-              @njfamirm
-            </Link>
-            <nav className="flex items-center gap-4 sm:gap-8">
-              <Link
-                href="/en/blog"
-                className="font-mono text-xs sm:text-sm uppercase tracking-wider text-primary"
-              >
-                Writing
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen selection:bg-foreground selection:text-background text-foreground">
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 py-12 md:py-16 max-w-5xl">
         {/* Back Link */}
@@ -90,10 +71,10 @@ export default function BlogPage() {
         <div className="container mx-auto px-4 sm:px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="font-mono text-[10px] sm:text-xs text-muted-foreground text-center md:text-left">
-              © 2024 Amir Mohammad Najafi. Building systems that matter.
+              © 2026 Amir Mohammad Najafi.
             </p>
             <p className="font-mono text-[10px] sm:text-xs text-muted-foreground">
-              ARCHITECT → ENGINEER → HUMAN
+              ENGINEERED LOGIC → TEAM COLLABORATION → SHIPPED.
             </p>
           </div>
         </div>
