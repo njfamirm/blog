@@ -5,7 +5,6 @@ date: 2023-08-30
 tags:
   - git
 canonical: https://medium.com/dev-genius/git-separate-26267193d5f5
-socialImage: /img/blog/git-separate/cover.jpg
 ---
 
 Hi everyone,

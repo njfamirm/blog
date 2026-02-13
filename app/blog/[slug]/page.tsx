@@ -1,12 +1,30 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getPostData, getAllPostSlugs } from '@/lib/blog'
+import type { Metadata } from 'next'
 
 export async function generateStaticParams() {
   const posts = getAllPostSlugs()
   return posts.map((post) => ({
     slug: post.params.slug,
   }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = await getPostData(slug)
+
+  return {
+    title: post.title,
+    description: post.summary,
+    alternates: post.canonical ? {
+      canonical: post.canonical,
+    } : undefined,
+  }
 }
 
 export default async function BlogPostPage({
@@ -56,8 +74,23 @@ export default async function BlogPostPage({
           </h1>
 
           {/* Metadata */}
-          <div className="flex items-center gap-6 mb-6 font-mono text-sm text-muted-foreground">
-            <span>{post.date}</span>
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex items-center gap-6 font-mono text-sm text-muted-foreground">
+              <span>{post.date}</span>
+            </div>
+            {post.canonical && (
+              <div className="font-mono text-xs text-muted-foreground">
+                Originally published at:{' '}
+                <a
+                  href={post.canonical}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-foreground transition-colors"
+                >
+                  {new URL(post.canonical).hostname}
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Tags */}

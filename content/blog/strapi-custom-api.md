@@ -6,7 +6,6 @@ tags:
   - strapi
   - idea
 canonical: https://medium.com/@njfamirm/creating-a-searchable-reading-list-with-strapi-cms-custom-api-5907bb5150a8
-socialImage: /img/blog/strapi-custom-api/cover.jpg
 ---
 
 Hi everyone!

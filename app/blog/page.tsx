@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { getSortedPostsData } from '@/lib/blog'
 
 export default function BlogPage() {
@@ -47,38 +47,38 @@ export default function BlogPage() {
         </div>
 
         {/* Blog Posts List */}
-        <div className="space-y-px">
+        <div className="grid grid-cols-1 divide-y divide-border border border-border">
           {blogPosts.map((post) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="block border border-border p-8 hover:border-primary transition-colors group bg-background"
+              className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
             >
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-4 mb-3">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {post.date}
-                    </span>
-                  </div>
-                  <h2 className="text-3xl font-bold tracking-tight group-hover:text-primary transition-colors mb-3">
+              <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">
+                <div className="max-w-4xl">
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-balance group-hover:text-background">
                     {post.title}
                   </h2>
-                  <p className="text-muted-foreground leading-relaxed text-lg">
+                  <p className="text-muted-foreground font-mono text-base md:text-lg leading-relaxed group-hover:text-background/80 max-w-2xl">
                     {post.summary}
                   </p>
+                  {/* Tags */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex gap-2 mt-4 flex-wrap">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="border border-border px-2 py-1 font-mono text-xs text-muted-foreground group-hover:border-background/30 group-hover:text-background/70"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <ArrowRight className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-2" />
-              </div>
-              <div className="flex gap-2 mt-4">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="border border-border px-2 py-1 font-mono text-xs text-muted-foreground"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+                <div className="flex flex-col items-end gap-2 font-mono text-sm md:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
+                  <time>{post.date}</time>
+                </div>
               </div>
             </Link>
           ))}

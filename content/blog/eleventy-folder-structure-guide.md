@@ -8,7 +8,6 @@ tags:
   - static-site-generator
   - best-practice
 canonical: https://medium.com/@njfamirm/eleventy-folder-structure-guide-89824d1cb5b7
-socialImage: /img/blog/eleventy-folder-structure-guide/cover.jpg
 ---
 
 ## Introduction

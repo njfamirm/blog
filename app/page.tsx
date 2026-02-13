@@ -89,6 +89,19 @@ export default function Page() {
                     <p className="text-muted-foreground font-mono text-base md:text-lg leading-relaxed group-hover:text-background/80 max-w-2xl">
                       {post.summary}
                     </p>
+                    {/* Tags */}
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex gap-2 mt-4 flex-wrap">
+                        {post.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="border border-border px-2 py-1 font-mono text-xs text-muted-foreground group-hover:border-background/30 group-hover:text-background/70"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-2 font-mono text-sm md:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
                     <time>{post.date}</time>

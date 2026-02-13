@@ -8,7 +8,6 @@ tags:
   - self-hosting
   - oauth
 canonical: https://medium.com/@njfamirm/a-step-by-step-guide-to-self-hosting-decap-cms-5425ab44abca
-socialImage: /img/blog/self-hosting-decap-cms/cover.jpg
 ---
 
 Hi everyone!

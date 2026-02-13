@@ -13,6 +13,7 @@ export interface Post {
   date: string
   tags: string[]
   contentHtml: string
+  canonical?: string
 }
 
 export function getSortedPostsData() {
@@ -85,5 +86,6 @@ export async function getPostData(slug: string): Promise<Post> {
       ? matterResult.data.date.toISOString().split('T')[0]
       : String(matterResult.data.date),
     tags: (matterResult.data.tags || []) as string[],
+    canonical: matterResult.data.canonical as string | undefined,
   }
 }

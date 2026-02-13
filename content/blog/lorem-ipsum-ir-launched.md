@@ -7,7 +7,6 @@ tags:
   - jamstack
   - static-site-generator
 canonical: https://medium.com/@njfamirm/lorem-ipsum-ir-launched-5e5638565ae7
-socialImage: /img/blog/lorem-ipsum-ir-launched/cover.jpg
 ---
 
 Hi everyone 🙌🏻

@@ -6,7 +6,6 @@ tags:
   - AI
   - LLM
 canonical: https://medium.com/@njfamirm/ai-vs-human-brain-6f9da5295f75
-socialImage: /img/blog/ai-vs-human-brain/cover.jpeg
 ---
 
 Have you ever wondered if the AI you're chatting with *thinks* like you do? We see them producing poems, writing code, and answering complex questions, and it's easy to assume their internal world is a lot like ours. As it turns out, the way a Large Language Model (LLM) "thinks" is fundamentally different from a human mind.
