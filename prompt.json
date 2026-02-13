@@ -2,68 +2,65 @@
   "project_manifesto": {
     "title": "Minimalist Architect Publication",
     "brand_identity": "njfamirm",
-    "ethos": "Signal over noise. Absolute digital minimalism. Form follows pure function.",
-    "primary_objective": "A structural space to publish technical essays and thoughts on software architecture and team dynamics. Zero marketing fluff.",
-    "persona": "Amir Mohammad Najafi (@njfamirm) - Senior Architect, minimalist, focuses on shipping value and calm technology."
+    "persona": "Amir Mohammad Najafi (@njfamirm) - Software Architect & Tech Lead at Nexim."
   },
-  "design_and_css_architecture": {
-    "layout_system": "Bento Grid implemented via strict CSS Grid. MUST have a maximum width (e.g., max-w-screen-2xl or 1536px) and be centered on the screen.",
-    "spacing_and_borders": {
-      "technique": "Use a 1px gap system (e.g., grid-gap with a subtle background color) OR explicit 1px borders on elements to create a flawless wireframe look.",
-      "padding": "Consistent internal padding for all Bento boxes (e.g., p-6 or p-8).",
-      "radius": "No rounded corners (sharp edges) OR universally consistent slight rounding (e.g., rounded-xl). Pick one and stick to it strictly."
+  "design_architecture": {
+    "theme": {
+      "palette": "Strict Monochrome. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays for borders. Absolutely NO other colors.",
+      "mode": "System-preference ONLY. NO manual toggle."
     },
     "typography": {
-      "sans_serif": "Geist or Inter for UI and headings. Vazirmatn for Persian text.",
-      "monospace": "Monaspace or Fira Code for ALL metadata, dates, tags, and code blocks.",
-      "hierarchy": "Brutal scale. H1 should be massive and tightly tracked. Body text max-width: 65ch for optimal reading."
+      "primary": "Geist or Inter (Extra Bold for headings, Regular for body text).",
+      "mono": "Monaspace or Fira Code for ALL technical labels, dates, and metadata.",
+      "STRICT_RULE": "NO Persian fonts. NO Vazirmatn. Use pure modern sans-serif."
     },
-    "theme": {
-      "mode": "System-preference ONLY. Pure black (#000000) and pure white (#FFFFFF) base with neutral gray borders. NO manual theme toggle."
+    "background_texture": {
+      "type": "Blueprint Grid",
+      "elements": [
+        "1px grid lines with 40px spacing.",
+        "High-definition SVG Hatch Pattern (45-degree diagonal lines) at 0.05 opacity. Must be sharp."
+      ]
     },
-    "icons_and_visuals": {
-      "system": "Strictly technical, minimalist line icons only.",
-      "stroke_width": "Must be uniform across the entire site (e.g., exactly 1.5px stroke).",
-      "library_preference": "Lucide React or similar geometric line-art libraries.",
-      "usage_rule": "Use extremely sparingly. Typography and grid structure should do the heavy lifting. Never use icons as mere decoration."
-    },
-    "interactions_and_animations": {
-      "hover_states": "Strictly 'Hard Invert' / Solid Fill. When hovering over clickable grid blocks or links, the background MUST instantly snap to a high-contrast color (pure inverted or the single accent color) and text color must invert. NO soft CSS transitions (use duration-0 or transition-none). It must feel binary, mechanical, and instant like a terminal."
+    "layout": {
+      "system": "Bento Grid implemented via strict CSS Grid.",
+      "constraints": "Max-width 1536px (2xl). Centered. 1px explicit borders on every block.",
+      "padding": "Consistent p-8 for all boxes."
+    }
+  },
+  "interaction_system": {
+    "hover_logic": {
+      "target": "INTERACTIVE_ELEMENTS_ONLY (Article cards and Link-labels).",
+      "static_blocks": "The main Statement block and other non-link containers must remain STATIC. No hover effects.",
+      "effect": "Hard Invert. Instant background/text color flip (duration-0). No fade, no transition."
     }
   },
   "page_structure": {
     "homepage": {
       "grid_areas": [
         {
-          "name": "Statement",
-          "content": "Short, punchy architectural statement. Focus on shipping value, managing complexity, and the @njfamirm brand."
+          "id": "hero_statement",
+          "content": "Architecting Clarity. Shipping Value. @njfamirm",
+          "style": "Massive typography, takes up significant grid space."
         },
         {
-          "name": "3D_Canvas",
-          "instruction": "HOLD EXECUTION. Output ONLY an empty container with id='canvas-container' and a placeholder border. DO NOT write WebGL or Three.js code until explicitly instructed.",
-          "future_behavior": "Will contain a mouse-reactive undulating 3D object."
+          "id": "writings_log",
+          "content": "A vertical list of the 5 most recent articles. Each item must show: Title, one-line summary, and Monospace metadata (Date/Tags).",
+          "interactive": true
         },
         {
-          "name": "Writings_Feed",
-          "content": "A raw, border-separated list of the 5 most recent articles. Title, description, and monospace date only."
-        },
-        {
-          "name": "Connect",
-          "content": "Raw links using the @njfamirm identity (e.g., github.com/njfamirm, medium.com/@njfamirm). No icons, just monospace text links."
+          "id": "identity_links",
+          "content": "github.com/njfamirm, medium.com/@njfamirm. Monospace text links only.",
+          "interactive": true
         }
       ]
     }
   },
   "strict_negative_constraints": [
-    "FATAL ERROR if you include a Search bar or search functionality.",
-    "FATAL ERROR if you include a Contact Form (use plain mailto link instead).",
-    "FATAL ERROR if you include a Newsletter signup.",
-    "FATAL ERROR if you include Pagination (just show latest logs).",
-    "FATAL ERROR if you include a 'Skills', 'Tech Stack', or 'Portfolio/Projects' section.",
-    "FATAL ERROR if you use drop-shadows, box-shadows, gradients, or blur effects.",
-    "FATAL ERROR if you write polite or fluffy placeholder text like 'Welcome to my website'. Use technical, raw placeholder copy.",
-    "FATAL ERROR if you use solid/filled icons, dual-tone icons, or multi-colored icons.",
-    "FATAL ERROR if icon stroke widths are inconsistent with each other or with the overall UI borders.",
-    "FATAL ERROR if hover effects use slow, soft fade transitions. They must be instant and harsh."
+    "FATAL ERROR if ANY 3D elements or WebGL code is included.",
+    "FATAL ERROR if non-clickable blocks (like the hero statement) have hover effects.",
+    "FATAL ERROR if Search, Portfolio, or Skills sections are added.",
+    "FATAL ERROR if any colors other than Black, White, or Zinc-Grays are used.",
+    "FATAL ERROR if there is any transition/fade delay on hover states.",
+    "FATAL ERROR if Persian fonts are present."
   ]
 }

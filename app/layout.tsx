@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Fira_Code, Vazirmatn } from 'next/font/google'
+import { Inter, Fira_Code } from 'next/font/google'
 
 import './globals.css'
 
@@ -15,12 +15,6 @@ const firaCode = Fira_Code({
   display: 'swap',
 })
 
-const vazirmatn = Vazirmatn({
-  subsets: ['arabic'],
-  variable: '--font-vazirmatn',
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
   title: 'Minimalist Architect Publication',
   description: 'Signal over noise. Absolute digital minimalism. Form follows pure function.',
@@ -32,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${firaCode.variable} ${vazirmatn.variable}`}>
+    <html lang="en" className={`${inter.variable} ${firaCode.variable}`}>
       <body className="font-sans antialiased bg-background text-foreground">{children}</body>
     </html>
   )

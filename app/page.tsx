@@ -1,77 +1,88 @@
 import Link from 'next/link'
-import HeroCanvas from '@/components/HeroCanvas'
 
-// Mock blog posts data - limiting to 5 as requested
+// Mock blog posts data
 const latestPosts = [
   {
     id: 1,
     title: 'Building Distributed Systems That Scale',
     summary: 'Lessons learned from architecting microservices at enterprise scale.',
     date: '2024-01-15',
+    readTime: '8 min',
   },
   {
     id: 2,
     title: 'Technical Debt: Investment, Not Failure',
     summary: 'Reframing technical debt as strategic investment.',
     date: '2024-01-10',
+    readTime: '5 min',
   },
   {
     id: 3,
     title: 'Event-Driven Architecture: Beyond the Hype',
     summary: 'Practical implementation patterns for event-driven systems.',
     date: '2024-01-05',
+    readTime: '12 min',
   },
   {
     id: 4,
     title: 'The Myth of Zero-Config',
     summary: 'Why abstraction layers often leak and cost more than they save.',
     date: '2024-01-02',
+    readTime: '6 min',
   },
   {
     id: 5,
     title: 'Team Topologies in Practice',
     summary: 'Aligning software architecture with organizational structure.',
     date: '2023-12-28',
+    readTime: '9 min',
   },
 ]
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background">
+    <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-foreground selection:text-background">
       {/* 
         Layout System: Bento Grid via strict CSS Grid.
-        Spacing: 1px gap system (bg-border with gap-px).
-        Radius: Sharp edges (default/explicit rounded-none).
+        Spacing: 1px explicit borders (gap-px).
+        Radius: Strict 0px.
+        Max-width: 1536px (2xl).
       */}
       <main className="grid grid-cols-1 md:grid-cols-12 min-h-screen gap-px bg-border border-b border-border max-w-screen-2xl mx-auto border-x">
 
         {/* 
-          Area: Statement 
-          Content: Short, punchy architectural statement.
-          Placement: Top Left, spanning significant width.
+          Area: Hero Statement 
+          Content: Architecting Clarity. Shipping Value. @njfamirm
+          INTERACTION: STATIC (No hover effect).
         */}
-        <section className="md:col-span-8 bg-background p-6 md:p-8 flex flex-col justify-between">
-          <div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] mb-8 uppercase">
-              Signal <br /> Over <br /> Noise.
+        <section className="md:col-span-8 bg-background p-8 flex flex-col justify-between min-h-[50vh]">
+          <div className="flex-1 flex flex-col justify-center">
+            <h1 className="text-6xl md:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance">
+              Architecting <br /> Clarity.
             </h1>
-            <p className="text-lg md:text-xl max-w-[65ch] leading-relaxed font-mono">
-              Amir Mohammad Najafi (@njfamirm). Senior Architect.
+          </div>
+          <div className="border-t border-border pt-8 mt-8">
+            <p className="text-xl md:text-2xl max-w-[60ch] leading-relaxed font-mono">
+              Shipping Value.
               <br />
-              Focusing on shipping value, managing complexity, and calm technology.
+              Amir Mohammad Najafi (@njfamirm).
               <br />
-              Form follows pure function.
+              Software Architect & Tech Lead at Nexim.
             </p>
           </div>
         </section>
 
         {/* 
-          Area: Connect
-          Content: Raw links using @njfamirm identity. No icons.
-          Placement: Sidebar area.
+          Area: Identity Links
+          Content: Minimalist grid of links. Monospace only.
+          INTERACTION: INDIVIDUAL LINKS HOVER ONLY (Hard Invert).
         */}
-        <section className="md:col-span-4 bg-background p-6 md:p-8 flex flex-col justify-end">
-          <nav className="flex flex-col gap-px bg-border border border-border">
+        <section className="md:col-span-4 bg-background flex flex-col border-l border-border h-full">
+          <div className="p-8 border-b border-border bg-background">
+            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">[CONNECT]</span>
+          </div>
+
+          <nav className="flex-1 flex flex-col">
             {[
               { label: 'github.com/njfamirm', href: 'https://github.com/njfamirm' },
               { label: 'medium.com/@njfamirm', href: 'https://medium.com/@njfamirm' },
@@ -83,7 +94,7 @@ export default function Page() {
                 href={link.href}
                 target={link.label.startsWith('mailto') ? '_self' : '_blank'}
                 rel="noopener noreferrer"
-                className="block bg-background p-4 font-mono text-sm hover:bg-foreground hover:text-background transition-none duration-0"
+                className="flex-1 flex items-center p-8 font-mono text-base border-b border-border last:border-b-0 hover:bg-foreground hover:text-background transition-none duration-0"
               >
                 {link.label}
               </a>
@@ -92,39 +103,34 @@ export default function Page() {
         </section>
 
         {/* 
-          Area: 3D_Canvas
-          Instruction: Suspense-wrapped 3D component.
-          Future behavior: undulating 3D object.
+          Area: Writings Log / Feed
+          Content: Top 5 Architectural Essays. Technical logs with monospace metadata.
+          INTERACTION: HOVER (Hard Invert).
         */}
-        <section className="md:col-span-12 h-64 md:h-96 bg-background relative border-t border-b border-border overflow-hidden">
-          <HeroCanvas />
-        </section>
-
-        {/* 
-          Area: Writings_Feed
-          Content: Raw, border-separated list of 5 most recent articles.
-          Strict: Title, description, monospace date ONLY.
-        */}
-        <section className="md:col-span-12 bg-background">
+        <section className="md:col-span-12 bg-background border-t border-border">
+          <div className="p-8 border-b border-border bg-background">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Recent Writing</h2>
+          </div>
           <div className="grid grid-cols-1 divide-y divide-border">
             {latestPosts.map((post) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.id}`}
-                className="group block p-6 md:p-8 hover:bg-foreground hover:text-background transition-none duration-0"
+                className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
               >
-                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-4">
-                  <div className="max-w-2xl">
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2 group-hover:text-background">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">
+                  <div className="max-w-4xl">
+                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-balance group-hover:text-background">
                       {post.title}
                     </h2>
-                    <p className="text-muted-foreground font-mono text-sm leading-relaxed group-hover:text-background/80">
+                    <p className="text-muted-foreground font-mono text-base md:text-lg leading-relaxed group-hover:text-background/80 max-w-2xl">
                       {post.summary}
                     </p>
                   </div>
-                  <time className="font-mono text-sm whitespace-nowrap opacity-60 group-hover:opacity-100">
-                    {post.date}
-                  </time>
+                  <div className="flex flex-col items-end gap-2 font-mono text-sm md:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
+                    <time>{post.date}</time>
+                    <span>{post.readTime} read</span>
+                  </div>
                 </div>
               </Link>
             ))}

@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dot Grid Background Pattern */
+/* Engineering Blueprint Background */
 @layer base {
+  /* Layer 1: 40px Grid of subtle 1px lines */
   body::before {
     content: '';
     position: fixed;
@@ -11,11 +12,34 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
-    opacity: 0.03;
-    background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
-    background-size: 20px 20px;
+    z-index: -2;
     pointer-events: none;
+    background-image: 
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.2; /* Visible grid */
+    mask-image: linear-gradient(to bottom, black 80%, transparent); 
+  }
+
+  /* Layer 2: 45-degree Diagonal Hatch Pattern */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--foreground) 0,
+      var(--foreground) 0.5px,
+      transparent 0,
+      transparent 4px
+    );
+    opacity: 0.03; /* Extremely subtle texture */
   }
 }
 
@@ -23,77 +47,74 @@
   .text-balance {
     text-wrap: balance;
   }
-  .text-pretty {
-    text-wrap: pretty;
-  }
 }
 
 @layer base {
   :root {
-    /* Technical Brutalism - Strict Black & White */
+    /* Strict Monochrome Palette (Zinc-based) */
+    
+    /* Light Mode: White Background, Zinc-900 Text */
     --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 0 0% 0%;   /* #000000 */
-    
+    --foreground: 240 5.9% 10%; /* Zinc-900 */
+
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    
+    --card-foreground: 240 5.9% 10%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-    
-    --primary: 0 0% 0%;      /* Black */
-    --primary-foreground: 0 0% 100%; /* White */
-    
-    --secondary: 0 0% 90%;   /* Light Gray */
-    --secondary-foreground: 0 0% 0%;
-    
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
-    
-    --accent: 0 0% 0%;
-    --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 100%;
-    
-    /* Visible borders for structure */
-    --border: 0 0% 85%;      /* Neutral Gray */
-    --input: 0 0% 85%;
-    --ring: 0 0% 0%;
-    
-    --radius: 0rem;
+    --popover-foreground: 240 5.9% 10%;
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%; /* Zinc-100 */
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%; /* Zinc-200 */
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+
+    --radius: 0rem; /* Strict Sharp Edges */
   }
-  
-  /* System preference dark mode */
+
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 0 0% 0%;   /* #000000 */
-      --foreground: 0 0% 100%; /* #FFFFFF */
-      
+      /* Dark Mode: Black Background, Zinc-100 Text */
+      --background: 0 0% 0%; /* #000000 */
+      --foreground: 0 0% 98%; /* Zinc-50 */
+
       --card: 0 0% 0%;
-      --card-foreground: 0 0% 100%;
-      
+      --card-foreground: 0 0% 98%;
+
       --popover: 0 0% 0%;
-      --popover-foreground: 0 0% 100%;
-      
-      --primary: 0 0% 100%;    /* White */
-      --primary-foreground: 0 0% 0%; /* Black */
-      
-      --secondary: 0 0% 15%;   /* Dark Gray */
-      --secondary-foreground: 0 0% 100%;
-      
-      --muted: 0 0% 15%;
-      --muted-foreground: 0 0% 60%;
-      
-      --accent: 0 0% 100%;
-      --accent-foreground: 0 0% 0%;
-      
-      --destructive: 0 100% 50%;
-      --destructive-foreground: 0 0% 100%;
-      
-      /* Visible borders for structure */
-      --border: 0 0% 20%;      /* Dark Gray */
-      --input: 0 0% 20%;
-      --ring: 0 0% 100%;
+      --popover-foreground: 0 0% 98%;
+
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+
+      --secondary: 240 3.7% 15.9%; /* Zinc-800 */
+      --secondary-foreground: 0 0% 98%;
+
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+
+      --border: 240 3.7% 15.9%; /* Zinc-800 */
+      --input: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
     }
   }
 }
