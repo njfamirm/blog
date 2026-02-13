@@ -30,70 +30,71 @@
 
 @layer base {
   :root {
-    /* Technical Brutalism - Monochrome with electric blue accent */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 5%;
+    /* Technical Brutalism - Strict Black & White */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 0%;   /* #000000 */
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
+    --card-foreground: 0 0% 0%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
+    --popover-foreground: 0 0% 0%;
     
-    /* Electric Blue Accent */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 0%;      /* Black */
+    --primary-foreground: 0 0% 100%; /* White */
     
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 5%;
+    --secondary: 0 0% 90%;   /* Light Gray */
+    --secondary-foreground: 0 0% 0%;
     
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 40%;
     
-    --accent: 217 91% 60%;
+    --accent: 0 0% 0%;
     --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
     
     /* Visible borders for structure */
-    --border: 0 0% 85%;
+    --border: 0 0% 85%;      /* Neutral Gray */
     --input: 0 0% 85%;
-    --ring: 217 91% 60%;
+    --ring: 0 0% 0%;
     
     --radius: 0rem;
   }
   
-  .dark {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 98%;
-    
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
-    
-    /* Electric Blue Accent */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
-    
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    
-    /* Visible borders for structure */
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 217 91% 60%;
+  /* System preference dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 0%;   /* #000000 */
+      --foreground: 0 0% 100%; /* #FFFFFF */
+      
+      --card: 0 0% 0%;
+      --card-foreground: 0 0% 100%;
+      
+      --popover: 0 0% 0%;
+      --popover-foreground: 0 0% 100%;
+      
+      --primary: 0 0% 100%;    /* White */
+      --primary-foreground: 0 0% 0%; /* Black */
+      
+      --secondary: 0 0% 15%;   /* Dark Gray */
+      --secondary-foreground: 0 0% 100%;
+      
+      --muted: 0 0% 15%;
+      --muted-foreground: 0 0% 60%;
+      
+      --accent: 0 0% 100%;
+      --accent-foreground: 0 0% 0%;
+      
+      --destructive: 0 100% 50%;
+      --destructive-foreground: 0 0% 100%;
+      
+      /* Visible borders for structure */
+      --border: 0 0% 20%;      /* Dark Gray */
+      --input: 0 0% 20%;
+      --ring: 0 0% 100%;
+    }
   }
 }
 

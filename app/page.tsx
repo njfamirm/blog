@@ -1,212 +1,140 @@
 import Link from 'next/link'
-import { ArrowRight, Github, Linkedin, ExternalLink } from 'lucide-react'
-import { ThreeDElement } from '@/components/three-d-element'
 
-// Mock blog posts data
+// Mock blog posts data - limiting to 5 as requested
 const latestPosts = [
   {
     id: 1,
     title: 'Building Distributed Systems That Scale',
-    summary: 'Lessons learned from architecting microservices at enterprise scale. How to handle failure, design for resilience, and maintain team velocity.',
+    summary: 'Lessons learned from architecting microservices at enterprise scale.',
     date: '2024-01-15',
-    readingTime: '8 min',
-    tags: ['Architecture', 'Microservices', 'Scale'],
   },
   {
     id: 2,
     title: 'Technical Debt: Investment, Not Failure',
-    summary: 'Reframing technical debt as strategic investment. When to incur it, how to measure it, and why your business stakeholders should care.',
+    summary: 'Reframing technical debt as strategic investment.',
     date: '2024-01-10',
-    readingTime: '6 min',
-    tags: ['Leadership', 'Strategy', 'Engineering'],
   },
   {
     id: 3,
     title: 'Event-Driven Architecture: Beyond the Hype',
-    summary: 'Practical implementation patterns for event-driven systems. Real-world examples, common pitfalls, and when NOT to use events.',
+    summary: 'Practical implementation patterns for event-driven systems.',
     date: '2024-01-05',
-    readingTime: '10 min',
-    tags: ['Architecture', 'Patterns', 'Integration'],
   },
-]
-
-const techStack = [
-  'TypeScript',
-  'Go',
-  'Rust',
-  'PostgreSQL',
-  'Redis',
-  'Kubernetes',
+  {
+    id: 4,
+    title: 'The Myth of Zero-Config',
+    summary: 'Why abstraction layers often leak and cost more than they save.',
+    date: '2024-01-02',
+  },
+  {
+    id: 5,
+    title: 'Team Topologies in Practice',
+    summary: 'Aligning software architecture with organizational structure.',
+    date: '2023-12-28',
+  },
 ]
 
 export default function Page() {
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-border">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              AMN
-            </Link>
-            <nav className="flex items-center gap-8">
-              <Link
-                href="/blog"
-                className="font-mono text-sm uppercase tracking-wider hover:text-primary transition-colors"
-              >
-                Writing
-              </Link>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-foreground selection:text-background">
+      {/* 
+        Layout System: Bento Grid via strict CSS Grid.
+        Spacing: 1px gap system (bg-border with gap-px).
+        Radius: Sharp edges (default/explicit rounded-none).
+      */}
+      <main className="grid grid-cols-1 md:grid-cols-12 min-h-screen gap-px bg-border border-b border-border max-w-screen-2xl mx-auto border-x">
 
-      {/* Bento Grid Layout */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-px bg-border">
-          {/* Hero Block - Large */}
-          <div className="md:col-span-6 lg:col-span-8 bg-background border border-border p-12 min-h-[400px] flex flex-col justify-center">
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-balance mb-6 leading-[0.9]">
-              Hi, I&apos;m Amir Mohammad Najafi
+        {/* 
+          Area: Statement 
+          Content: Short, punchy architectural statement.
+          Placement: Top Left, spanning significant width.
+        */}
+        <section className="md:col-span-8 bg-background p-6 md:p-8 flex flex-col justify-between">
+          <div>
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] mb-8 uppercase">
+              Signal <br /> Over <br /> Noise.
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
-              Software Architect focused on <span className="text-foreground font-semibold">Business Value</span>, 
-              <span className="text-foreground font-semibold"> Scalability</span>, and 
-              <span className="text-foreground font-semibold"> Shipping Products</span>.
-            </p>
-            <div className="mt-8">
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 font-mono text-sm uppercase tracking-wider hover:bg-primary/90 transition-colors"
-              >
-                Read My Writing
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-
-          {/* The Human Touch Block - Medium with 3D Element */}
-          <div className="md:col-span-6 lg:col-span-4 bg-background border border-border p-8 min-h-[400px] flex flex-col items-center justify-center overflow-hidden">
-            <ThreeDElement />
-            <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-4 text-center">
-              Engineering + Human Touch
+            <p className="text-lg md:text-xl max-w-[65ch] leading-relaxed font-mono">
+              Amir Mohammad Najafi (@njfamirm). Senior Architect.
+              <br />
+              Focusing on shipping value, managing complexity, and calm technology.
+              <br />
+              Form follows pure function.
             </p>
           </div>
+        </section>
 
-          {/* Quick Links/Stack Block - Small */}
-          <div className="md:col-span-6 lg:col-span-4 bg-background border border-border p-8">
-            <h3 className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-6">
-              Core Stack
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {techStack.map((tech) => (
-                <div
-                  key={tech}
-                  className="border border-border px-3 py-1.5 font-mono text-sm hover:border-primary hover:text-primary transition-colors"
-                >
-                  {tech}
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 space-y-3">
+        {/* 
+          Area: Connect
+          Content: Raw links using @njfamirm identity. No icons.
+          Placement: Sidebar area.
+        */}
+        <section className="md:col-span-4 bg-background p-6 md:p-8 flex flex-col justify-end">
+          <nav className="flex flex-col gap-px bg-border border border-border">
+            {[
+              { label: 'github.com/njfamirm', href: 'https://github.com/njfamirm' },
+              { label: 'medium.com/@njfamirm', href: 'https://medium.com/@njfamirm' },
+              { label: 'twitter.com/njfamirm', href: 'https://twitter.com/njfamirm' },
+              { label: 'mailto:hi@example.com', href: 'mailto:hi@example.com' }
+            ].map((link) => (
               <a
-                href="https://github.com"
-                target="_blank"
+                key={link.label}
+                href={link.href}
+                target={link.label.startsWith('mailto') ? '_self' : '_blank'}
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 font-mono text-sm hover:text-primary transition-colors group"
+                className="block bg-background p-4 font-mono text-sm hover:bg-foreground hover:text-background transition-none duration-0"
               >
-                <Github className="h-4 w-4" />
-                <span>GitHub</span>
-                <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {link.label}
               </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 font-mono text-sm hover:text-primary transition-colors group"
-              >
-                <Linkedin className="h-4 w-4" />
-                <span>LinkedIn</span>
-                <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            </div>
+            ))}
+          </nav>
+        </section>
+
+        {/* 
+          Area: 3D_Canvas
+          Instruction: Empty container with id='canvas-container'.
+          Future behavior: undulating 3D object.
+        */}
+        <section className="md:col-span-12 h-64 md:h-96 bg-background relative border-t border-b border-border">
+          <div id="canvas-container" className="absolute inset-0 w-full h-full" />
+          {/* Visual placeholder to indicate area if empty */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="font-mono text-xs uppercase text-muted-foreground/30">[3D_Context_Layer_v1.0]</span>
           </div>
+        </section>
 
-          {/* Latest Writings Block - Large, Wide */}
-          <div className="md:col-span-6 lg:col-span-8 bg-background border border-border p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black tracking-tight">Latest Writing</h2>
+        {/* 
+          Area: Writings_Feed
+          Content: Raw, border-separated list of 5 most recent articles.
+          Strict: Title, description, monospace date ONLY.
+        */}
+        <section className="md:col-span-12 bg-background">
+          <div className="grid grid-cols-1 divide-y divide-border">
+            {latestPosts.map((post) => (
               <Link
-                href="/blog"
-                className="font-mono text-xs uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                key={post.id}
+                href={`/blog/${post.id}`}
+                className="group block p-6 md:p-8 hover:bg-foreground hover:text-background transition-none duration-0"
               >
-                View All
-                <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-            <div className="space-y-px">
-              {latestPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.id}`}
-                  className="block border border-border p-6 hover:border-primary transition-colors group"
-                >
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-4">
+                  <div className="max-w-2xl">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2 group-hover:text-background">
                       {post.title}
-                    </h3>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
+                    </h2>
+                    <p className="text-muted-foreground font-mono text-sm leading-relaxed group-hover:text-background/80">
+                      {post.summary}
+                    </p>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    {post.summary}
-                  </p>
-                  <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground">
-                    <span>{post.date}</span>
-                    <span>•</span>
-                    <span>{post.readingTime}</span>
-                    <span>•</span>
-                    <div className="flex gap-2">
-                      {post.tags.map((tag) => (
-                        <span key={tag}>#{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  <time className="font-mono text-sm whitespace-nowrap opacity-60 group-hover:opacity-100">
+                    {post.date}
+                  </time>
+                </div>
+              </Link>
+            ))}
           </div>
-        </div>
-      </main>
+        </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border mt-24">
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-xs text-muted-foreground">
-              © 2024 Amir Mohammad Najafi. Building systems that matter.
-            </p>
-            <p className="font-mono text-xs text-muted-foreground">
-              ARCHITECT → ENGINEER → HUMAN
-            </p>
-          </div>
-        </div>
-      </footer>
+      </main>
     </div>
   )
 }

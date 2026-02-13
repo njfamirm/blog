@@ -1,24 +1,29 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, Fira_Code, Vazirmatn } from 'next/font/google'
 
 import './globals.css'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 })
 
-const jetbrainsMono = JetBrains_Mono({ 
+const firaCode = Fira_Code({
   subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  variable: '--font-fira-code',
+  display: 'swap',
+})
+
+const vazirmatn = Vazirmatn({
+  subsets: ['arabic'],
+  variable: '--font-vazirmatn',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Amir Mohammad Najafi - Software Architect',
-  description: 'Senior Software Architect focused on Business Value, Scalability, and Team Dynamics. Building systems that ship.',
-  generator: 'v0.app',
+  title: 'Minimalist Architect Publication',
+  description: 'Signal over noise. Absolute digital minimalism. Form follows pure function.',
 }
 
 export default function RootLayout({
@@ -27,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={`${inter.variable} ${firaCode.variable} ${vazirmatn.variable}`}>
+      <body className="font-sans antialiased bg-background text-foreground">{children}</body>
     </html>
   )
 }
