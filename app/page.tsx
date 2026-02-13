@@ -18,14 +18,14 @@ export default function Page() {
           Content: Architecting Clarity. Shipping Value. @njfamirm
           INTERACTION: STATIC (No hover effect).
         */}
-        <section className="md:col-span-8 bg-background p-8 flex flex-col justify-between min-h-[50vh]">
+        <section className="md:col-span-8 bg-background p-6 md:p-8 flex flex-col justify-between min-h-[50vh]">
           <div className="flex-1 flex flex-col justify-center">
-            <h1 className="text-6xl md:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance">
               Architecting <br /> Clarity.
             </h1>
           </div>
           <div className="border-t border-border pt-8 mt-8">
-            <p className="text-xl md:text-2xl max-w-[60ch] leading-relaxed font-mono">
+            <p className="text-lg md:text-xl lg:text-2xl max-w-[60ch] leading-relaxed font-mono">
               Shipping Value.
               <br />
               Amir Mohammad Najafi (@njfamirm).
@@ -40,8 +40,8 @@ export default function Page() {
           Content: Minimalist grid of links. Monospace only.
           INTERACTION: INDIVIDUAL LINKS HOVER ONLY (Hard Invert).
         */}
-        <section className="md:col-span-4 bg-background flex flex-col border-l border-border h-full">
-          <div className="p-8 border-b border-border bg-background">
+        <section className="md:col-span-4 bg-background flex flex-col border-t md:border-t-0 md:border-l border-border h-full">
+          <div className="p-6 md:p-8 border-b border-border bg-background">
             <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">[CONNECT]</span>
           </div>
 
@@ -57,7 +57,7 @@ export default function Page() {
                 href={link.href}
                 target={link.label.startsWith('njfamirm@') ? '_self' : '_blank'}
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center p-8 font-mono text-base border-b border-border last:border-b-0 hover:bg-foreground hover:text-background transition-none duration-0"
+                className="flex-1 flex items-center p-6 md:p-8 font-mono text-sm md:text-base border-b border-border last:border-b-0 hover:bg-foreground hover:text-background transition-none duration-0 break-all sm:break-normal"
               >
                 {link.label}
               </a>
@@ -71,7 +71,7 @@ export default function Page() {
           INTERACTION: HOVER (Hard Invert).
         */}
         <section className="md:col-span-12 bg-background border-t border-border">
-          <div className="p-8 border-b border-border bg-background">
+          <div className="p-6 md:p-8 border-b border-border bg-background">
             <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Recent Writing</h2>
           </div>
           <div className="grid grid-cols-1 divide-y divide-border">
@@ -79,14 +79,14 @@ export default function Page() {
               <Link
                 key={post.slug}
                 href={`/en/blog/${post.slug}`}
-                className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
+                className="group block p-6 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
               >
                 <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">
                   <div className="max-w-4xl">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-balance group-hover:text-background">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-balance group-hover:text-background">
                       {post.title}
                     </h2>
-                    <p className="text-muted-foreground font-mono text-base md:text-lg leading-relaxed group-hover:text-background/80 max-w-2xl">
+                    <p className="text-muted-foreground font-mono text-sm md:text-base lg:text-lg leading-relaxed group-hover:text-background/80 max-w-2xl">
                       {post.summary}
                     </p>
                     {/* Tags */}
@@ -103,7 +103,7 @@ export default function Page() {
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col items-end gap-2 font-mono text-sm md:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
+                  <div className="flex flex-col items-start md:items-end gap-2 font-mono text-xs md:text-sm lg:text-base opacity-60 group-hover:opacity-100 group-hover:text-background whitespace-nowrap">
                     <time>{post.date}</time>
                   </div>
                 </div>
