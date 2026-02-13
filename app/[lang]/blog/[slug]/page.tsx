@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 export async function generateStaticParams() {
   const posts = getAllPostSlugs()
   return posts.map((post) => ({
+    lang: 'en',
     slug: post.params.slug,
   }))
 }
@@ -13,7 +14,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ lang: string; slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
   const post = await getPostData(slug)
@@ -30,7 +31,7 @@ export async function generateMetadata({
 export default async function BlogPostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ lang: string; slug: string }>
 }) {
   const { slug } = await params
   const post = await getPostData(slug)
@@ -46,7 +47,7 @@ export default async function BlogPostPage({
             </Link>
             <nav className="flex items-center gap-8">
               <Link
-                href="/blog"
+                href="/en/blog"
                 className="font-mono text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-none duration-0 px-3 py-2 border border-transparent hover:border-foreground"
               >
                 Writing
@@ -60,7 +61,7 @@ export default async function BlogPostPage({
       <article className="container mx-auto px-6 py-16">
         {/* Back Link */}
         <Link
-          href="/blog"
+          href="/en/blog"
           className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:bg-foreground hover:text-background transition-none duration-0 px-3 py-2 border border-transparent hover:border-foreground mb-12"
         >
           <ArrowLeft className="h-3 w-3" />
@@ -119,7 +120,7 @@ export default async function BlogPostPage({
         {/* Related Articles / CTA */}
         <div className="max-w-2xl mx-auto mt-24 pt-12 border-t border-border">
           <Link
-            href="/blog"
+            href="/en/blog"
             className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-mono text-sm uppercase tracking-wider hover:bg-background hover:text-foreground transition-none duration-0 border border-foreground"
           >
             Read More Articles

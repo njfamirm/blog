@@ -15,7 +15,7 @@ export default function BlogPage() {
             </Link>
             <nav className="flex items-center gap-8">
               <Link
-                href="/blog"
+                href="/en/blog"
                 className="font-mono text-sm uppercase tracking-wider text-primary"
               >
                 Writing
@@ -51,7 +51,7 @@ export default function BlogPage() {
           {blogPosts.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={`/en/blog/${post.slug}`}
               className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
             >
               <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">

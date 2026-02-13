@@ -78,7 +78,7 @@ export default function Page() {
             {latestPosts.map((post) => (
               <Link
                 key={post.slug}
-                href={`/blog/${post.slug}`}
+                href={`/en/blog/${post.slug}`}
                 className="group block p-8 md:p-12 hover:bg-foreground hover:text-background transition-none duration-0"
               >
                 <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-6">
