@@ -1,97 +1,111 @@
 {
   "project_manifesto": {
     "title": "Minimalist Architect Publication",
-    "brand_identity": "njfamirm",
-    "persona": "Amir Mohammad Najafi (@njfamirm) - Software Architect & Tech Lead at Nexim."
+    "brand_identity": "@njfamirm",
+    "base_url": "https://www.njfamirm.ir",
+    "persona": "Amir Mohammad Najafi (@njfamirm) - Software Architect & Tech Lead at Nexim.",
+    "slogan": "Architecting Clarity. Shipping Value.",
+    "mission_statement": "Signal over noise. Absolute digital minimalism. Form follows pure function."
   },
   "content_architecture": {
     "source": {
       "provider": "Local Markdown Files",
       "path": "content/blog/*.md"
     },
+    "routing": {
+      "prefix": "/en",
+      "blog_root": "/en/blog",
+      "blog_detail": "/en/blog/[slug]"
+    },
     "schema": {
       "frontmatter": {
-        "title": "String (Required) - The main headline.",
-        "summary": "String (Required) - A concise one-sentence description.",
-        "date": "YYYY-MM-DD (Required) - Publication date.",
-        "tags": "Array<String> (Required) - List of relevant topics."
+        "title": "String (Required)",
+        "summary": "String (Required) - Concise description.",
+        "date": "YYYY-MM-DD (Required)",
+        "tags": "Array<String> (Required)",
+        "canonical": "URL (Optional)"
       }
     }
   },
   "design_architecture": {
     "theme": {
-      "palette": "Strict Monochrome for UI. Pure Black (#000000), Pure White (#FFFFFF), and Zinc-Grays. Syntax highlighting in blog code blocks is allowed to use a vibrant, high-contrast color palette for readability.",
-      "mode": "System-preference (prefers-color-scheme). Automatic dark/light mode switching based on user's system settings. Syntax highlighting must be theme-aware (higher contrast in light mode)."
+      "palette": "Strict Monochrome. Pure Black (#000000) for Background (Dark), Pure White (#FFFFFF) for Background (Light). Use Zinc-Zinc for grays (Zinc-50 to Zinc-900).",
+      "mode": "System-preference-aware (prefers-color-scheme). Automatic switching between Light and Dark themes."
     },
     "typography": {
-      "primary": "Inter for body text.",
-      "mono": "Fira Code for ALL headings (h1, h2, etc.), technical labels, dates, metadata, and code blocks.",
-      "STRICT_RULE": "NO Persian fonts. NO Vazirmatn. Use pure modern sans-serif and monospace fonts."
+      "primary": "Inter for body text and long-form paragraphs.",
+      "mono": "Fira Code for ALL technical labels, dates, metadata, code blocks, navigation links, and most headings (h1, h2, etc.).",
+      "STRICT_RULE": "NO Persian fonts. No Vazirmatn. Use only Inter and Fira Code."
     },
     "scrollbar": {
-      "style": "Minimal custom scrollbar (6px width). Monochrome color matching borders.",
-      "behavior": "Hidden track, border-colored thumb with muted-foreground hover state."
+      "style": "Minimal custom scrollbar (6px width). Monochrome Zinc-800/Zinc-200 thumb.",
+      "behavior": "Hidden track, 3px rounded thumb that changes brightness on hover."
     },
     "background_texture": {
-      "type": "Blueprint Grid",
-      "elements": [
-        "1px grid lines with 40px spacing.",
-        "High-definition SVG Hatch Pattern (45-degree diagonal lines) at 0.05 opacity. Must be sharp."
+      "type": "Engineering Blueprint Grid",
+      "layers": [
+        {
+          "id": "grid",
+          "description": "40px x 40px grid of subtle 1px lines (Zinc-200 in Light / Zinc-800 in Dark). 0.2 opacity.",
+          "mask": "Linear gradient fade at the bottom."
+        },
+        {
+          "id": "hatch",
+          "description": "45-degree diagonal repeating linear gradient (0.5px foreground, 4px transparent). 0.03 opacity. Extremely subtle texture."
+        }
       ]
     },
     "layout": {
-      "system": "Bento Grid implemented via strict CSS Grid.",
-      "constraints": "Max-width 1536px (2xl). Centered. 1px explicit borders on every block.",
-      "padding": "Consistent p-8 for all boxes."
+      "system": "Bento Grid implemented via strict CSS Grid with 1px explicit borders (gap-px).",
+      "constraints": "Max-width 1536px (2xl). Centered horizontally. Strict 0px border-radius (sharp edges).",
+      "padding": "Consistent p-6 to p-12 for distinct boxes. Paragraphs in blog content use max-width 2xl (max-w-2xl)."
     }
   },
   "interaction_system": {
-    "brightness_button_design": {
-      "description": "All interactive elements use reversed color hover effect (brightness button pattern).",
-      "implementation": "hover:bg-foreground hover:text-background transition-none duration-0",
-      "applies_to": [
-        "Navigation links",
-        "Article cards",
-        "Identity links (GitHub, Medium, Twitter, Email)",
-        "Back navigation buttons",
-        "CTA buttons",
-        "Blog content links",
-        "All clickable elements throughout the app"
-      ]
-    },
     "hover_logic": {
-      "target": "INTERACTIVE_ELEMENTS_ONLY (Article cards, buttons, and all links).",
-      "static_blocks": "The main Statement block and other non-link containers must remain STATIC. No hover effects.",
-      "effect": "Brightness Button Design - Complete color reversal. Background becomes foreground color, text becomes background color. Instant flip (duration-0). No fade, no transition, no opacity changes."
-    }
+      "effect": "Brightness Button Design (Hard Invert). On hover, background becomes foreground color, text becomes background color. Instant flip (duration-0, transition-none).",
+      "target": "Interactive elements only: Navigation links, Identity links, Writing cards, CTA buttons."
+    },
+    "selection": "Selection color must be inverted: background=foreground, text=background."
   },
   "page_structure": {
     "homepage": {
-      "grid_areas": [
+      "sections": [
         {
-          "id": "hero_statement",
-          "content": "Architecting Clarity. Shipping Value. @njfamirm",
-          "style": "Massive typography, takes up significant grid space."
-        },
-        {
-          "id": "writings_log",
-          "content": "A vertical list of the 5 most recent articles. Each item must show: Title, one-line summary, and Monospace metadata (Date/Tags).",
-          "interactive": true
+          "id": "hero",
+          "layout": "col-span-8",
+          "content": {
+            "h1": "Architecting Clarity.",
+            "statement": "Shipping Value. Amir Mohammad Najafi (@njfamirm). Software Architect & Tech Lead at Nexim."
+          },
+          "style": "Massive typography (text-8xl/text-[8rem]), uppercase, font-black (Inter), tracking-tighter."
         },
         {
           "id": "identity_links",
-          "content": "linkedin.com/in/njfamirm-me, github.com/njfamirm, medium.com/@njfamirm, njfamirm@gmail.com. Monospace text links only.",
-          "interactive": true
+          "layout": "col-span-4",
+          "content": "[CONNECT] label followed by links: linkedin.com/in/njfamirm-me, github.com/njfamirm, medium.com/@njfamirm, njfamirm@gmail.com.",
+          "style": "Vertical list, font-mono, gap-0, each link takes full width."
+        },
+        {
+          "id": "writings_log",
+          "layout": "col-span-12",
+          "content": "Recent Writing log. Lists top 5 articles with Title, Summary, Tags (#), and Date.",
+          "style": "Vertical list, divide-y, large padding (p-12), group-hover inversion."
         }
       ]
+    },
+    "blog_detail": {
+      "header": "Minimal header with @njfamirm and 'Writing' link.",
+      "meta": "Date, Canonical URL (if exists), Tags with # prefix.",
+      "footer": "Copyright year, name, and slogans: 'Building systems that matter.' and 'ARCHITECT → ENGINEER → HUMAN'."
     }
   },
   "strict_negative_constraints": [
-    "FATAL ERROR if ANY 3D elements or WebGL code is included.",
-    "FATAL ERROR if non-clickable blocks (like the hero statement) have hover effects.",
-    "FATAL ERROR if Search, Portfolio, or Skills sections are added.",
+    "FATAL ERROR if ANY 3D, WebGL, or Canvas elements are included.",
+    "FATAL ERROR if non-clickable blocks have hover effects.",
     "FATAL ERROR if UI elements (except code blocks) use any colors other than Black, White, or Zinc-Grays.",
-    "FATAL ERROR if there is any transition/fade delay on hover states.",
-    "FATAL ERROR if Persian fonts are present."
+    "FATAL ERROR if Persian fonts or RTL support is added.",
+    "FATAL ERROR if border-radius is more than 0px (except scrollbar thumb).",
+    "FATAL ERROR if transitions/animations are added to hover states (must be instant)."
   ]
 }
