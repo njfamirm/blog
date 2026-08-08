@@ -1,5 +1,5 @@
 ---
-title: "[WIP] The Architecture of Sanity: Shielding Your Team from Software Entropy"
+title: "The Architecture of Sanity: Shielding Your Team from Software Entropy"
 summary: "Software inherently degrades into chaos. Protect your system’s structural integrity by enforcing strict boundaries, neutralizing team cognitive biases, and strategically governing AI code generation."
 date: 2026-02-25
 tags:
