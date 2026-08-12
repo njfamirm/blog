@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM BURNER TUNNEL | Zero-Server P2P Encryption</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #030712;
+            color: #22d3ee;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(6, 182, 212, 0.03), rgba(236, 72, 153, 0.02), rgba(16, 185, 129, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid #06b6d4;
+            color: #22d3ee;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #06b6d4;
+            color: #000;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            word-break: break-word;
+        }
+
+        .chat-bubble.me {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #67e8f9;
+            align-self: flex-end;
+        }
+
+        .chat-bubble.peer {
+            background: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            color: #f472b6;
+            align-self: flex-start;
+        }
+
+        /* Cyber Toast Notification HUD Banner */
+        #toast-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #toast-banner.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* High-Definition Scannable QR Code Styling */
+        .qrcode-box {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.5);
+            border: 4px solid #06b6d4;
+        }
+
+        .qrcode-box img, .qrcode-box canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.4); border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Sleek HUD Toast Notification Banner -->
+    <div id="toast-banner" class="hud-card px-6 py-3 rounded-lg border border-cyan-400 flex items-center gap-3 text-xs font-bold shadow-[0_0_30px_rgba(6,182,212,0.4)]">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-base text-cyan-400"></i>
+        <span id="toast-text" class="text-cyan-200 uppercase tracking-wider">NOTIFICATION MESSAGE</span>
+    </div>
+
+    <!-- Giant QR Code Modal Overlay -->
+    <div id="qr-modal" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center hidden p-4">
+        <div class="hud-card p-6 md:p-8 rounded-xl max-w-lg w-full text-center flex flex-col items-center border-cyan-400">
+            <div class="flex items-center justify-between w-full border-b border-cyan-900/60 pb-3 mb-6">
+                <span class="text-xs font-bold uppercase tracking-widest text-cyan-300">
+                    <i class="fa-solid fa-qrcode"></i> HIGH-DEFINITION SCANNABLE QR CODE
+                </span>
+                <button onclick="closeQrModal()" class="text-xs text-red-400 hover:text-white font-bold">
+                    CLOSE [✕]
+                </button>
+            </div>
+
+            <div id="modal-qrcode-target" class="qrcode-box mb-6"></div>
+
+            <p class="text-xs text-cyan-400 mb-4 font-mono">
+                Point your mobile phone camera or scanner at the screen to scan the WebRTC token instantly!
+            </p>
+
+            <button onclick="closeQrModal()" class="btn-cyber w-full py-2.5 text-xs font-bold uppercase">
+                DONE SCANNING [BACK TO WORKSPACE]
+            </button>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-cyan-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                ⚛️
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-cyan-300 uppercase">QUANTUM BURNER TUNNEL</h1>
+                <p class="text-xs text-cyan-500/80 uppercase">ZERO-SERVER P2P // INSTANT WEBRTC DATA STREAM</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div id="connection-badge" class="px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                <span>TUNNEL UNCONNECTED</span>
+            </div>
+            <button id="nuke-btn" onclick="nukeTunnel()" class="btn-cyber btn-danger px-3 py-1 text-xs uppercase hidden">
+                <i class="fa-solid fa-bomb"></i> NUKE TUNNEL
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-6xl flex-1 my-6 grid grid-cols-1 md:grid-cols-12 gap-6 z-20">
+
+        <!-- SETUP & SIGNALING PANEL (Shown when un-connected) -->
+        <div id="setup-panel" class="md:col-span-12 hud-card p-6 md:p-8 rounded-xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between border-b border-cyan-900/50 pb-4 mb-6">
+                    <h2 class="text-sm font-bold uppercase text-cyan-300 tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired"></i> STEP 1: INITIALIZE PEER DISCOVERY
+                    </h2>
+                    <span class="text-xs text-cyan-500">[100% P2P - CANDIDATE-GATHERED TOKENS]</span>
+                </div>
+
+                <!-- Mode Selection -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <button onclick="setMode('host')" id="mode-host-btn" class="btn-cyber p-6 rounded-lg text-left flex flex-col justify-between border-cyan-400 bg-cyan-500/20">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl">📡</span>
+                            <span class="text-xs bg-cyan-500/30 text-cyan-200 px-2 py-0.5 rounded">HOST MODE</span>
+                        </div>
+                        <h3 class="text-base font-bold text-cyan-200">CREATE NEW QUANTUM TUNNEL</h3>
+                        <p class="text-xs text-cyan-400/70 mt-2">Generate a full ICE-candidate SDP offer token and scannable QR code.</p>
+                    </button>
+
+                    <button onclick="setMode('guest')" id="mode-guest-btn" class="btn-cyber p-6 rounded-lg text-left flex flex-col justify-between opacity-60 hover:opacity-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl">🔗</span>
+                            <span class="text-xs bg-pink-500/30 text-pink-200 px-2 py-0.5 rounded">GUEST MODE</span>
+                        </div>
+                        <h3 class="text-base font-bold text-pink-300">JOIN EXISTING TUNNEL</h3>
+                        <p class="text-xs text-pink-400/70 mt-2">Paste or scan the offer token received from your host peer.</p>
+                    </button>
+                </div>
+
+                <!-- Route diagnostics: tells the user UP FRONT whether the token they are
+                     about to share can actually cross networks, instead of the link
+                     silently failing to connect minutes later. Shared by both modes. -->
+                <div class="border border-cyan-900/60 bg-black/60 rounded px-3 py-2 mb-6">
+                    <span class="text-[10px] uppercase text-cyan-500 font-bold block mb-1">NETWORK ROUTE DIAGNOSTICS:</span>
+                    <div id="ice-progress" class="text-[10px] font-mono text-cyan-400/80">IDLE</div>
+                </div>
+
+                <!-- HOST SIGNALING WORKFLOW -->
+                <div id="workflow-host" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <div class="lg:col-span-7">
+                            <label class="block text-xs uppercase text-cyan-400 mb-2">[1. YOUR OFFER TOKEN] Send this token or QR code to your peer:</label>
+                            <div class="relative">
+                                <textarea id="host-offer-token" readonly class="w-full h-32 bg-black/80 border border-cyan-800 text-cyan-300 text-xs p-3 font-mono rounded resize-none select-all" placeholder="Gathering network ICE candidates & generating offer token..."></textarea>
+                                <button onclick="copyToken('host-offer-token')" class="absolute top-2 right-2 btn-cyber px-3 py-1 text-xs">
+                                    <i class="fa-solid fa-copy"></i> COPY TOKEN
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Large Scannable QR Code Display Box -->
+                        <div class="lg:col-span-5 flex flex-col items-center justify-center p-4 border border-cyan-900/60 bg-black/60 rounded-lg text-center">
+                            <span class="text-xs font-bold text-cyan-300 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-qrcode"></i> SCANNABLE OFFER QR CODE
+                            </span>
+                            <div id="host-offer-qrcode" class="qrcode-box mb-3 min-h-[220px] min-w-[220px] flex items-center justify-center">
+                                <span class="text-xs text-gray-400 animate-pulse">Gathering ICE...</span>
+                            </div>
+                            <button onclick="openQrModal('host-offer-qrcode')" class="btn-cyber px-3 py-1 text-[11px] font-bold uppercase w-full">
+                                <i class="fa-solid fa-expand"></i> EXPAND FULLSCREEN QR
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-cyan-900/40 pt-4">
+                        <label class="block text-xs uppercase text-cyan-400 mb-2">[2. PEER ANSWER TOKEN] Paste the answer token from your peer here:</label>
+                        <textarea id="host-answer-input" class="w-full h-20 bg-black/80 border border-cyan-800 text-cyan-300 text-xs p-3 font-mono rounded resize-none focus:border-cyan-400 outline-none" placeholder="Paste your peer's Answer Token here..."></textarea>
+                        <button onclick="connectHost()" class="mt-3 btn-cyber w-full py-3 font-bold text-sm uppercase tracking-wider">
+                            <i class="fa-solid fa-plug"></i> ESTABLISH SECURE P2P TUNNEL
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GUEST SIGNALING WORKFLOW -->
+                <div id="workflow-guest" class="space-y-6 hidden">
+                    <div>
+                        <label class="block text-xs uppercase text-pink-400 mb-2">[1. HOST OFFER TOKEN] Paste the token received from the host:</label>
+                        <textarea id="guest-offer-input" class="w-full h-20 bg-black/80 border border-pink-800 text-pink-300 text-xs p-3 font-mono rounded resize-none focus:border-pink-400 outline-none" placeholder="Paste host's Offer Token here..."></textarea>
+                        <button onclick="generateGuestAnswer()" class="mt-2 btn-cyber w-full py-2.5 text-xs uppercase font-bold border-pink-500 text-pink-300">
+                            GENERATE ANSWER TOKEN & QR CODE ⚡
+                        </button>
+                    </div>
+
+                    <div id="guest-answer-section" class="hidden border-t border-pink-900/40 pt-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-7">
+                                <label class="block text-xs uppercase text-pink-400 mb-2">[2. YOUR ANSWER TOKEN] Send this token back to the host:</label>
+                                <div class="relative">
+                                    <textarea id="guest-answer-token" readonly class="w-full h-32 bg-black/80 border border-pink-800 text-pink-300 text-xs p-3 font-mono rounded resize-none select-all" placeholder="Gathering network ICE candidates & generating answer token..."></textarea>
+                                    <button onclick="copyToken('guest-answer-token')" class="absolute top-2 right-2 btn-cyber border-pink-500 text-pink-300 px-3 py-1 text-xs">
+                                        <i class="fa-solid fa-copy"></i> COPY ANSWER
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-5 flex flex-col items-center justify-center p-4 border border-pink-900/60 bg-black/60 rounded-lg text-center">
+                                <span class="text-xs font-bold text-pink-300 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <i class="fa-solid fa-qrcode"></i> SCANNABLE ANSWER QR CODE
+                                </span>
+                                <div id="guest-answer-qrcode" class="qrcode-box mb-3 min-h-[220px] min-w-[220px] flex items-center justify-center">
+                                    <span class="text-xs text-gray-400 animate-pulse">Gathering ICE...</span>
+                                </div>
+                                <button onclick="openQrModal('guest-answer-qrcode')" class="btn-cyber border-pink-500 text-pink-300 px-3 py-1 text-[11px] font-bold uppercase w-full">
+                                    <i class="fa-solid fa-expand"></i> EXPAND FULLSCREEN QR
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-yellow-400/80 mt-3 animate-pulse">
+                            ⏳ Awaiting host to paste answer token to complete connection...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Footer Note -->
+            <div class="border-t border-cyan-900/50 pt-4 mt-6 flex items-center justify-between text-xs text-cyan-500/70">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i> END-TO-END WEBRTC DATACHANNEL ENCRYPTION
+                </span>
+                <span>TUNNEL AUTO-DESTRUCTS ON TAB CLOSE</span>
+            </div>
+        </div>
+
+        <!-- CONNECTED WORKSPACE PANEL (Shown when P2P connection active) -->
+        <div id="workspace-panel" class="md:col-span-12 hud-card p-6 rounded-xl flex-col justify-between hidden">
+            <!-- Top Status Toolbar -->
+            <div class="flex items-center justify-between border-b border-cyan-900/50 pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">[P2P QUANTUM TUNNEL ACTIVE]</span>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-cyan-400">
+                    <span id="speed-meter"><i class="fa-solid fa-gauge-high"></i> P2P STREAM</span>
+                    <span id="latency-meter"><i class="fa-solid fa-signal"></i> DIRECT TUNNEL</span>
+                </div>
+            </div>
+
+            <!-- Main Interactive Split View -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-[500px]">
+                
+                <!-- Chat Window (7 Cols) -->
+                <div class="md:col-span-7 flex flex-col justify-between border border-cyan-900/60 bg-black/60 rounded-lg p-4">
+                    <div class="flex items-center justify-between border-b border-cyan-900/40 pb-2 mb-3 text-xs text-cyan-400">
+                        <span><i class="fa-solid fa-comments"></i> ENCRYPTED P2P CHAT STREAM</span>
+                        <button onclick="clearChat()" class="text-[10px] text-red-400 hover:underline">PURGE LOGS</button>
+                    </div>
+
+                    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-2 flex flex-col">
+                        <div class="text-center text-[10px] text-cyan-500/60 py-2 border-b border-cyan-900/20">
+                            --- ENCRYPTED P2P TUNNEL ESTABLISHED ---
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex gap-2">
+                        <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Type instant P2P message..." class="flex-1 bg-black border border-cyan-800 text-cyan-200 text-xs px-3 py-2.5 rounded outline-none focus:border-cyan-400">
+                        <button onclick="sendChatMessage()" class="btn-cyber px-4 py-2 text-xs font-bold">
+                            SEND <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- File Transfer & Vault Window (5 Cols) -->
+                <div class="md:col-span-5 flex flex-col justify-between border border-cyan-900/60 bg-black/60 rounded-lg p-4">
+                    <div class="border-b border-cyan-900/40 pb-2 mb-3 text-xs text-cyan-400 flex items-center justify-between">
+                        <span><i class="fa-solid fa-file-arrow-up"></i> DIRECT FILE STREAM</span>
+                        <span class="text-[10px] text-emerald-400">UNLIMITED SIZE</span>
+                    </div>
+
+                    <!-- Dropzone -->
+                    <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="flex-1 border-2 border-dashed border-cyan-800 rounded-lg flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:border-cyan-400 transition-colors bg-cyan-950/10">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-400 mb-2"></i>
+                        <span class="text-xs font-bold text-cyan-200">DROP FILE HERE OR CLICK TO CHOOSE</span>
+                        <span class="text-[10px] text-cyan-500/70 mt-1">Streams binary chunks directly from RAM to RAM</span>
+                        <input type="file" id="file-input" onchange="handleFileSelect(event)" class="hidden">
+                    </div>
+
+                    <!-- File Transfer Progress -->
+                    <div id="transfer-progress-box" class="mt-4 hidden border border-cyan-800 p-3 rounded bg-black/80">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span id="transfer-filename" class="truncate font-bold text-cyan-200">file.bin</span>
+                            <span id="transfer-percent" class="text-cyan-400 font-mono">0%</span>
+                        </div>
+                        <div class="w-full bg-cyan-950 h-2 rounded overflow-hidden">
+                            <div id="transfer-progress-bar" class="bg-cyan-400 h-full w-0 transition-all duration-100"></div>
+                        </div>
+                    </div>
+
+                    <!-- Received Files Download List -->
+                    <div class="mt-4">
+                        <span class="text-[10px] uppercase text-cyan-500 block mb-2">RECEIVED VAULT FILES:</span>
+                        <div id="received-files-list" class="space-y-2 max-h-28 overflow-y-auto pr-1">
+                            <div class="text-[10px] text-cyan-600 italic">No files received yet.</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Stats Bar -->
+    <footer class="w-full max-w-6xl py-3 border-t border-cyan-900/40 flex items-center justify-between text-xs text-cyan-500/70 z-20">
+        <span>QUANTUM BURNER TUNNEL v5.0 // BULLETPROOF ICE CANDIDATE SIGNALING</span>
+        <span>ICE STUN: Google STUN Public</span>
+    </footer>
+
+    <script>
+        // --- WEBRTC SDP ENCODING & PARSING ---
+
+        // A datachannel offer carrying gathered ICE candidates runs 2-5KB. Raw base64
+        // of that overflows a QR code (byte mode tops out at 2953 bytes even at the
+        // lowest error correction), so the code either failed to render or came out too
+        // dense to scan. Deflate first — SDP is extremely repetitive and compresses to
+        // roughly a quarter of its size, which lands comfortably inside a scannable QR.
+        const TOKEN_PREFIX = 'QBT1:';
+
+        async function encodeSDP(sdpObj) {
+            if (!sdpObj || !sdpObj.sdp) return '';
+            const json = JSON.stringify({ type: sdpObj.type, sdp: sdpObj.sdp });
+
+            if (typeof CompressionStream === 'undefined') {
+                return btoa(unescape(encodeURIComponent(json)));
+            }
+
+            const stream = new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+            const packed = new Uint8Array(await new Response(stream).arrayBuffer());
+
+            let binary = '';
+            for (let i = 0; i < packed.length; i++) binary += String.fromCharCode(packed[i]);
+            return TOKEN_PREFIX + btoa(binary);
+        }
+
+        async function decodeSDP(tokenStr) {
+            if (!tokenStr) return null;
+            const clean = tokenStr.replace(/[\s\r\n]+/g, '');
+
+            if (clean.startsWith(TOKEN_PREFIX)) {
+                const binary = atob(clean.slice(TOKEN_PREFIX.length));
+                const packed = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) packed[i] = binary.charCodeAt(i);
+
+                const stream = new Blob([packed]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+                const json = await new Response(stream).text();
+                return buildSessionDescription(JSON.parse(json));
+            }
+
+            // Uncompressed tokens (older links, or a browser without CompressionStream).
+            return buildSessionDescription(JSON.parse(decodeURIComponent(escape(atob(clean)))));
+        }
+
+        function buildSessionDescription(parsed) {
+
+            let sdpType = parsed.type;
+            if (!sdpType && parsed.t) {
+                sdpType = (parsed.t === 'o' ? 'offer' : 'answer');
+            }
+
+            let sdpText = parsed.sdp || parsed;
+            if (typeof sdpText === 'object' && sdpText.sdp) {
+                sdpText = sdpText.sdp;
+            }
+
+            const SessionDesc = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
+            if (SessionDesc) {
+                return new SessionDesc({
+                    type: sdpType,
+                    sdp: sdpText
+                });
+            }
+            return {
+                type: sdpType,
+                sdp: sdpText
+            };
+        }
+
+        // --- HUD Toast Banner Utility ---
+        function showToast(text, type = 'info') {
+            const banner = document.getElementById('toast-banner');
+            const txt = document.getElementById('toast-text');
+            const icon = document.getElementById('toast-icon');
+
+            txt.textContent = text;
+
+            if (type === 'error') {
+                icon.className = "fa-solid fa-circle-exclamation text-base text-red-500";
+                banner.style.borderColor = "#ef4444";
+            } else if (type === 'success') {
+                icon.className = "fa-solid fa-circle-check text-base text-emerald-400";
+                banner.style.borderColor = "#10b981";
+            } else if (type === 'warning') {
+                icon.className = "fa-solid fa-triangle-exclamation text-base text-yellow-400";
+                banner.style.borderColor = "#f59e0b";
+            } else {
+                icon.className = "fa-solid fa-circle-info text-base text-cyan-400";
+                banner.style.borderColor = "#06b6d4";
+            }
+
+            banner.classList.add('show');
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 3500);
+        }
+
+        // --- WebRTC State ---
+        let pc = null;
+        let dataChannel = null;
+        let mode = 'host';
+        let currentActiveQrText = '';
+
+        // File Transfer State
+        let incomingFileMeta = null;
+        let incomingFileChunks = [];
+        let incomingFileReceivedSize = 0;
+
+        // Sound Synthesizer FX
+        let audioCtx = null;
+        function playTone(freq, type = 'sine', duration = 0.15) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // STUN alone only works when at least one side sits behind a cone NAT. On
+        // symmetric NAT — which is what virtually every mobile carrier and most
+        // corporate networks hand out — the peers learn each other's addresses and
+        // still cannot reach them. That is the single biggest reason a hole-punched
+        // link "just never connects". A TURN relay is the fallback that makes it work
+        // regardless of NAT type, so one is included over both UDP and TCP/443
+        // (TCP/443 also survives networks that block UDP outright).
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun.cloudflare.com:3478' },
+                {
+                    urls: [
+                        'turn:openrelay.metered.ca:80',
+                        'turn:openrelay.metered.ca:443',
+                        'turn:openrelay.metered.ca:443?transport=tcp'
+                    ],
+                    username: 'openrelayproject',
+                    credential: 'openrelayproject'
+                }
+            ],
+            iceCandidatePoolSize: 4
+        };
+
+        // Gathering budget. The old 1200ms cap almost guaranteed failure: a STUN
+        // round trip alone often exceeds it on mobile, and a TURN allocation always
+        // does, so the emitted token typically contained nothing but LAN candidates —
+        // which can only ever connect two devices on the same Wi-Fi.
+        const ICE_MAX_WAIT_MS = 9000;
+        const ICE_EARLY_EXIT_MS = 2500;
+
+        // Resolves when gathering completes, or early once we hold candidates good
+        // enough to cross a NAT, or at the hard deadline — whichever comes first.
+        function waitForICEGathering(peerConn) {
+            return new Promise((resolve) => {
+                if (peerConn.iceGatheringState === 'complete') return resolve();
+
+                const started = performance.now();
+                let sawReflexive = false;
+                let sawRelay = false;
+                let settled = false;
+
+                const finish = () => {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(hardTimer);
+                    clearInterval(poll);
+                    peerConn.removeEventListener('icegatheringstatechange', onState);
+                    peerConn.removeEventListener('icecandidate', onCandidate);
+                    updateIceDiagnostics(sawReflexive, sawRelay);
+                    resolve();
+                };
+
+                const onState = () => {
+                    if (peerConn.iceGatheringState === 'complete') finish();
+                };
+
+                const onCandidate = (e) => {
+                    if (!e.candidate) return finish(); // null candidate == gathering done
+                    const c = e.candidate.candidate || '';
+                    if (c.includes('typ srflx')) sawReflexive = true;
+                    if (c.includes('typ relay')) sawRelay = true;
+                    setIceProgress(sawReflexive, sawRelay);
+                };
+
+                // Once a relay candidate exists the link is guaranteed routable, so
+                // there is no point waiting out the remaining server round trips.
+                const poll = setInterval(() => {
+                    const elapsed = performance.now() - started;
+                    if (sawRelay && elapsed > ICE_EARLY_EXIT_MS) finish();
+                }, 200);
+
+                const hardTimer = setTimeout(finish, ICE_MAX_WAIT_MS);
+
+                peerConn.addEventListener('icegatheringstatechange', onState);
+                peerConn.addEventListener('icecandidate', onCandidate);
+            });
+        }
+
+        function setIceProgress(srflx, relay) {
+            const el = document.getElementById('ice-progress');
+            if (!el) return;
+            el.textContent = `GATHERING… PUBLIC ADDR: ${srflx ? 'YES' : 'pending'} · RELAY: ${relay ? 'YES' : 'pending'}`;
+        }
+
+        function updateIceDiagnostics(srflx, relay) {
+            const el = document.getElementById('ice-progress');
+            if (!el) return;
+
+            if (relay) {
+                el.textContent = 'READY — relay path available, this token works across any network.';
+                el.className = 'text-[10px] font-mono text-emerald-400';
+            } else if (srflx) {
+                el.textContent = 'READY — public address found but no relay. Works unless both peers sit behind symmetric NAT.';
+                el.className = 'text-[10px] font-mono text-yellow-400';
+            } else {
+                el.textContent = 'WARNING — only local network addresses were gathered. This token can only connect two devices on the SAME Wi-Fi.';
+                el.className = 'text-[10px] font-mono text-red-400';
+            }
+        }
+
+        // Without this the UI simply sat on "connecting" forever with no explanation.
+        function attachConnectionDiagnostics(peerConn) {
+            peerConn.oniceconnectionstatechange = () => {
+                const state = peerConn.iceConnectionState;
+                if (state === 'connected' || state === 'completed') {
+                    showToast("ICE CONNECTION ESTABLISHED!", "success");
+                } else if (state === 'failed') {
+                    showToast("CONNECTION FAILED — no route between the two devices. Try again, or move one peer onto a different network.", "error");
+                } else if (state === 'disconnected') {
+                    showToast("LINK DROPPED — network changed or peer went away.", "warning");
+                }
+            };
+
+            peerConn.onicecandidateerror = (e) => {
+                // 701 means a STUN/TURN server was unreachable — worth surfacing,
+                // because it usually means that server is blocked on this network.
+                if (e.errorCode === 701) {
+                    console.warn('ICE server unreachable:', e.url, e.errorText);
+                }
+            };
+        }
+
+        function setMode(m) {
+            playTone(440);
+            mode = m;
+            document.getElementById('mode-host-btn').className = `btn-cyber p-6 rounded-lg text-left flex flex-col justify-between ${m==='host'?'border-cyan-400 bg-cyan-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('mode-guest-btn').className = `btn-cyber p-6 rounded-lg text-left flex flex-col justify-between ${m==='guest'?'border-pink-400 bg-pink-500/20':'opacity-60 hover:opacity-100'}`;
+
+            if (m === 'host') {
+                document.getElementById('workflow-host').classList.remove('hidden');
+                document.getElementById('workflow-guest').classList.add('hidden');
+                initHostWebRTC();
+            } else {
+                document.getElementById('workflow-host').classList.add('hidden');
+                document.getElementById('workflow-guest').classList.remove('hidden');
+                initGuestWebRTC();
+            }
+        }
+
+        // Render Crisp Scannable QR Code
+        // A QR code in byte mode at the lowest error correction holds 2953 bytes, hard
+        // stop. Past that the library throws and the box was simply left blank, giving
+        // no hint that the QR path was unusable — fall back to telling the user to copy
+        // the token by hand.
+        const QR_BYTE_LIMIT = 2900;
+
+        function renderQRCode(containerId, text, size = 210) {
+            if (!text) return;
+            currentActiveQrText = text;
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if (text.length > QR_BYTE_LIMIT) {
+                container.innerHTML = `<span class="text-[10px] text-yellow-400 p-3 text-center leading-snug">
+                    TOKEN IS ${text.length} CHARS — TOO LARGE FOR A SCANNABLE QR CODE.<br>USE "COPY TOKEN" INSTEAD.
+                </span>`;
+                return;
+            }
+
+            try {
+                new QRCode(container, {
+                    text: text,
+                    width: size,
+                    height: size,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+            } catch (e) {
+                container.innerHTML = `<span class="text-[10px] text-red-400 p-3 text-center">QR RENDER FAILED — USE "COPY TOKEN".</span>`;
+            }
+        }
+
+        function openQrModal(sourceContainerId) {
+            if (!currentActiveQrText) return;
+            playTone(600);
+            const modal = document.getElementById('qr-modal');
+            const target = document.getElementById('modal-qrcode-target');
+            target.innerHTML = '';
+            new QRCode(target, {
+                text: currentActiveQrText,
+                width: 320,
+                height: 320,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L
+            });
+            modal.classList.remove('hidden');
+        }
+
+        function closeQrModal() {
+            document.getElementById('qr-modal').classList.add('hidden');
+        }
+
+        async function updateHostToken() {
+            if (!pc || !pc.localDescription) return;
+            const token = await encodeSDP(pc.localDescription);
+            if (token) {
+                document.getElementById('host-offer-token').value = token;
+                renderQRCode('host-offer-qrcode', token);
+            }
+        }
+
+        async function updateGuestToken() {
+            if (!pc || !pc.localDescription) return;
+            const token = await encodeSDP(pc.localDescription);
+            if (token) {
+                document.getElementById('guest-answer-token').value = token;
+                renderQRCode('guest-answer-qrcode', token);
+            }
+        }
+
+        // Host Mode Initialization
+        async function initHostWebRTC() {
+            if (pc) pc.close();
+            pc = new RTCPeerConnection(rtcConfig);
+
+            dataChannel = pc.createDataChannel('quantum-channel');
+            setupDataChannelHandlers(dataChannel);
+
+            attachConnectionDiagnostics(pc);
+
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            // Wait for network candidates to gather before outputting final token
+            setIceProgress(false, false);
+            showToast("GATHERING NETWORK ROUTES… THIS TAKES A FEW SECONDS", "info");
+            await waitForICEGathering(pc);
+            await updateHostToken();
+            showToast("HOST OFFER TOKEN & QR READY", "info");
+        }
+
+        // Host Connect Button clicked
+        async function connectHost() {
+            playTone(587);
+            const answerStr = document.getElementById('host-answer-input').value.trim();
+            if (!answerStr) {
+                showToast("PLEASE PASTE ANSWER TOKEN FROM PEER", "warning");
+                return;
+            }
+
+            try {
+                const answerObj = await decodeSDP(answerStr);
+
+                if (answerObj.type !== 'answer') {
+                    showToast("⛔ THIS IS AN OFFER TOKEN! PASTE THE ANSWER TOKEN FROM GUEST.", "warning");
+                    return;
+                }
+
+                await pc.setRemoteDescription(answerObj);
+                showToast("LOCKING P2P TUNNEL CONNECTION...", "info");
+            } catch(e) {
+                showToast("ERROR: " + (e.message || "Invalid Token Format"), "error");
+            }
+        }
+
+        // Guest Mode Initialization
+        function initGuestWebRTC() {
+            if (pc) pc.close();
+            pc = new RTCPeerConnection(rtcConfig);
+
+            attachConnectionDiagnostics(pc);
+
+            pc.ondatachannel = (e) => {
+                dataChannel = e.channel;
+                setupDataChannelHandlers(dataChannel);
+            };
+        }
+
+        // Guest Generate Answer
+        async function generateGuestAnswer() {
+            playTone(523);
+            const offerStr = document.getElementById('guest-offer-input').value.trim();
+            if (!offerStr) {
+                showToast("PLEASE PASTE OFFER TOKEN FROM HOST", "warning");
+                return;
+            }
+
+            try {
+                const offerObj = await decodeSDP(offerStr);
+
+                if (offerObj.type !== 'offer') {
+                    showToast("⛔ THIS IS AN ANSWER TOKEN! PASTE THE OFFER TOKEN FROM HOST.", "warning");
+                    return;
+                }
+
+                await pc.setRemoteDescription(offerObj);
+
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+
+                // Wait for network candidates to gather before outputting answer token
+                setIceProgress(false, false);
+                showToast("GATHERING NETWORK ROUTES… THIS TAKES A FEW SECONDS", "info");
+                await waitForICEGathering(pc);
+                await updateGuestToken();
+
+                document.getElementById('guest-answer-section').classList.remove('hidden');
+                showToast("ANSWER TOKEN & HD QR GENERATED", "success");
+
+            } catch(e) {
+                showToast("ERROR: " + (e.message || "Invalid Token Format"), "error");
+            }
+        }
+
+        // DataChannel Handlers Setup
+        function setupDataChannelHandlers(dc) {
+            dc.binaryType = 'arraybuffer';
+
+            dc.onopen = () => {
+                playTone(880, 'triangle', 0.3);
+                document.getElementById('setup-panel').classList.add('hidden');
+                document.getElementById('workspace-panel').classList.remove('hidden');
+                document.getElementById('workspace-panel').classList.add('flex');
+                document.getElementById('nuke-btn').classList.remove('hidden');
+
+                const badge = document.getElementById('connection-badge');
+                badge.className = "px-3 py-1 text-xs border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center gap-2";
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> <span>P2P TUNNEL CONNECTED</span>`;
+
+                showToast("P2P WEBRTC TUNNEL CONNECTED & ENCRYPTED!", "success");
+            };
+
+            dc.onclose = () => {
+                nukeTunnel();
+            };
+
+            dc.onmessage = (e) => {
+                if (typeof e.data === 'string') {
+                    const msg = JSON.parse(e.data);
+                    if (msg.type === 'chat') {
+                        playTone(659, 'sine', 0.1);
+                        renderChatMessage(msg.text, 'peer');
+                    } else if (msg.type === 'file-meta') {
+                        playTone(784, 'triangle', 0.2);
+                        incomingFileMeta = msg;
+                        incomingFileChunks = [];
+                        incomingFileReceivedSize = 0;
+                        showTransferProgress(msg.name, 0);
+                        showToast(`INCOMING FILE: ${msg.name}`, "info");
+                    }
+                } else if (e.data instanceof ArrayBuffer) {
+                    incomingFileChunks.push(e.data);
+                    incomingFileReceivedSize += e.data.byteLength;
+                    const percent = Math.min(100, Math.round((incomingFileReceivedSize / incomingFileMeta.size) * 100));
+                    showTransferProgress(incomingFileMeta.name, percent);
+
+                    if (incomingFileReceivedSize >= incomingFileMeta.size) {
+                        playTone(1046, 'sine', 0.4);
+                        const blob = new Blob(incomingFileChunks, { type: incomingFileMeta.mime || 'application/octet-stream' });
+                        const url = URL.createObjectURL(blob);
+                        addReceivedFile(incomingFileMeta.name, incomingFileMeta.size, url);
+                        hideTransferProgress();
+                        showToast(`FILE DOWNLOAD COMPLETE: ${incomingFileMeta.name}`, "success");
+                    }
+                }
+            };
+        }
+
+        // Send Chat Message
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !dataChannel || dataChannel.readyState !== 'open') return;
+
+            playTone(440, 'sine', 0.08);
+            dataChannel.send(JSON.stringify({ type: 'chat', text: text }));
+            renderChatMessage(text, 'me');
+            input.value = '';
+        }
+
+        function renderChatMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `chat-bubble ${sender} px-3 py-2 rounded-lg text-xs font-mono`;
+            div.textContent = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearChat() {
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] text-cyan-500/60 py-2 border-b border-cyan-900/20">--- LOGS PURGED ---</div>`;
+            showToast("CHAT LOGS PURGED FROM RAM", "info");
+        }
+
+        // Send File over DataChannel
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file || !dataChannel || dataChannel.readyState !== 'open') return;
+
+            const chunkSize = 16384;
+            const reader = new FileReader();
+            let offset = 0;
+
+            dataChannel.send(JSON.stringify({
+                type: 'file-meta',
+                name: file.name,
+                size: file.size,
+                mime: file.type
+            }));
+
+            showTransferProgress(`Sending ${file.name}`, 0);
+            showToast(`STREAMING FILE: ${file.name}`, "info");
+
+            reader.onload = (event) => {
+                if (!dataChannel || dataChannel.readyState !== 'open') return;
+                dataChannel.send(event.target.result);
+                offset += event.target.result.byteLength;
+
+                const percent = Math.min(100, Math.round((offset / file.size) * 100));
+                showTransferProgress(`Sending ${file.name}`, percent);
+
+                if (offset < file.size) {
+                    readNextChunk();
+                } else {
+                    playTone(880, 'sine', 0.2);
+                    setTimeout(hideTransferProgress, 1000);
+                    showToast("FILE STREAMING COMPLETED!", "success");
+                }
+            };
+
+            function readNextChunk() {
+                const slice = file.slice(offset, offset + chunkSize);
+                reader.readAsArrayBuffer(slice);
+            }
+
+            readNextChunk();
+        }
+
+        function showTransferProgress(name, percent) {
+            const box = document.getElementById('transfer-progress-box');
+            box.classList.remove('hidden');
+            document.getElementById('transfer-filename').textContent = name;
+            document.getElementById('transfer-percent').textContent = `${percent}%`;
+            document.getElementById('transfer-progress-bar').style.width = `${percent}%`;
+        }
+
+        function hideTransferProgress() {
+            document.getElementById('transfer-progress-box').classList.add('hidden');
+        }
+
+        function addReceivedFile(name, size, url) {
+            const list = document.getElementById('received-files-list');
+            if (list.querySelector('div.italic')) list.innerHTML = '';
+
+            const sizeMb = (size / (1024 * 1024)).toFixed(2);
+            const div = document.createElement('div');
+            div.className = "flex items-center justify-between bg-cyan-950/30 border border-cyan-800 p-2 rounded text-xs";
+            div.innerHTML = `
+                <div class="truncate pr-2">
+                    <span class="font-bold text-cyan-200">${name}</span>
+                    <span class="text-[10px] text-cyan-500 block">${sizeMb} MB</span>
+                </div>
+                <a href="${url}" download="${name}" class="btn-cyber px-2 py-1 text-[10px] font-bold text-emerald-400 border-emerald-500 hover:bg-emerald-500 hover:text-black">
+                    <i class="fa-solid fa-download"></i> SAVE
+                </a>
+            `;
+            list.appendChild(div);
+        }
+
+        function copyToken(id) {
+            playTone(600, 'sine', 0.1);
+            const el = document.getElementById(id);
+            el.select();
+            navigator.clipboard.writeText(el.value);
+            showToast("TOKEN COPIED TO CLIPBOARD!", "success");
+        }
+
+        function nukeTunnel() {
+            playTone(200, 'sawtooth', 0.5);
+            if (dataChannel) {
+                try { dataChannel.close(); } catch(e) {}
+            }
+            if (pc) {
+                try { pc.close(); } catch(e) {}
+            }
+
+            dataChannel = null;
+            pc = null;
+            incomingFileChunks = [];
+
+            document.getElementById('workspace-panel').classList.add('hidden');
+            document.getElementById('setup-panel').classList.remove('hidden');
+            document.getElementById('nuke-btn').classList.add('hidden');
+
+            const badge = document.getElementById('connection-badge');
+            badge.className = "px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span> <span>TUNNEL DESTROYED</span>`;
+
+            showToast("TUNNEL NUKED! ALL DATA & BUFFERS DESTROYED", "error");
+        }
+
+        window.addEventListener('beforeunload', () => {
+            nukeTunnel();
+        });
+
+        setMode('host');
+    </script>
+</body>
+</html>

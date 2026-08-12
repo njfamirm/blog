@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPECTRAL ANOMALY SCANNER | Hidden Frequency Radar</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #022c22;
+            background: radial-gradient(circle at center, #022c22 0%, #020617 100%);
+            color: #34d399;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(16, 185, 129, 0.03), rgba(244, 63, 94, 0.02), rgba(6, 182, 212, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(6, 78, 59, 0.25);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #34d399;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #10b981;
+            color: #000;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-alert {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid #f43f5e;
+            color: #fb7185;
+        }
+
+        .btn-alert:hover {
+            background: #f43f5e;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.7);
+        }
+
+        .anomaly-alarm-active {
+            animation: alarmPulse 0.5s infinite alternate;
+        }
+
+        @keyframes alarmPulse {
+            0% { box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.2); }
+            100% { box-shadow: inset 0 0 120px rgba(244, 63, 94, 0.6); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative" id="main-body">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-emerald-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                📻
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-emerald-300 uppercase">SPECTRAL ANOMALY SCANNER</h1>
+                <p class="text-xs text-emerald-500/80 uppercase">HIDDEN FREQUENCY RADAR // INFRASOUND & ULTRASOUND AMPLIFIER</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="status-badge" class="px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                <span>RADAR OFFLINE</span>
+            </div>
+            <button id="btn-start-scanner" onclick="startScanner()" class="btn-cyber px-4 py-1.5 text-xs uppercase font-bold">
+                <i class="fa-solid fa-microphone-lines"></i> START SPECTRAL SCAN
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="w-full max-w-6xl flex-1 my-4 grid grid-cols-1 md:grid-cols-12 gap-4 z-20">
+
+        <!-- Left Controls & Telemetry HUD (4 Cols) -->
+        <div class="md:col-span-4 hud-card p-5 rounded-xl flex flex-col justify-between text-xs space-y-6">
+            <div>
+                <div class="border-b border-emerald-900/50 pb-2 mb-4 font-bold text-emerald-300 flex items-center justify-between">
+                    <span><i class="fa-solid fa-sliders"></i> SCANNER CONTROLS</span>
+                    <span id="txt-mode-tag" class="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 border border-emerald-800">ULTRASOUND</span>
+                </div>
+
+                <!-- Scan Mode Selection -->
+                <div class="space-y-2 mb-6">
+                    <span class="text-emerald-500 block mb-1">SELECT FREQUENCY BAND:</span>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="setScanMode('ultrasound')" id="mode-ultra-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between border-emerald-400 bg-emerald-500/20">
+                            <span>📡 ULTRASOUND (>14 kHz)</span>
+                            <span class="text-[10px] text-emerald-300">COIL WHINE / BUGS</span>
+                        </button>
+
+                        <button onclick="setScanMode('infrasound')" id="mode-infra-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between opacity-60 hover:opacity-100">
+                            <span>🔊 INFRASOUND (&lt;30 Hz)</span>
+                            <span class="text-[10px] text-emerald-300">SEISMIC / VIBRATION</span>
+                        </button>
+
+                        <button onclick="setScanMode('full')" id="mode-full-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between opacity-60 hover:opacity-100">
+                            <span>⚡ FULL SPECTRUM SCAN</span>
+                            <span class="text-[10px] text-emerald-300">0 Hz - 22 kHz</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sensitivity & Gain Boost Sliders -->
+                <div class="space-y-4 border-t border-emerald-900/50 pt-4">
+                    <div>
+                        <div class="flex justify-between text-emerald-400 mb-1">
+                            <span>DIGITAL GAIN BOOST:</span>
+                            <span id="txt-gain-val" class="font-bold text-emerald-300">1000x</span>
+                        </div>
+                        <input type="range" id="slider-gain" min="1" max="1000" value="1000" oninput="updateAudioParams()" class="w-full accent-emerald-400 cursor-pointer">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-emerald-400 mb-1">
+                            <span>ANOMALY THRESHOLD:</span>
+                            <span id="txt-thresh-val" class="font-bold text-emerald-300">75%</span>
+                        </div>
+                        <input type="range" id="slider-thresh" min="20" max="95" value="75" oninput="updateAudioParams()" class="w-full accent-emerald-400 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Live Anomaly Telemetry Readout -->
+                <div class="mt-6 border border-emerald-900/60 bg-black/60 p-3 rounded space-y-2">
+                    <span class="text-[10px] text-emerald-500 uppercase block font-bold">LIVE TELEMETRY:</span>
+                    <div class="flex justify-between">
+                        <span>PEAK FREQUENCY:</span>
+                        <span id="txt-peak-freq" class="font-bold text-emerald-300">0 Hz</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>SIGNAL INTENSITY:</span>
+                        <span id="txt-peak-amp" class="font-bold text-emerald-300">0 dB</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ANOMALY STATUS:</span>
+                        <span id="txt-anomaly-state" class="font-bold text-emerald-400">CLEAR</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lock / Snapshot Actions -->
+            <div class="border-t border-emerald-900/50 pt-3 flex gap-2">
+                <button onclick="freezeScan()" id="btn-freeze" class="btn-cyber flex-1 py-2 text-xs font-bold uppercase">
+                    <i class="fa-solid fa-pause"></i> FREEZE SCAN
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Waterfall Spectrogram & Radar Screen (8 Cols) -->
+        <div class="md:col-span-8 hud-card rounded-xl p-5 flex flex-col justify-between relative overflow-hidden">
+            
+            <div class="flex items-center justify-between border-b border-emerald-900/50 pb-3 mb-3 text-xs">
+                <span class="font-bold text-emerald-300 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> CASCADING WATERFALL SPECTROGRAM RADAR
+                </span>
+                <span class="text-[10px] text-emerald-500 font-mono">FFT SIZE: 2048 BANDS</span>
+            </div>
+
+            <!-- Main Dual Canvas Display: FFT Bars + Waterfall Matrix -->
+            <div class="relative w-full flex-1 flex flex-col gap-3 min-h-[460px]">
+                
+                <!-- Top FFT Oscilloscope Bars Canvas -->
+                <div class="relative w-full h-40 bg-black/80 border border-emerald-900/60 rounded overflow-hidden">
+                    <canvas id="fft-canvas" class="w-full h-full object-stretch"></canvas>
+                    <div class="absolute top-2 left-2 text-[9px] text-emerald-500 uppercase bg-black/60 px-1 border border-emerald-900/50">
+                        FFT AMPLITUDE SPECTRUM
+                    </div>
+                    <div class="absolute bottom-1 right-2 text-[9px] text-emerald-500 font-mono">
+                        0Hz ── 5kHz ── 10kHz ── 15kHz ── 22kHz
+                    </div>
+                </div>
+
+                <!-- Bottom Cascading Waterfall Canvas -->
+                <div class="relative w-full flex-1 bg-black/90 border border-emerald-900/60 rounded overflow-hidden">
+                    <canvas id="waterfall-canvas" class="w-full h-full object-stretch"></canvas>
+                    <div class="absolute top-2 left-2 text-[9px] text-emerald-500 uppercase bg-black/60 px-1 border border-emerald-900/50">
+                        TIME-CASCADING WATERFALL MATRIX
+                    </div>
+                </div>
+
+                <!-- Anomaly Target Reticle Overlay -->
+                <div id="anomaly-reticle" class="absolute top-10 left-1/2 -translate-x-1/2 hidden pointer-events-none flex flex-col items-center">
+                    <div class="w-12 h-12 border-2 border-red-500 rounded-full animate-ping mb-1"></div>
+                    <span id="txt-reticle-label" class="bg-red-950 text-red-400 text-[10px] px-2 py-0.5 border border-red-500 font-bold uppercase">
+                        ANOMALY DETECTED
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Stats Bar -->
+    <footer class="w-full max-w-6xl py-3 border-t border-emerald-900/40 flex items-center justify-between text-xs text-emerald-500/70 z-20">
+        <span>SPECTRAL ANOMALY SCANNER v2.4 // WEB AUDIO DSP</span>
+        <span>NYQUIST FREQUENCY: 24,000 Hz</span>
+    </footer>
+
+    <script>
+        // --- Web Audio API & DSP Pipeline ---
+        let audioCtx = null;
+        let analyser = null;
+        let micStream = null;
+        let sourceNode = null;
+        let filterNode = null;
+
+        let scanMode = 'ultrasound'; // 'ultrasound', 'infrasound', 'full'
+        let digitalGain = 1000;
+        let anomalyThreshold = 0.75;
+        let isFrozen = false;
+        let isScannerActive = false;
+
+        // Canvases
+        const fftCanvas = document.getElementById('fft-canvas');
+        const fftCtx = fftCanvas.getContext('2d');
+        const wfCanvas = document.getElementById('waterfall-canvas');
+        const wfCtx = wfCanvas.getContext('2d');
+
+        // Audio Beep Synthesizer
+        function playSynthBeep(freq, duration = 0.1) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function setScanMode(mode) {
+            playSynthBeep(600);
+            scanMode = mode;
+
+            document.getElementById('mode-ultra-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${mode==='ultrasound'?'border-emerald-400 bg-emerald-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('mode-infra-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${mode==='infrasound'?'border-emerald-400 bg-emerald-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('mode-full-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${mode==='full'?'border-emerald-400 bg-emerald-500/20':'opacity-60 hover:opacity-100'}`;
+
+            document.getElementById('txt-mode-tag').textContent = mode.toUpperCase();
+
+            updateAudioFilters();
+        }
+
+        function updateAudioParams() {
+            digitalGain = parseInt(document.getElementById('slider-gain').value);
+            anomalyThreshold = parseInt(document.getElementById('slider-thresh').value) / 100;
+
+            document.getElementById('txt-gain-val').textContent = `${digitalGain}x`;
+            document.getElementById('txt-thresh-val').textContent = `${Math.round(anomalyThreshold * 100)}%`;
+        }
+
+        async function startScanner() {
+            if (isScannerActive) return;
+            playSynthBeep(880);
+
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 2048;
+                analyser.smoothingTimeConstant = 0.8;
+
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                sourceNode = audioCtx.createMediaStreamSource(micStream);
+
+                filterNode = audioCtx.createBiquadFilter();
+                updateAudioFilters();
+
+                sourceNode.connect(filterNode);
+                filterNode.connect(analyser);
+
+                isScannerActive = true;
+
+                document.getElementById('status-badge').className = "px-3 py-1 text-xs border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center gap-2";
+                document.getElementById('status-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> <span>SPECTRAL RADAR ACTIVE</span>`;
+                document.getElementById('btn-start-scanner').classList.add('hidden');
+
+                // Initialize Waterfall Canvas dimensions
+                wfCanvas.width = wfCanvas.clientWidth;
+                wfCanvas.height = wfCanvas.clientHeight;
+                fftCanvas.width = fftCanvas.clientWidth;
+                fftCanvas.height = fftCanvas.clientHeight;
+
+                requestAnimationFrame(renderLoop);
+
+            } catch(e) {
+                alert("Microphone access failed. Please ensure microphone permissions are allowed.");
+            }
+        }
+
+        function updateAudioFilters() {
+            if (!filterNode || !audioCtx) return;
+
+            if (scanMode === 'ultrasound') {
+                filterNode.type = 'highpass';
+                filterNode.frequency.setValueAtTime(14000, audioCtx.currentTime); // Isolate >14kHz
+            } else if (scanMode === 'infrasound') {
+                filterNode.type = 'lowpass';
+                filterNode.frequency.setValueAtTime(40, audioCtx.currentTime); // Isolate <40Hz
+            } else {
+                filterNode.type = 'allpass';
+            }
+        }
+
+        function freezeScan() {
+            playSynthBeep(440);
+            isFrozen = !isFrozen;
+            const btn = document.getElementById('btn-freeze');
+            btn.innerHTML = isFrozen ? `<i class="fa-solid fa-play"></i> RESUME SCAN` : `<i class="fa-solid fa-pause"></i> FREEZE SCAN`;
+        }
+
+        // --- Render Loop (FFT Bar Chart & Cascading Waterfall) ---
+        let anomalyAlarmTimer = 0;
+
+        function renderLoop() {
+            if (!isScannerActive) return;
+
+            if (!isFrozen) {
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyser.getByteFrequencyData(dataArray);
+
+                const sampleRate = audioCtx.sampleRate;
+                const nyquist = sampleRate / 2;
+
+                // 1. Find Peak Frequency & Anomaly Detection
+                let maxAmp = 0;
+                let maxIndex = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    // Apply Digital Gain Boost
+                    const boosted = Math.min(255, dataArray[i] * (digitalGain / 200));
+                    if (boosted > maxAmp) {
+                        maxAmp = boosted;
+                        maxIndex = i;
+                    }
+                }
+
+                const peakFreq = Math.round((maxIndex / bufferLength) * nyquist);
+                const normalizedAmp = maxAmp / 255;
+
+                document.getElementById('txt-peak-freq').textContent = `${peakFreq} Hz`;
+                document.getElementById('txt-peak-amp').textContent = `${(normalizedAmp * 100).toFixed(0)}%`;
+
+                // Anomaly Condition
+                const isAnomaly = normalizedAmp >= anomalyThreshold;
+
+                if (isAnomaly) {
+                    anomalyAlarmTimer++;
+                    document.getElementById('txt-anomaly-state').textContent = "ANOMALY DETECTED!";
+                    document.getElementById('txt-anomaly-state').className = "font-bold text-red-500 animate-pulse";
+                    document.getElementById('main-body').classList.add('anomaly-alarm-active');
+                    document.getElementById('anomaly-reticle').classList.remove('hidden');
+                    document.getElementById('txt-reticle-label').textContent = `ANOMALY: ${peakFreq} Hz`;
+
+                    if (anomalyAlarmTimer % 20 === 0) {
+                        playSynthBeep(1200, 0.15);
+                    }
+                } else {
+                    document.getElementById('txt-anomaly-state').textContent = "CLEAR (NORMAL)";
+                    document.getElementById('txt-anomaly-state').className = "font-bold text-emerald-400";
+                    document.getElementById('main-body').classList.remove('anomaly-alarm-active');
+                    document.getElementById('anomaly-reticle').classList.add('hidden');
+                }
+
+                // 2. Render FFT Oscilloscope Bars Canvas
+                fftCtx.clearRect(0, 0, fftCanvas.width, fftCanvas.height);
+                const barWidth = fftCanvas.width / (bufferLength / 2);
+                let x = 0;
+
+                for (let i = 0; i < bufferLength / 2; i++) {
+                    const amp = Math.min(255, dataArray[i] * (digitalGain / 200));
+                    const barHeight = (amp / 255) * fftCanvas.height;
+
+                    if (amp / 255 >= anomalyThreshold) {
+                        fftCtx.fillStyle = '#f43f5e';
+                    } else {
+                        fftCtx.fillStyle = '#10b981';
+                    }
+
+                    fftCtx.fillRect(x, fftCanvas.height - barHeight, barWidth - 0.5, barHeight);
+                    x += barWidth;
+                }
+
+                // 3. Render Cascading Waterfall Canvas
+                // Move existing waterfall image down 2 pixels
+                const imgData = wfCtx.getImageData(0, 0, wfCanvas.width, wfCanvas.height - 2);
+                wfCtx.putImageData(imgData, 0, 2);
+
+                // Draw new top scan line
+                const step = (bufferLength / 2) / wfCanvas.width;
+                for (let col = 0; col < wfCanvas.width; col++) {
+                    const idx = Math.floor(col * step);
+                    const val = Math.min(255, dataArray[idx] * (digitalGain / 200));
+
+                    if (val / 255 >= anomalyThreshold) {
+                        // Red anomaly pixel
+                        wfCtx.fillStyle = `rgb(244, 63, 94)`;
+                    } else {
+                        // Emerald / Cyan spectrum hue
+                        const green = val;
+                        const blue = Math.floor(val * 0.7);
+                        wfCtx.fillStyle = `rgb(0, ${green}, ${blue})`;
+                    }
+                    wfCtx.fillRect(col, 0, 1, 2);
+                }
+            }
+
+            requestAnimationFrame(renderLoop);
+        }
+    </script>
+</body>
+</html>

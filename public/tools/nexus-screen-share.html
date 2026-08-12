@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS SCREEN SHARE | Zero-Server P2P Display Beam</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        input, textarea, .selectable { user-select: text; }
+
+        body {
+            background-color: #030712;
+            color: #c084fc;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(168, 85, 247, 0.03), rgba(56, 189, 248, 0.02), rgba(168, 85, 247, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid #a855f7;
+            color: #c084fc;
+            transition: all 0.15s ease;
+        }
+
+        .btn-cyber:hover:not(:disabled) {
+            background: #a855f7;
+            color: #000;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+        }
+
+        .btn-cyber:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .btn-sky {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+            color: #7dd3fc;
+            transition: all 0.15s ease;
+        }
+
+        .btn-sky:hover:not(:disabled) { background: #38bdf8; color: #000; box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); }
+        .btn-sky:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+
+        .btn-danger:hover { background: #ef4444; color: #fff; }
+
+        /* Cyber Toast Notification HUD Banner */
+        #toast-banner {
+            position: fixed;
+            top: 16px; left: 50%;
+            transform: translate(-50%, -140%);
+            transition: transform 0.25s ease;
+            z-index: 120;
+        }
+
+        #toast-banner.show { transform: translate(-50%, 0); }
+
+        .step-locked { opacity: 0.35; pointer-events: none; }
+
+        .sdp-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            color: #d8b4fe;
+            font-size: 11px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+
+        .sdp-box:focus { outline: none; border-color: #a855f7; }
+
+        #stage { display: none; }
+        #stage.live { display: block; }
+
+        #stage video {
+            width: 100%;
+            display: block;
+            background: #000;
+            max-height: 72vh;
+        }
+
+        .live-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #22c55e;
+            animation: pulse-dot 1.4s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70%  { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(192, 132, 252, 0.25);
+            border-top-color: #c084fc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.4); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <div id="toast-banner" class="hud-card px-6 py-3 rounded-lg flex items-center gap-3 text-xs font-bold">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-base text-purple-400"></i>
+        <span id="toast-text" class="text-purple-200 uppercase tracking-wider">READY</span>
+    </div>
+
+    <!-- HEADER -->
+    <header class="w-full max-w-5xl mx-auto mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-purple-900/60 pb-3">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-display text-2xl text-purple-400"></i>
+                <div>
+                    <h1 class="text-lg font-bold uppercase tracking-widest text-purple-300">NEXUS SCREEN SHARE</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-purple-700">MANUAL SIGNALING // ZERO-SERVER // DIRECT DISPLAY BEAM</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider">
+                <span id="role-chip" class="px-2 py-1 border border-purple-800 text-purple-500">ROLE: —</span>
+                <span id="status-chip" class="px-2 py-1 border border-yellow-700 text-yellow-500">
+                    <i class="fa-solid fa-circle text-[6px] align-middle"></i> IDLE
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto flex-1 flex flex-col gap-4">
+
+        <!-- ================= ROLE PICKER ================= -->
+        <section id="role-picker" class="hud-card rounded-lg p-4 md:p-5">
+            <div class="flex items-center gap-2 mb-4 text-xs uppercase tracking-widest text-purple-400">
+                <i class="fa-solid fa-diagram-project"></i> SELECT NODE ROLE
+            </div>
+            <div class="grid md:grid-cols-2 gap-3">
+                <button id="pick-host" class="btn-cyber rounded p-5 text-left">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fa-solid fa-tower-broadcast text-xl"></i>
+                        <span class="text-sm font-bold uppercase tracking-widest">BROADCASTER</span>
+                    </div>
+                    <p class="text-[10px] leading-relaxed opacity-70 normal-case">
+                        Capture a screen, window or tab and beam it straight to the peer.
+                    </p>
+                </button>
+                <button id="pick-viewer" class="btn-sky rounded p-5 text-left">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fa-solid fa-eye text-xl"></i>
+                        <span class="text-sm font-bold uppercase tracking-widest">RECEIVER</span>
+                    </div>
+                    <p class="text-[10px] leading-relaxed opacity-70 normal-case">
+                        Paste the broadcaster's offer token and pull the live display feed.
+                    </p>
+                </button>
+            </div>
+            <p class="text-[10px] text-purple-800 mt-4 leading-relaxed normal-case">
+                No signaling server, no account, no relay. The two tokens below are the entire handshake —
+                pass them over any channel you already trust. Pixels travel peer to peer only.
+            </p>
+        </section>
+
+        <!-- ================= HOST VIEW ================= -->
+        <section id="host-view" class="hud-card rounded-lg p-4 md:p-5 hidden">
+
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-2 text-xs uppercase tracking-widest text-purple-400">
+                    <i class="fa-solid fa-1"></i> CAPTURE A DISPLAY SOURCE
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="start-share" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-record-vinyl"></i> SELECT SOURCE
+                    </button>
+                    <span id="host-spin" class="hidden items-center gap-2 text-[10px] uppercase tracking-widest text-purple-500">
+                        <span class="spinner"></span> GATHERING ICE CANDIDATES…
+                    </span>
+                </div>
+                <label class="flex items-center gap-2 mt-3 text-[10px] uppercase tracking-widest text-purple-600 cursor-pointer">
+                    <input id="share-audio" type="checkbox" class="accent-purple-500">
+                    INCLUDE SYSTEM AUDIO (WHERE SUPPORTED)
+                </label>
+            </div>
+
+            <div id="host-step2" class="mb-4 step-locked">
+                <div class="flex items-center gap-2 mb-2 text-xs uppercase tracking-widest text-purple-400">
+                    <i class="fa-solid fa-2"></i> SEND THIS OFFER TOKEN TO THE RECEIVER
+                </div>
+                <div class="relative">
+                    <textarea id="offer-token" readonly rows="4" placeholder="offer token appears here…"
+                        class="sdp-box selectable w-full p-3 pr-24 rounded resize-none"></textarea>
+                    <button id="copy-offer" class="absolute top-1.5 right-1.5 btn-cyber px-3 py-1.5 text-[10px] uppercase rounded">
+                        <i class="fa-solid fa-copy"></i> COPY
+                    </button>
+                </div>
+                <p class="text-[10px] text-purple-800 mt-2 leading-relaxed normal-case">
+                    Any channel works — chat, mail, note app. The token carries only a connection descriptor;
+                    your screen never travels through it.
+                </p>
+            </div>
+
+            <div id="host-step3" class="step-locked">
+                <div class="flex items-center gap-2 mb-2 text-xs uppercase tracking-widest text-purple-400">
+                    <i class="fa-solid fa-3"></i> PASTE THE REPLY TOKEN FROM THE RECEIVER
+                </div>
+                <textarea id="answer-input" rows="3" placeholder="Paste the receiver's reply token here — the beam opens instantly."
+                    class="sdp-box selectable w-full p-3 rounded resize-none"></textarea>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button id="accept-answer" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-plug-circle-bolt"></i> OPEN BEAM
+                    </button>
+                    <button class="btn-danger px-4 py-2 text-[11px] font-bold uppercase rounded reset-session">
+                        <i class="fa-solid fa-rotate"></i> NEW SESSION
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEWER VIEW ================= -->
+        <section id="viewer-view" class="hud-card rounded-lg p-4 md:p-5 hidden">
+
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-2 text-xs uppercase tracking-widest text-sky-400">
+                    <i class="fa-solid fa-1"></i> PASTE THE BROADCASTER'S OFFER TOKEN
+                </div>
+                <textarea id="offer-input" rows="4" placeholder="Paste the offer token you received…"
+                    class="sdp-box selectable w-full p-3 rounded resize-none"></textarea>
+                <div class="flex flex-wrap items-center gap-2 mt-2">
+                    <button id="build-answer" class="btn-sky px-4 py-2 text-[11px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-reply"></i> BUILD REPLY TOKEN
+                    </button>
+                    <button class="btn-danger px-4 py-2 text-[11px] font-bold uppercase rounded reset-session">
+                        <i class="fa-solid fa-rotate"></i> NEW SESSION
+                    </button>
+                    <span id="viewer-spin" class="hidden items-center gap-2 text-[10px] uppercase tracking-widest text-sky-500">
+                        <span class="spinner"></span> GATHERING ICE CANDIDATES…
+                    </span>
+                </div>
+            </div>
+
+            <div id="viewer-step2" class="step-locked">
+                <div class="flex items-center gap-2 mb-2 text-xs uppercase tracking-widest text-sky-400">
+                    <i class="fa-solid fa-2"></i> SEND THIS REPLY TOKEN BACK — THAT'S THE LAST STEP
+                </div>
+                <div class="relative">
+                    <textarea id="answer-token" readonly rows="4" placeholder="reply token appears here…"
+                        class="sdp-box selectable w-full p-3 pr-24 rounded resize-none"></textarea>
+                    <button id="copy-answer" class="absolute top-1.5 right-1.5 btn-sky px-3 py-1.5 text-[10px] uppercase rounded">
+                        <i class="fa-solid fa-copy"></i> COPY
+                    </button>
+                </div>
+                <p class="text-[10px] text-sky-800 mt-2 leading-relaxed normal-case">
+                    The feed appears below the moment the broadcaster drops this token in.
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= LIVE STAGE ================= -->
+        <section id="stage" class="hud-card rounded-lg p-3 md:p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <div class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-green-400">
+                    <span class="live-dot"></span>
+                    <span id="stage-label">LIVE FEED</span>
+                    <span id="stage-res" class="text-purple-700"></span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="fullscreen-btn" class="btn-cyber px-3 py-1.5 text-[10px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-expand"></i> FULLSCREEN
+                    </button>
+                    <button class="btn-danger px-3 py-1.5 text-[10px] font-bold uppercase rounded reset-session">
+                        <i class="fa-solid fa-plug-circle-xmark"></i> CUT BEAM
+                    </button>
+                </div>
+            </div>
+            <video id="feed" autoplay playsinline controls class="rounded border border-purple-900/60"></video>
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-5xl mx-auto mt-6 pt-3 border-t border-purple-900/40 text-[9px] uppercase tracking-widest text-purple-800 flex flex-wrap gap-x-5 gap-y-1">
+        <span>[NEXUS // TOOL-13]</span>
+        <span>[WEBRTC MANUAL SIGNALING]</span>
+        <span>[NO SERVER · NO RELAY · NO ACCOUNT]</span>
+    </footer>
+
+    <script>
+    (() => {
+        'use strict';
+
+        const RTC_CONFIG = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        const els = {
+            rolePicker: $('role-picker'),
+            hostView: $('host-view'),
+            viewerView: $('viewer-view'),
+            stage: $('stage'),
+            feed: $('feed'),
+            roleChip: $('role-chip'),
+            statusChip: $('status-chip'),
+            stageLabel: $('stage-label'),
+            stageRes: $('stage-res'),
+            toast: $('toast-banner'),
+            toastIcon: $('toast-icon'),
+            toastText: $('toast-text')
+        };
+
+        let pc = null;
+        let localStream = null;
+        let toastTimer = null;
+
+        /* ---------- HUD helpers ---------- */
+
+        function toast(msg, kind = 'info') {
+            const map = {
+                info: ['fa-circle-info', 'text-purple-400', 'text-purple-200'],
+                ok:   ['fa-circle-check', 'text-green-400', 'text-green-200'],
+                warn: ['fa-triangle-exclamation', 'text-yellow-400', 'text-yellow-200'],
+                err:  ['fa-circle-xmark', 'text-red-400', 'text-red-200']
+            };
+            const [icon, iconColor, textColor] = map[kind] || map.info;
+            els.toastIcon.className = `fa-solid ${icon} text-base ${iconColor}`;
+            els.toastText.className = `${textColor} uppercase tracking-wider`;
+            els.toastText.textContent = msg;
+            els.toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => els.toast.classList.remove('show'), 3200);
+        }
+
+        function setStatus(label, tone) {
+            const tones = {
+                idle:  'border-yellow-700 text-yellow-500',
+                work:  'border-purple-700 text-purple-400',
+                live:  'border-green-700 text-green-400',
+                dead:  'border-red-700 text-red-400'
+            };
+            els.statusChip.className = `px-2 py-1 border ${tones[tone] || tones.idle}`;
+            els.statusChip.innerHTML = `<i class="fa-solid fa-circle text-[6px] align-middle"></i> ${label}`;
+        }
+
+        function setRole(label) {
+            els.roleChip.textContent = `ROLE: ${label}`;
+        }
+
+        function unlock(el) {
+            el.classList.remove('step-locked');
+        }
+
+        async function copyFrom(el, label) {
+            if (!el.value) { toast('NOTHING TO COPY YET', 'warn'); return; }
+            try {
+                await navigator.clipboard.writeText(el.value);
+            } catch {
+                el.select();
+                el.setSelectionRange(0, el.value.length);
+                document.execCommand('copy');
+            }
+            toast(`${label} COPIED`, 'ok');
+        }
+
+        /* ---------- Token codec ---------- */
+
+        const encodeToken = (desc) => btoa(JSON.stringify(desc)).replace(/=+$/, '');
+        const decodeToken = (raw) => {
+            const clean = raw.trim().replace(/\s+/g, '');
+            if (!clean) throw new Error('empty token');
+            const padded = clean + '='.repeat((4 - clean.length % 4) % 4);
+            const desc = JSON.parse(atob(padded));
+            if (!desc || !desc.type || !desc.sdp) throw new Error('malformed token');
+            return desc;
+        };
+
+        /* ---------- Peer plumbing ---------- */
+
+        function newPeer() {
+            const conn = new RTCPeerConnection(RTC_CONFIG);
+            conn.onconnectionstatechange = () => {
+                const s = conn.connectionState;
+                if (s === 'connected') {
+                    setStatus('BEAM LIVE', 'live');
+                    toast('PEER LINK ESTABLISHED', 'ok');
+                } else if (s === 'connecting') {
+                    setStatus('NEGOTIATING', 'work');
+                } else if (s === 'disconnected') {
+                    setStatus('PEER LOST', 'dead');
+                    toast('PEER DISCONNECTED', 'warn');
+                } else if (s === 'failed' || s === 'closed') {
+                    setStatus('BEAM DOWN', 'dead');
+                }
+            };
+            return conn;
+        }
+
+        // Resolves once ICE gathering completes, so a single token carries every candidate.
+        function waitForIce(conn) {
+            if (conn.iceGatheringState === 'complete') return Promise.resolve();
+            return new Promise((resolve) => {
+                const done = () => {
+                    if (conn.iceGatheringState === 'complete') {
+                        conn.removeEventListener('icegatheringstatechange', done);
+                        resolve();
+                    }
+                };
+                conn.addEventListener('icegatheringstatechange', done);
+                // Some stacks never flip to complete on a dead network — ship what we have.
+                setTimeout(resolve, 4000);
+            });
+        }
+
+        function showStage(label) {
+            els.stageLabel.textContent = label;
+            els.stage.classList.add('live');
+            const v = els.feed;
+            const stamp = () => {
+                if (v.videoWidth) els.stageRes.textContent = `${v.videoWidth}×${v.videoHeight}`;
+            };
+            v.onloadedmetadata = stamp;
+            v.onresize = stamp;
+            stamp();
+        }
+
+        /* ---------- Role selection ---------- */
+
+        $('pick-host').onclick = () => {
+            els.rolePicker.classList.add('hidden');
+            els.hostView.classList.remove('hidden');
+            setRole('BROADCASTER');
+            setStatus('AWAITING SOURCE', 'work');
+        };
+
+        $('pick-viewer').onclick = () => {
+            els.rolePicker.classList.add('hidden');
+            els.viewerView.classList.remove('hidden');
+            setRole('RECEIVER');
+            setStatus('AWAITING OFFER', 'work');
+        };
+
+        /* ---------- Broadcaster ---------- */
+
+        $('start-share').onclick = async () => {
+            const btn = $('start-share');
+            btn.disabled = true;
+            $('host-spin').classList.replace('hidden', 'flex');
+
+            try {
+                localStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { cursor: 'always' },
+                    audio: $('share-audio').checked
+                });
+            } catch (err) {
+                $('host-spin').classList.replace('flex', 'hidden');
+                btn.disabled = false;
+                toast('DISPLAY CAPTURE DENIED', 'err');
+                console.error(err);
+                return;
+            }
+
+            pc = newPeer();
+            localStream.getTracks().forEach((t) => pc.addTrack(t, localStream));
+
+            // Browser-level "Stop sharing" ends the session on this side too.
+            localStream.getVideoTracks()[0].addEventListener('ended', () => {
+                toast('SOURCE STOPPED SHARING', 'warn');
+                setStatus('BEAM DOWN', 'dead');
+            });
+
+            els.feed.srcObject = localStream;
+            els.feed.muted = true;
+            showStage('LOCAL PREVIEW');
+
+            try {
+                await pc.setLocalDescription(await pc.createOffer());
+                await waitForIce(pc);
+                $('offer-token').value = encodeToken(pc.localDescription);
+            } catch (err) {
+                toast('OFFER BUILD FAILED', 'err');
+                console.error(err);
+                return;
+            } finally {
+                $('host-spin').classList.replace('flex', 'hidden');
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> SOURCE CAPTURED';
+            unlock($('host-step2'));
+            unlock($('host-step3'));
+            setStatus('AWAITING REPLY', 'work');
+            toast('OFFER TOKEN READY — SEND IT OVER', 'ok');
+        };
+
+        $('copy-offer').onclick = () => copyFrom($('offer-token'), 'OFFER TOKEN');
+
+        $('accept-answer').onclick = async () => {
+            if (!pc) { toast('CAPTURE A SOURCE FIRST', 'warn'); return; }
+            let desc;
+            try {
+                desc = decodeToken($('answer-input').value);
+            } catch {
+                toast('REPLY TOKEN IS INVALID', 'err');
+                return;
+            }
+            try {
+                await pc.setRemoteDescription(new RTCSessionDescription(desc));
+                setStatus('NEGOTIATING', 'work');
+                showStage('OUTGOING BEAM');
+                toast('REPLY ACCEPTED — OPENING BEAM', 'ok');
+            } catch (err) {
+                toast('HANDSHAKE REJECTED', 'err');
+                console.error(err);
+            }
+        };
+
+        /* ---------- Receiver ---------- */
+
+        $('build-answer').onclick = async () => {
+            let offer;
+            try {
+                offer = decodeToken($('offer-input').value);
+            } catch {
+                toast('OFFER TOKEN IS INVALID', 'err');
+                return;
+            }
+
+            const btn = $('build-answer');
+            btn.disabled = true;
+            $('viewer-spin').classList.replace('hidden', 'flex');
+
+            pc = newPeer();
+            pc.ontrack = (event) => {
+                if (els.feed.srcObject !== event.streams[0]) {
+                    els.feed.srcObject = event.streams[0];
+                    els.feed.muted = false;
+                    showStage('INCOMING BEAM');
+                }
+            };
+
+            try {
+                await pc.setRemoteDescription(new RTCSessionDescription(offer));
+                await pc.setLocalDescription(await pc.createAnswer());
+                await waitForIce(pc);
+                $('answer-token').value = encodeToken(pc.localDescription);
+            } catch (err) {
+                btn.disabled = false;
+                toast('REPLY BUILD FAILED', 'err');
+                console.error(err);
+                return;
+            } finally {
+                $('viewer-spin').classList.replace('flex', 'hidden');
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> REPLY READY';
+            unlock($('viewer-step2'));
+            setStatus('AWAITING PEER', 'work');
+            toast('REPLY TOKEN READY — SEND IT BACK', 'ok');
+        };
+
+        $('copy-answer').onclick = () => copyFrom($('answer-token'), 'REPLY TOKEN');
+
+        /* ---------- Stage controls ---------- */
+
+        $('fullscreen-btn').onclick = () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else els.feed.requestFullscreen?.().catch(() => toast('FULLSCREEN BLOCKED', 'warn'));
+        };
+
+        document.querySelectorAll('.reset-session').forEach((btn) => {
+            btn.onclick = () => {
+                localStream?.getTracks().forEach((t) => t.stop());
+                pc?.close();
+                location.reload();
+            };
+        });
+
+        window.addEventListener('beforeunload', () => {
+            localStream?.getTracks().forEach((t) => t.stop());
+            pc?.close();
+        });
+
+        if (!navigator.mediaDevices?.getDisplayMedia) {
+            $('pick-host').disabled = true;
+            toast('THIS BROWSER CANNOT CAPTURE A DISPLAY', 'warn');
+        }
+    })();
+    </script>
+</body>
+</html>

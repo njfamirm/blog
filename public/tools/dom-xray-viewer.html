@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM X-RAY VIEWER | 3D Spatial Layer Deconstruction</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #020617;
+            color: #38bdf8;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(56, 189, 248, 0.03), rgba(168, 85, 247, 0.02), rgba(16, 185, 129, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #38bdf8;
+            color: #000;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+        }
+
+        /* 3D Exploded DOM Layer Container */
+        #xray-viewport {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        #xray-stage {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .dom-node-card {
+            position: absolute;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            background: rgba(15, 23, 42, 0.7);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(4px);
+            transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .dom-node-card:hover, .dom-node-card.selected {
+            border-color: #a855f7 !important;
+            background: rgba(168, 85, 247, 0.25) !important;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.7), inset 0 0 15px rgba(168, 85, 247, 0.3) !important;
+            z-index: 9999 !important;
+        }
+
+        /* Color Coding by Tag Type */
+        .tag-layout { border-color: rgba(56, 189, 248, 0.6); background: rgba(56, 189, 248, 0.08); }
+        .tag-text { border-color: rgba(16, 185, 129, 0.6); background: rgba(16, 185, 129, 0.08); }
+        .tag-interactive { border-color: rgba(244, 63, 94, 0.6); background: rgba(244, 63, 94, 0.08); }
+        .tag-media { border-color: rgba(234, 179, 8, 0.6); background: rgba(234, 179, 8, 0.08); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-sky-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-sky-500/20 border border-sky-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+                🪞
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-sky-300 uppercase">DOM X-RAY VIEWER</h1>
+                <p class="text-xs text-sky-500/80 uppercase">3D SPATIAL LAYER DECONSTRUCTION & DOM ARCHITECTURAL INSPECTOR</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div id="nodes-count-badge" class="px-3 py-1 text-xs border border-purple-500/50 bg-purple-500/10 text-purple-300 rounded-full flex items-center gap-2 font-mono">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                <span id="txt-total-nodes">0 NODES PARSED</span>
+            </div>
+            <button onclick="resetCameraView()" class="btn-cyber px-3 py-1.5 text-xs font-bold uppercase">
+                <i class="fa-solid fa-arrows-rotate"></i> RESET 3D VIEW
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="w-full max-w-6xl flex-1 my-4 grid grid-cols-1 md:grid-cols-12 gap-4 z-20">
+
+        <!-- Left Controls & Node Telemetry HUD (4 Cols) -->
+        <div class="md:col-span-4 hud-card p-5 rounded-xl flex flex-col justify-between text-xs space-y-4">
+            <div>
+                <div class="border-b border-sky-900/50 pb-2 mb-4 font-bold text-sky-300 flex items-center justify-between">
+                    <span><i class="fa-solid fa-code"></i> HTML SOURCE INPUT</span>
+                    <span class="text-[10px] text-sky-500">PARSER READY</span>
+                </div>
+
+                <!-- Template Selector -->
+                <div class="mb-4">
+                    <span class="text-sky-500 block mb-1">PRE-LOADED PRESETS:</span>
+                    <select id="preset-select" onchange="loadPresetTemplate(this.value)" class="w-full bg-black border border-sky-800 text-sky-200 text-xs p-2 rounded outline-none focus:border-sky-400">
+                        <option value="saas">🚀 SAAS LANDING PAGE</option>
+                        <option value="dashboard">⚡ CYBERPUNK DASHBOARD</option>
+                        <option value="blog">📝 BLOG ARCHITECTURE</option>
+                        <option value="custom">✏️ CUSTOM HTML CODE</option>
+                    </select>
+                </div>
+
+                <!-- Custom HTML Textarea -->
+                <div class="mb-4">
+                    <label class="block text-sky-500 mb-1">RAW HTML CODE:</label>
+                    <textarea id="html-input" oninput="parseCustomHTML()" class="w-full h-28 bg-black/80 border border-sky-800 text-sky-300 text-xs p-2 font-mono rounded resize-none focus:border-sky-400 outline-none" placeholder="Paste <div><h1>Header</h1></div>..."></textarea>
+                </div>
+
+                <!-- 3D Explosion Sliders -->
+                <div class="space-y-4 border-t border-sky-900/50 pt-4">
+                    <div>
+                        <div class="flex justify-between text-sky-400 mb-1">
+                            <span>Z-AXIS LAYER EXPLOSION:</span>
+                            <span id="txt-z-val" class="font-bold text-purple-400">80 px</span>
+                        </div>
+                        <input type="range" id="slider-z" min="0" max="200" value="80" oninput="render3DDOM()" class="w-full accent-purple-400 cursor-pointer">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-sky-400 mb-1">
+                            <span>X-RAY OPACITY:</span>
+                            <span id="txt-op-val" class="font-bold text-sky-300">70%</span>
+                        </div>
+                        <input type="range" id="slider-op" min="10" max="100" value="70" oninput="render3DDOM()" class="w-full accent-sky-400 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Selected Node Telemetry Readout -->
+                <div class="mt-4 border border-purple-900/60 bg-black/60 p-3 rounded space-y-1.5 font-mono">
+                    <span class="text-[10px] text-purple-400 uppercase block font-bold border-b border-purple-900/50 pb-1">
+                        <i class="fa-solid fa-microscope"></i> NODE INSPECTOR
+                    </span>
+                    <div class="flex justify-between">
+                        <span>TAG TYPE:</span>
+                        <span id="inspect-tag" class="font-bold text-purple-300">&lt;none&gt;</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>DEPTH LEVEL:</span>
+                        <span id="inspect-depth" class="font-bold text-sky-300">L0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>CHILD COUNT:</span>
+                        <span id="inspect-children" class="font-bold text-emerald-400">0</span>
+                    </div>
+                    <div class="truncate text-[10px] text-sky-400/80 pt-1">
+                        <span>CLASS: </span><span id="inspect-class" class="text-sky-200">none</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orbit Control Tips -->
+            <div class="border-t border-sky-900/50 pt-3 text-[10px] text-sky-500">
+                💡 Drag mouse to orbit 360° around the 3D DOM building. Scroll wheel to zoom in/out.
+            </div>
+        </div>
+
+        <!-- Center 3D Viewport (8 Cols) -->
+        <div id="viewport-container" class="md:col-span-8 hud-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden h-[540px]">
+            
+            <div class="flex items-center justify-between border-b border-sky-900/50 pb-3 mb-3 text-xs z-30">
+                <span class="font-bold text-sky-300 flex items-center gap-2">
+                    <i class="fa-solid fa-cube"></i> 3D DOM EXPLODED LAYER STACK
+                </span>
+                <div class="flex items-center gap-3 text-[10px]">
+                    <span class="flex items-center gap-1 text-sky-400"><span class="w-2 h-2 bg-sky-400 rounded-full"></span> LAYOUT</span>
+                    <span class="flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 bg-emerald-400 rounded-full"></span> TEXT</span>
+                    <span class="flex items-center gap-1 text-rose-400"><span class="w-2 h-2 bg-rose-400 rounded-full"></span> INTERACTIVE</span>
+                </div>
+            </div>
+
+            <!-- 3D Perspective Canvas Container -->
+            <div id="hologram-stage-wrapper" class="relative w-full flex-1 flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden">
+                
+                <div id="xray-viewport" class="w-full h-full flex items-center justify-center">
+                    <div id="xray-stage" class="relative w-[500px] h-[360px]">
+                        <!-- DOM Nodes dynamically injected here in 3D Space -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Stats -->
+    <footer class="w-full max-w-6xl py-3 border-t border-sky-900/40 flex items-center justify-between text-xs text-sky-500/70 z-20">
+        <span>DOM X-RAY VIEWER v1.0 // REVERSE ENGINEERING VISUALIZER</span>
+        <span>HTML5 CANVAS & CSS 3D PERSPECTIVE ENGINE</span>
+    </footer>
+
+    <script>
+        // --- Preset HTML Templates ---
+        const PRESETS = {
+            saas: `<div class="app-container">
+  <header class="navbar">
+    <div class="logo">SaaS Core</div>
+    <nav class="nav-links">
+      <a href="#">Product</a>
+      <a href="#">Pricing</a>
+    </nav>
+    <button class="btn-primary">Get Started</button>
+  </header>
+  <main class="hero-section">
+    <h1 class="hero-title">Next-Gen Quantum Platform</h1>
+    <p class="hero-sub">Autonomous AI workflows built for scale.</p>
+    <div class="cta-group">
+      <button class="btn-primary font-bold">Start Free Trial</button>
+      <button class="btn-secondary">Watch Demo</button>
+    </div>
+  </main>
+  <footer class="footer">
+    <span>© 2099 SaaS Inc.</span>
+  </footer>
+</div>`,
+            dashboard: `<div class="dashboard-grid">
+  <aside class="sidebar">
+    <div class="brand font-bold">CYBER HUD</div>
+    <ul class="menu">
+      <li class="active">Overview</li>
+      <li>Telemetry</li>
+      <li>Security</li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <header class="topbar">
+      <h2>System Telemetry</h2>
+      <div class="user-badge">Admin</div>
+    </header>
+    <div class="card-grid">
+      <div class="card bg-cyan">
+        <h3>CPU LOAD</h3>
+        <p>14.2%</p>
+      </div>
+      <div class="card bg-purple">
+        <h3>MEMORY</h3>
+        <p>8.4 GB</p>
+      </div>
+    </div>
+  </main>
+</div>`,
+            blog: `<article class="post-card">
+  <div class="post-header">
+    <span class="category">AI & ARCHITECTURE</span>
+    <h1>Building 3D Web Tools</h1>
+    <div class="meta">By Alex • 5 min read</div>
+  </div>
+  <div class="post-body">
+    <p>Spatial DOM visualization enables intuitive reverse engineering.</p>
+    <blockquote class="quote">"Structure is function."</blockquote>
+  </div>
+  <div class="post-footer">
+    <button class="like-btn">❤️ 142 Likes</button>
+  </div>
+</article>`
+        };
+
+        // --- Audio Synthesizer FX ---
+        let audioCtx = null;
+        function playTone(freq, type = 'sine', duration = 0.1) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // --- 3D Viewport State ---
+        let rotX = -20;
+        let rotY = 25;
+        let scale = 0.85;
+        let isDragging = false;
+        let startMouseX = 0, startMouseY = 0;
+
+        let parsedNodes = [];
+        let selectedNode = null;
+
+        // Initialize 3D Orbit Controls
+        const wrapper = document.getElementById('hologram-stage-wrapper');
+        const stage = document.getElementById('xray-stage');
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startMouseX = e.clientX;
+            startMouseY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startMouseX;
+            const dy = e.clientY - startMouseY;
+            rotY += dx * 0.4;
+            rotX -= dy * 0.4;
+            startMouseX = e.clientX;
+            startMouseY = e.clientY;
+            updateStageTransform();
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) scale = Math.min(1.6, scale + 0.05);
+            else scale = Math.max(0.4, scale - 0.05);
+            updateStageTransform();
+        });
+
+        function resetCameraView() {
+            playTone(600);
+            rotX = -20;
+            rotY = 25;
+            scale = 0.85;
+            updateStageTransform();
+        }
+
+        function updateStageTransform() {
+            stage.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`;
+        }
+
+        // --- Recursive DOM Parser & Node Mapping ---
+        function parseCustomHTML() {
+            const htmlStr = document.getElementById('html-input').value;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlStr, 'text/html');
+            const body = doc.body;
+
+            parsedNodes = [];
+            traverseDOMNode(body.firstElementChild || body, 0, { x: 10, y: 10, w: 480, h: 340 });
+
+            document.getElementById('txt-total-nodes').textContent = `${parsedNodes.length} NODES PARSED`;
+            render3DDOM();
+        }
+
+        function traverseDOMNode(element, depth, bounds) {
+            if (!element || element.nodeType !== 1) return;
+
+            const tagName = element.tagName.toLowerCase();
+            const className = element.className || '';
+            const childElements = Array.from(element.children);
+
+            // Determine Tag Category for Styling
+            let category = 'layout';
+            if (['p', 'h1', 'h2', 'h3', 'h4', 'span', 'blockquote', 'a', 'li'].includes(tagName)) category = 'text';
+            else if (['button', 'input', 'select', 'textarea'].includes(tagName)) category = 'interactive';
+            else if (['img', 'svg', 'canvas', 'video'].includes(tagName)) category = 'media';
+
+            const nodeData = {
+                id: 'node-' + Math.random().toString(36).substr(2, 9),
+                tag: tagName,
+                class: className,
+                depth: depth,
+                childrenCount: childElements.length,
+                text: element.textContent.trim().substring(0, 30),
+                category: category,
+                bounds: { ...bounds }
+            };
+
+            parsedNodes.push(nodeData);
+
+            // Layout Child Nodes inside Parent Bounds
+            if (childElements.length > 0) {
+                const innerMargin = 12;
+                const availableW = bounds.w - (innerMargin * 2);
+                const availableH = (bounds.h - 35) / childElements.length;
+
+                childElements.forEach((child, idx) => {
+                    const childBounds = {
+                        x: bounds.x + innerMargin,
+                        y: bounds.y + 25 + (idx * availableH),
+                        w: Math.max(120, availableW - 10),
+                        h: Math.max(40, availableH - 8)
+                    };
+                    traverseDOMNode(child, depth + 1, childBounds);
+                });
+            }
+        }
+
+        // --- Render Exploded 3D DOM Cards ---
+        function render3DDOM() {
+            stage.innerHTML = '';
+            const zSpacing = parseInt(document.getElementById('slider-z').value);
+            const opacity = parseInt(document.getElementById('slider-op').value) / 100;
+
+            document.getElementById('txt-z-val').textContent = `${zSpacing} px`;
+            document.getElementById('txt-op-val').textContent = `${Math.round(opacity * 100)}%`;
+
+            parsedNodes.forEach((node) => {
+                const card = document.createElement('div');
+                card.className = `dom-node-card tag-${node.category}`;
+                card.style.left = `${node.bounds.x}px`;
+                card.style.top = `${node.bounds.y}px`;
+                card.style.width = `${node.bounds.w}px`;
+                card.style.height = `${node.bounds.h}px`;
+                card.style.transform = `translateZ(${node.depth * zSpacing}px)`;
+                card.style.opacity = opacity;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="text-sky-300">&lt;${node.tag}&gt;</span>
+                        ${node.class ? `<span class="text-[9px] text-sky-400/60 truncate max-w-[100px]">.${node.class.split(' ')[0]}</span>` : ''}
+                    </div>
+                    <span class="text-[9px] font-mono text-purple-300/80 bg-purple-950/60 px-1 rounded border border-purple-800/40">L${node.depth}</span>
+                `;
+
+                card.addEventListener('mouseenter', () => {
+                    playTone(784, 'sine', 0.05);
+                    inspectNode(node);
+                });
+
+                card.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playTone(880, 'triangle', 0.15);
+                    selectNode(node, card);
+                });
+
+                stage.appendChild(card);
+            });
+
+            updateStageTransform();
+        }
+
+        function inspectNode(node) {
+            document.getElementById('inspect-tag').textContent = `<${node.tag}>`;
+            document.getElementById('inspect-depth').textContent = `L${node.depth}`;
+            document.getElementById('inspect-children').textContent = node.childrenCount;
+            document.getElementById('inspect-class').textContent = node.class || 'none';
+        }
+
+        function selectNode(node, cardEl) {
+            document.querySelectorAll('.dom-node-card').forEach(c => c.classList.remove('selected'));
+            cardEl.classList.add('selected');
+            selectedNode = node;
+            inspectNode(node);
+        }
+
+        function loadPresetTemplate(key) {
+            playTone(523);
+            if (key === 'custom') return;
+            const htmlStr = PRESETS[key] || PRESETS.saas;
+            document.getElementById('html-input').value = htmlStr;
+            parseCustomHTML();
+        }
+
+        // Initialize with default SaaS Template
+        loadPresetTemplate('saas');
+    </script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN DROP | Same-Network Instant Peer Transfer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        input, textarea, .selectable { user-select: text; }
+
+        body {
+            background-color: #030712;
+            color: #4ade80;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(74, 222, 128, 0.03), rgba(234, 179, 8, 0.02), rgba(74, 222, 128, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            box-shadow: 0 0 25px rgba(74, 222, 128, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid #22c55e;
+            color: #4ade80;
+            transition: all 0.15s ease;
+        }
+
+        .btn-cyber:hover:not(:disabled) {
+            background: #22c55e;
+            color: #000;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+        }
+
+        .btn-cyber:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+
+        .btn-danger:hover { background: #ef4444; color: #fff; }
+
+        .qrcode-box {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            border: 3px solid #22c55e;
+        }
+
+        .qrcode-box img, .qrcode-box canvas { display: block; margin: 0 auto; }
+        .qrcode-box.tappable { cursor: zoom-in; }
+
+        /* Fullscreen QR: pure white, above the scanlines, nothing filtering the
+           code so a phone camera locks on instantly. */
+        #qr-full {
+            position: fixed; inset: 0; z-index: 200;
+            background: #ffffff;
+            display: none;
+            flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 18px;
+            padding: 16px;
+            cursor: zoom-out;
+        }
+        #qr-full.active { display: flex; }
+        #qr-full img, #qr-full canvas { display: block; image-rendering: pixelated; }
+        #qr-full-label {
+            font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+            color: #111827; text-align: center;
+        }
+        #qr-full-close {
+            position: absolute; top: 16px; right: 16px;
+            background: #000; color: #fff; border: none;
+            padding: 8px 14px; border-radius: 8px;
+            font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        /* Full-window drag target highlight */
+        #drop-veil {
+            position: fixed; inset: 0; z-index: 60;
+            background: rgba(34, 197, 94, 0.12);
+            border: 3px dashed #22c55e;
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center; justify-content: center;
+        }
+        #drop-veil.active { display: flex; }
+
+        .item-row.me { border-left: 3px solid #22c55e; }
+        .item-row.peer { border-left: 3px solid #eab308; }
+
+        #toast-banner {
+            position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: transform 0.25s ease, opacity 0.25s;
+        }
+        #toast-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(74, 222, 128, 0.4); border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <div id="qr-full">
+        <button id="qr-full-close" type="button">CLOSE</button>
+        <div id="qr-full-canvas"></div>
+        <div id="qr-full-label">TAP ANYWHERE TO CLOSE</div>
+    </div>
+
+    <div id="drop-veil">
+        <div class="text-2xl font-bold uppercase tracking-widest text-green-300">
+            <i class="fa-solid fa-arrow-down-to-bracket"></i> RELEASE TO BEAM
+        </div>
+    </div>
+
+    <div id="toast-banner" class="hud-card px-6 py-3 rounded-lg flex items-center gap-3 text-xs font-bold">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-base text-green-400"></i>
+        <span id="toast-text" class="text-green-200 uppercase tracking-wider">READY</span>
+    </div>
+
+    <!-- HEADER -->
+    <header class="w-full max-w-5xl mx-auto mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-green-900/60 pb-3">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-tower-broadcast text-2xl text-green-400"></i>
+                <div>
+                    <h1 class="text-lg font-bold uppercase tracking-widest text-green-300">LAN DROP</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-green-700">SAME-NETWORK // ZERO-SERVER // DIRECT PEER BEAM</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider">
+                <span id="role-chip" class="px-2 py-1 border border-green-800 text-green-500">ROLE: —</span>
+                <span id="status-chip" class="px-2 py-1 border border-yellow-700 text-yellow-500">
+                    <i class="fa-solid fa-circle text-[6px] align-middle"></i> IDLE
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto flex-1 flex flex-col gap-4">
+
+        <!-- ================= HANDSHAKE ================= -->
+        <section id="handshake" class="hud-card rounded-lg p-4 md:p-5">
+
+            <!-- HOST VIEW -->
+            <div id="host-view" class="hidden">
+                <div class="flex items-center gap-2 mb-3 text-xs uppercase tracking-widest text-green-400">
+                    <i class="fa-solid fa-1"></i> SEND THIS LINK TO YOUR PEER
+                </div>
+
+                <div class="grid md:grid-cols-[1fr_auto] gap-4 items-start">
+                    <div>
+                        <div class="relative">
+                            <input id="invite-link" readonly value="generating…"
+                                class="w-full bg-black/70 border border-green-900 text-green-300 text-xs p-3 pr-24 rounded outline-none focus:border-green-500">
+                            <button id="copy-link" class="absolute top-1.5 right-1.5 btn-cyber px-3 py-1.5 text-[10px] uppercase rounded">
+                                <i class="fa-solid fa-copy"></i> COPY
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-green-800 mt-2 leading-relaxed">
+                            Any channel works — chat, mail, note app. The link carries only a connection
+                            descriptor; your files never travel through it.
+                        </p>
+
+                        <div class="mt-4">
+                            <label class="block text-[10px] uppercase tracking-widest text-green-400 mb-2">
+                                <i class="fa-solid fa-2"></i> PASTE THE REPLY CODE FROM YOUR PEER
+                            </label>
+                            <textarea id="answer-input" rows="3" placeholder="Paste the peer's reply code here — connection opens instantly."
+                                class="w-full bg-black/70 border border-green-900 text-green-300 text-xs p-3 rounded resize-none outline-none focus:border-green-500"></textarea>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <button id="accept-answer" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded">
+                                    <i class="fa-solid fa-plug-circle-bolt"></i> OPEN TUNNEL
+                                </button>
+                                <button id="scan-answer" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded hidden">
+                                    <i class="fa-solid fa-camera"></i> SCAN REPLY QR
+                                </button>
+                                <button id="reset-session" class="btn-danger px-4 py-2 text-[11px] font-bold uppercase rounded">
+                                    <i class="fa-solid fa-rotate"></i> NEW SESSION
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="justify-self-center text-center">
+                        <div id="host-qr" class="qrcode-box min-h-[180px] min-w-[180px] flex items-center justify-center">
+                            <span class="text-[10px] text-slate-600 px-4">BUILDING…</span>
+                        </div>
+                        <p class="text-[9px] uppercase tracking-widest text-green-700 mt-2">SCAN FROM PHONE — TAP TO ENLARGE</p>
+                    </div>
+                </div>
+
+                <video id="scan-video" class="hidden w-full max-w-xs mt-4 rounded border border-green-800" playsinline muted></video>
+            </div>
+
+            <!-- GUEST VIEW -->
+            <div id="guest-view" class="hidden">
+                <div class="flex items-center gap-2 mb-3 text-xs uppercase tracking-widest text-yellow-400">
+                    <i class="fa-solid fa-reply"></i> SEND THIS REPLY CODE BACK — THAT'S THE LAST STEP
+                </div>
+
+                <div class="grid md:grid-cols-[1fr_auto] gap-4 items-start">
+                    <div>
+                        <div class="relative">
+                            <textarea id="answer-token" readonly rows="4" placeholder="building reply code…"
+                                class="w-full bg-black/70 border border-yellow-900 text-yellow-300 text-xs p-3 pr-24 rounded resize-none outline-none"></textarea>
+                            <button id="copy-answer" class="absolute top-1.5 right-1.5 btn-cyber px-3 py-1.5 text-[10px] uppercase rounded">
+                                <i class="fa-solid fa-copy"></i> COPY
+                            </button>
+                        </div>
+                        <p id="guest-hint" class="text-[10px] text-yellow-800 mt-2 leading-relaxed">
+                            Paste it back to whoever sent you the link. The tunnel opens the moment they drop it in.
+                        </p>
+                    </div>
+
+                    <div class="justify-self-center text-center">
+                        <div id="guest-qr" class="qrcode-box min-h-[180px] min-w-[180px] flex items-center justify-center">
+                            <span class="text-[10px] text-slate-600 px-4">BUILDING…</span>
+                        </div>
+                        <p class="text-[9px] uppercase tracking-widest text-yellow-700 mt-2">OR LET THEM SCAN THIS — TAP TO ENLARGE</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TRANSFER DECK ================= -->
+        <section id="deck" class="hidden flex-1 flex flex-col gap-4">
+
+            <div class="hud-card rounded-lg p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <span class="text-[10px] uppercase tracking-widest text-green-500">
+                        <i class="fa-solid fa-bolt"></i> TUNNEL LIVE — DROP ANYTHING
+                    </span>
+                    <span id="link-stats" class="text-[10px] text-green-800 uppercase tracking-wider">IDLE</span>
+                </div>
+
+                <textarea id="text-input" rows="2" placeholder="Type or paste text — Enter to beam, Shift+Enter for a new line. Ctrl+V an image anywhere on the page."
+                    class="w-full bg-black/70 border border-green-900 text-green-200 text-xs p-3 rounded resize-none outline-none focus:border-green-500"></textarea>
+
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button id="send-text" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-paper-plane"></i> BEAM TEXT
+                    </button>
+                    <button id="pick-files" class="btn-cyber px-4 py-2 text-[11px] font-bold uppercase rounded">
+                        <i class="fa-solid fa-folder-open"></i> PICK FILES
+                    </button>
+                    <button id="burn-session" class="btn-danger px-4 py-2 text-[11px] font-bold uppercase rounded ml-auto">
+                        <i class="fa-solid fa-fire"></i> BURN
+                    </button>
+                    <input id="file-input" type="file" multiple class="hidden">
+                </div>
+            </div>
+
+            <div class="hud-card rounded-lg p-4 flex-1 min-h-[220px]">
+                <div class="text-[10px] uppercase tracking-widest text-green-600 mb-3 border-b border-green-900/60 pb-2">
+                    <i class="fa-solid fa-list"></i> TRANSFER LOG
+                </div>
+                <div id="feed" class="flex flex-col gap-2 max-h-[46vh] overflow-y-auto pr-1">
+                    <p class="text-[10px] text-green-900 uppercase tracking-wider">NOTHING BEAMED YET</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER NOTE -->
+        <p class="text-[9px] text-green-900 leading-relaxed text-center pb-4">
+            Direct peer link over your local network — no STUN, no TURN, no relay, nothing stored anywhere.
+            Everything lives in memory and dies with the tab. Some corporate Wi-Fi enables AP/client isolation
+            or blocks mDNS, which severs any direct link; a personal hotspot sidesteps both.
+        </p>
+    </main>
+
+<script>
+/* =========================================================================
+   LAN DROP — direct peer transfer between two machines on one network.
+
+   No signalling server exists, so the two descriptors have to cross by hand:
+   the host's offer rides in the invite URL's hash, the guest's answer comes
+   back as a short code. That is the whole handshake; everything after it is
+   a straight datachannel.
+   ========================================================================= */
+
+/* An empty ICE server list is the entire "LAN mode". STUN only exists to
+   discover a public reflexive address and TURN to relay through one, both
+   useless between two machines on the same subnet — and both cost seconds of
+   gathering (or the full timeout when the network has no internet at all).
+   Dropping them leaves host candidates, which appear in a few milliseconds
+   and keep the descriptor small enough to stay a scannable QR. */
+const RTC_CONFIG = { iceServers: [] };
+
+/* Host-only gathering normally finishes almost immediately; this cap just
+   stops a browser that never fires 'complete' from hanging the UI. */
+const ICE_CAP_MS = 2500;
+
+/* Chunk size for file payloads. 16 KiB sits under every browser's datachannel
+   message ceiling, so no SCTP fragmentation negotiation is needed. */
+const CHUNK = 16 * 1024;
+
+/* Backpressure window. Without it, a large file queues entirely into the send
+   buffer in a tight loop and the tab dies before a byte lands on the wire. */
+const BUFFER_HIGH = 4 * 1024 * 1024;
+const BUFFER_LOW = 512 * 1024;
+
+const TOKEN_PREFIX = 'LD1.';
+
+let pc = null;
+let dc = null;
+let role = null;          // 'host' | 'guest'
+let connected = false;
+let sendQueue = Promise.resolve();
+let incoming = null;      // in-flight inbound file
+let scanStream = null;
+
+const $ = (id) => document.getElementById(id);
+
+/* ---------------------------------------------------------------- helpers */
+
+function toast(message, kind = 'info') {
+    const banner = $('toast-banner');
+    const icon = $('toast-icon');
+    const palette = {
+        info: ['fa-circle-info', 'text-green-400'],
+        ok: ['fa-circle-check', 'text-green-400'],
+        warn: ['fa-triangle-exclamation', 'text-yellow-400'],
+        err: ['fa-circle-xmark', 'text-red-400']
+    };
+    const [glyph, color] = palette[kind] || palette.info;
+    icon.className = `fa-solid ${glyph} text-base ${color}`;
+    $('toast-text').textContent = message;
+    banner.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => banner.classList.remove('show'), 2600);
+}
+
+function setStatus(text, tone = 'yellow') {
+    const chip = $('status-chip');
+    chip.className = `px-2 py-1 border border-${tone}-700 text-${tone}-500`;
+    chip.innerHTML = `<i class="fa-solid fa-circle text-[6px] align-middle"></i> ${text}`;
+}
+
+function humanBytes(n) {
+    if (n < 1024) return `${n} B`;
+    if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+    if (n < 1024 * 1024 * 1024) return `${(n / 1048576).toFixed(1)} MB`;
+    return `${(n / 1073741824).toFixed(2)} GB`;
+}
+
+/* Base64url keeps the token safe inside a URL hash without percent-encoding,
+   which would otherwise inflate it past a comfortable QR size. */
+function bytesToB64url(bytes) {
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64urlToBytes(text) {
+    const padded = text.replace(/-/g, '+').replace(/_/g, '/');
+    const binary = atob(padded + '='.repeat((4 - padded.length % 4) % 4));
+    const out = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
+    return out;
+}
+
+/* SDP is heavily repetitive line-oriented text; deflating it before base64
+   roughly quarters the token and is what keeps the QR sparse enough to scan
+   from across a desk. */
+async function encodeDescriptor(desc) {
+    const json = JSON.stringify({ t: desc.type === 'offer' ? 'o' : 'a', s: desc.sdp });
+    if (typeof CompressionStream === 'undefined') {
+        return TOKEN_PREFIX + bytesToB64url(new TextEncoder().encode(json));
+    }
+    const stream = new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    const packed = new Uint8Array(await new Response(stream).arrayBuffer());
+    return TOKEN_PREFIX + 'z' + bytesToB64url(packed);
+}
+
+async function decodeDescriptor(token) {
+    const clean = String(token).trim().replace(/\s+/g, '');
+    const body = clean.startsWith(TOKEN_PREFIX) ? clean.slice(TOKEN_PREFIX.length) : clean;
+
+    let json;
+    if (body.startsWith('z')) {
+        const packed = b64urlToBytes(body.slice(1));
+        const stream = new Blob([packed]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        json = await new Response(stream).text();
+    } else {
+        json = new TextDecoder().decode(b64urlToBytes(body));
+    }
+
+    const parsed = JSON.parse(json);
+    return { type: parsed.t === 'o' ? 'offer' : 'answer', sdp: parsed.s };
+}
+
+/* Text behind each rendered QR, so the fullscreen view can redraw it at
+   whatever size the viewport allows instead of upscaling a 180px bitmap. */
+const qrPayloads = {};
+
+function renderQR(containerId, text) {
+    const box = $(containerId);
+    box.innerHTML = '';
+    qrPayloads[containerId] = null;
+    box.classList.remove('tappable');
+    /* Byte mode tops out at 2953 bytes even at the lowest error correction.
+       A LAN descriptor lands far below that, but say so rather than render a
+       broken square if some browser emits an unusually fat SDP. */
+    if (!window.QRCode || text.length > 2900) {
+        box.innerHTML = '<span class="text-[10px] text-slate-600 px-4 text-center">USE THE COPY BUTTON</span>';
+        return;
+    }
+    try {
+        new QRCode(box, {
+            text,
+            width: 180,
+            height: 180,
+            correctLevel: QRCode.CorrectLevel.L
+        });
+        qrPayloads[containerId] = text;
+        box.classList.add('tappable');
+        box.title = 'TAP TO ENLARGE';
+    } catch {
+        box.innerHTML = '<span class="text-[10px] text-slate-600 px-4 text-center">USE THE COPY BUTTON</span>';
+    }
+}
+
+/* -------------------------------------------------------- fullscreen QR */
+
+function openFullQR(sourceId, label) {
+    const text = qrPayloads[sourceId];
+    if (!text || !window.QRCode) return;
+
+    /* Square as large as the shorter viewport edge allows, snapped down a bit
+       so the white quiet zone around the code survives on every screen. */
+    const size = Math.max(220, Math.floor(Math.min(window.innerWidth, window.innerHeight) * 0.82));
+    const host = $('qr-full-canvas');
+    host.innerHTML = '';
+    try {
+        new QRCode(host, {
+            text,
+            width: size,
+            height: size,
+            correctLevel: QRCode.CorrectLevel.L
+        });
+    } catch {
+        return;
+    }
+    $('qr-full-label').textContent = label || 'TAP ANYWHERE TO CLOSE';
+    $('qr-full').classList.add('active');
+}
+
+function closeFullQR() {
+    $('qr-full').classList.remove('active');
+    $('qr-full-canvas').innerHTML = '';
+}
+
+$('qr-full').addEventListener('click', closeFullQR);
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeFullQR();
+});
+$('host-qr').addEventListener('click', () => openFullQR('host-qr', 'SCAN FROM PHONE — TAP TO CLOSE'));
+$('guest-qr').addEventListener('click', () => openFullQR('guest-qr', 'LET THEM SCAN — TAP TO CLOSE'));
+window.addEventListener('resize', () => {
+    if ($('qr-full').classList.contains('active')) closeFullQR();
+});
+
+async function copyText(value, label) {
+    try {
+        await navigator.clipboard.writeText(value);
+        toast(`${label} COPIED`, 'ok');
+    } catch {
+        toast('COPY BLOCKED — SELECT MANUALLY', 'warn');
+    }
+}
+
+/* ------------------------------------------------------------ ICE waiting */
+
+function waitForICE(peer) {
+    return new Promise((resolve) => {
+        if (peer.iceGatheringState === 'complete') return resolve();
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            peer.removeEventListener('icegatheringstatechange', onChange);
+            resolve();
+        };
+        const onChange = () => { if (peer.iceGatheringState === 'complete') finish(); };
+        peer.addEventListener('icegatheringstatechange', onChange);
+        setTimeout(finish, ICE_CAP_MS);
+    });
+}
+
+/* ------------------------------------------------------------ peer wiring */
+
+function buildPeer() {
+    pc = new RTCPeerConnection(RTC_CONFIG);
+
+    pc.onconnectionstatechange = () => {
+        const state = pc.connectionState;
+        if (state === 'connecting') setStatus('LINKING', 'yellow');
+        if (state === 'failed' || state === 'disconnected') {
+            connected = false;
+            setStatus('LINK LOST', 'red');
+            toast('LINK LOST', 'err');
+        }
+        if (state === 'closed') setStatus('CLOSED', 'red');
+    };
+}
+
+function attachChannel(channel) {
+    dc = channel;
+    dc.binaryType = 'arraybuffer';
+    dc.bufferedAmountLowThreshold = BUFFER_LOW;
+
+    dc.onopen = () => {
+        connected = true;
+        setStatus('TUNNEL LIVE', 'green');
+        toast('TUNNEL LIVE', 'ok');
+        $('handshake').classList.add('hidden');
+        $('deck').classList.remove('hidden');
+        stopScanner();
+        $('text-input').focus();
+        reportLink();
+    };
+
+    dc.onclose = () => {
+        connected = false;
+        setStatus('CLOSED', 'red');
+    };
+
+    dc.onmessage = onWireMessage;
+}
+
+async function reportLink() {
+    /* The selected candidate pair is the only honest answer to "is this
+       actually going straight across the LAN". Surfacing it stops a silent
+       fallback from looking like success. */
+    try {
+        const stats = await pc.getStats();
+        let pair = null;
+        stats.forEach((entry) => {
+            if (entry.type === 'candidate-pair' && entry.state === 'succeeded' && entry.nominated) pair = entry;
+        });
+        if (!pair) return;
+        const local = stats.get(pair.localCandidateId);
+        const label = local ? `${local.candidateType || 'host'}/${local.protocol || '—'}` : 'direct';
+        $('link-stats').textContent = `DIRECT ${label.toUpperCase()}`;
+    } catch { /* stats are advisory only */ }
+}
+
+/* ------------------------------------------------------------ host / guest */
+
+async function startHost() {
+    role = 'host';
+    $('role-chip').textContent = 'ROLE: HOST';
+    $('host-view').classList.remove('hidden');
+    setStatus('BUILDING OFFER', 'yellow');
+
+    buildPeer();
+    attachChannel(pc.createDataChannel('drop', { ordered: true }));
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await waitForICE(pc);
+
+    const token = await encodeDescriptor(pc.localDescription);
+    const url = `${location.origin}${location.pathname}#o=${token}`;
+
+    $('invite-link').value = url;
+    renderQR('host-qr', url);
+    setStatus('AWAITING REPLY', 'yellow');
+
+    if ('BarcodeDetector' in window) $('scan-answer').classList.remove('hidden');
+}
+
+async function startGuest(token) {
+    role = 'guest';
+    $('role-chip').textContent = 'ROLE: GUEST';
+    $('guest-view').classList.remove('hidden');
+    setStatus('READING OFFER', 'yellow');
+
+    buildPeer();
+    pc.ondatachannel = (event) => attachChannel(event.channel);
+
+    try {
+        const offer = await decodeDescriptor(token);
+        await pc.setRemoteDescription(offer);
+    } catch {
+        setStatus('BAD LINK', 'red');
+        $('answer-token').value = '';
+        $('guest-hint').textContent = 'That invite link is malformed or expired — ask for a fresh one.';
+        $('guest-hint').className = 'text-[10px] text-red-500 mt-2 leading-relaxed';
+        $('guest-qr').innerHTML = '<span class="text-[10px] text-slate-600 px-4 text-center">NO LINK</span>';
+        return;
+    }
+
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    await waitForICE(pc);
+
+    const replyToken = await encodeDescriptor(pc.localDescription);
+    $('answer-token').value = replyToken;
+    renderQR('guest-qr', replyToken);
+    setStatus('REPLY READY', 'yellow');
+
+    /* The reply is useless sitting in a textarea — put it on the clipboard so
+       the guest's only remaining action is a paste into whatever chat they
+       already have open. */
+    copyText(replyToken, 'REPLY CODE');
+}
+
+async function acceptAnswer(raw) {
+    const token = (raw || '').trim();
+    if (!token) return toast('PASTE THE REPLY CODE FIRST', 'warn');
+    if (!pc || !pc.localDescription) return toast('SESSION NOT READY', 'warn');
+
+    try {
+        const answer = await decodeDescriptor(token);
+        if (answer.type !== 'answer') return toast('THAT IS NOT A REPLY CODE', 'err');
+        await pc.setRemoteDescription(answer);
+        setStatus('LINKING', 'yellow');
+        toast('REPLY ACCEPTED', 'ok');
+    } catch {
+        toast('REPLY CODE UNREADABLE', 'err');
+    }
+}
+
+/* ------------------------------------------------------- optional QR scan */
+
+async function startScanner() {
+    if (!('BarcodeDetector' in window)) return toast('NO QR SCANNER IN THIS BROWSER', 'warn');
+    const video = $('scan-video');
+    try {
+        scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    } catch {
+        return toast('CAMERA DENIED', 'err');
+    }
+    video.srcObject = scanStream;
+    video.classList.remove('hidden');
+    await video.play();
+
+    const detector = new BarcodeDetector({ formats: ['qr_code'] });
+    const tick = async () => {
+        if (!scanStream || connected) return;
+        try {
+            const codes = await detector.detect(video);
+            if (codes.length) {
+                $('answer-input').value = codes[0].rawValue;
+                stopScanner();
+                acceptAnswer(codes[0].rawValue);
+                return;
+            }
+        } catch { /* a dropped frame is not fatal */ }
+        requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+}
+
+function stopScanner() {
+    if (scanStream) {
+        scanStream.getTracks().forEach((t) => t.stop());
+        scanStream = null;
+    }
+    $('scan-video').classList.add('hidden');
+}
+
+/* ------------------------------------------------------------ wire format */
+/*
+   Control frames are JSON strings, payload frames are raw ArrayBuffers. The
+   channel is ordered, so a file's chunks always sit between its own header
+   and trailer — provided only one file is in flight, which the send queue
+   guarantees.
+*/
+
+function onWireMessage(event) {
+    if (typeof event.data === 'string') {
+        let frame;
+        try { frame = JSON.parse(event.data); } catch { return; }
+
+        if (frame.k === 'txt') {
+            addItem({ side: 'peer', kind: 'text', text: frame.v });
+        } else if (frame.k === 'fh') {
+            incoming = { name: frame.name, size: frame.size, mime: frame.mime, parts: [], got: 0 };
+            incoming.row = addItem({ side: 'peer', kind: 'file', name: frame.name, size: frame.size, pending: true });
+        } else if (frame.k === 'fe') {
+            finishIncoming();
+        }
+        return;
+    }
+
+    if (!incoming) return;
+    incoming.parts.push(event.data);
+    incoming.got += event.data.byteLength;
+    if (incoming.row) {
+        const pct = incoming.size ? Math.floor((incoming.got / incoming.size) * 100) : 0;
+        incoming.row.querySelector('[data-progress]').textContent = `${pct}%`;
+    }
+}
+
+function finishIncoming() {
+    if (!incoming) return;
+    const blob = new Blob(incoming.parts, { type: incoming.mime || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const row = incoming.row;
+    const name = incoming.name;
+    const mime = incoming.mime || '';
+    incoming = null;
+
+    if (!row) return;
+    row.querySelector('[data-progress]').textContent = 'READY';
+    const actions = row.querySelector('[data-actions]');
+    actions.innerHTML = '';
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    link.className = 'btn-cyber px-3 py-1 text-[10px] uppercase rounded';
+    link.innerHTML = '<i class="fa-solid fa-download"></i> SAVE';
+    actions.appendChild(link);
+
+    if (mime.startsWith('image/')) {
+        const thumb = document.createElement('img');
+        thumb.src = url;
+        thumb.className = 'mt-2 max-h-40 rounded border border-green-900';
+        row.appendChild(thumb);
+    }
+    toast(`RECEIVED ${name}`, 'ok');
+}
+
+/* ------------------------------------------------------------ sending side */
+
+function waitForDrain() {
+    return new Promise((resolve) => {
+        if (dc.bufferedAmount <= BUFFER_HIGH) return resolve();
+        const onLow = () => { dc.removeEventListener('bufferedamountlow', onLow); resolve(); };
+        dc.addEventListener('bufferedamountlow', onLow);
+    });
+}
+
+function sendText(text) {
+    if (!connected) return toast('NO TUNNEL', 'warn');
+    const value = text.trim();
+    if (!value) return;
+    dc.send(JSON.stringify({ k: 'txt', v: value }));
+    addItem({ side: 'me', kind: 'text', text: value });
+}
+
+function enqueueFiles(files) {
+    if (!connected) return toast('NO TUNNEL', 'warn');
+    for (const file of files) {
+        /* One file at a time: interleaving two of them on a single ordered
+           channel would hand the receiver chunks it cannot attribute. */
+        sendQueue = sendQueue.then(() => sendFile(file)).catch(() => {});
+    }
+}
+
+async function sendFile(file) {
+    const row = addItem({ side: 'me', kind: 'file', name: file.name, size: file.size, pending: true });
+    const label = row.querySelector('[data-progress]');
+
+    dc.send(JSON.stringify({ k: 'fh', name: file.name, size: file.size, mime: file.type }));
+
+    let offset = 0;
+    const started = performance.now();
+
+    while (offset < file.size) {
+        const slice = await file.slice(offset, offset + CHUNK).arrayBuffer();
+        if (!connected || dc.readyState !== 'open') {
+            label.textContent = 'ABORTED';
+            return;
+        }
+        dc.send(slice);
+        offset += slice.byteLength;
+
+        if (dc.bufferedAmount > BUFFER_HIGH) await waitForDrain();
+
+        const pct = Math.floor((offset / file.size) * 100);
+        const rate = offset / Math.max(1, performance.now() - started) * 1000;
+        label.textContent = `${pct}% · ${humanBytes(rate)}/s`;
+    }
+
+    dc.send(JSON.stringify({ k: 'fe' }));
+    label.textContent = 'SENT';
+}
+
+/* ------------------------------------------------------------------ feed */
+
+function addItem({ side, kind, text, name, size, pending }) {
+    const feed = $('feed');
+    if (feed.dataset.empty !== 'no') {
+        feed.innerHTML = '';
+        feed.dataset.empty = 'no';
+    }
+
+    const row = document.createElement('div');
+    row.className = `item-row ${side} bg-black/40 rounded px-3 py-2`;
+
+    const stamp = new Date().toLocaleTimeString();
+    const who = side === 'me' ? 'YOU' : 'PEER';
+
+    if (kind === 'text') {
+        row.innerHTML = `
+            <div class="flex items-center justify-between gap-3 text-[9px] uppercase tracking-widest ${side === 'me' ? 'text-green-600' : 'text-yellow-600'}">
+                <span><i class="fa-solid fa-align-left"></i> ${who} · TEXT</span>
+                <span>${stamp}</span>
+            </div>
+            <p class="selectable text-xs text-green-200 mt-1 whitespace-pre-wrap break-words"></p>
+            <button class="btn-cyber px-3 py-1 text-[10px] uppercase rounded mt-2" data-copy>
+                <i class="fa-solid fa-copy"></i> COPY
+            </button>`;
+        row.querySelector('p').textContent = text;
+        row.querySelector('[data-copy]').onclick = () => copyText(text, 'TEXT');
+    } else {
+        row.innerHTML = `
+            <div class="flex items-center justify-between gap-3 text-[9px] uppercase tracking-widest ${side === 'me' ? 'text-green-600' : 'text-yellow-600'}">
+                <span><i class="fa-solid fa-file"></i> ${who} · FILE</span>
+                <span>${stamp}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3 mt-1">
+                <span class="selectable text-xs text-green-200 break-all"></span>
+                <span class="text-[10px] text-green-600 shrink-0" data-progress>${pending ? '0%' : ''}</span>
+            </div>
+            <div class="text-[9px] text-green-800 mt-0.5">${humanBytes(size || 0)}</div>
+            <div class="flex gap-2 mt-2" data-actions></div>`;
+        row.querySelector('span.selectable').textContent = name;
+    }
+
+    feed.appendChild(row);
+    feed.scrollTop = feed.scrollHeight;
+    return row;
+}
+
+/* --------------------------------------------------------------- teardown */
+
+function burn() {
+    try { if (dc) dc.close(); } catch {}
+    try { if (pc) pc.close(); } catch {}
+    stopScanner();
+    connected = false;
+    setStatus('BURNED', 'red');
+    $('feed').innerHTML = '<p class="text-[10px] text-red-900 uppercase tracking-wider">SESSION BURNED</p>';
+    $('feed').dataset.empty = 'yes';
+    toast('SESSION BURNED', 'err');
+}
+
+/* ------------------------------------------------------------------ boot */
+
+$('copy-link').onclick = () => copyText($('invite-link').value, 'INVITE LINK');
+$('copy-answer').onclick = () => copyText($('answer-token').value, 'REPLY CODE');
+$('accept-answer').onclick = () => acceptAnswer($('answer-input').value);
+$('scan-answer').onclick = startScanner;
+$('reset-session').onclick = () => { burn(); location.hash = ''; location.reload(); };
+$('burn-session').onclick = burn;
+$('send-text').onclick = () => { sendText($('text-input').value); $('text-input').value = ''; };
+$('pick-files').onclick = () => $('file-input').click();
+$('file-input').onchange = (e) => { enqueueFiles(e.target.files); e.target.value = ''; };
+
+$('text-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendText($('text-input').value);
+        $('text-input').value = '';
+    }
+});
+
+/* Pasting a screenshot is the single most common thing this tool gets used
+   for, so it is bound page-wide rather than to the composer alone. */
+document.addEventListener('paste', (e) => {
+    if (!connected) return;
+    const files = Array.from(e.clipboardData?.files || []);
+    if (files.length) {
+        e.preventDefault();
+        enqueueFiles(files);
+    }
+});
+
+let dragDepth = 0;
+window.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    if (!connected) return;
+    dragDepth++;
+    $('drop-veil').classList.add('active');
+});
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('dragleave', () => {
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (!dragDepth) $('drop-veil').classList.remove('active');
+});
+window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragDepth = 0;
+    $('drop-veil').classList.remove('active');
+    if (e.dataTransfer?.files?.length) enqueueFiles(e.dataTransfer.files);
+});
+
+window.addEventListener('beforeunload', () => {
+    try { if (pc) pc.close(); } catch {}
+});
+
+(function boot() {
+    const match = location.hash.match(/[#&]o=([^&]+)/);
+    if (match) {
+        startGuest(match[1]).catch(() => setStatus('GUEST FAILED', 'red'));
+    } else {
+        startHost().catch(() => {
+            setStatus('OFFER FAILED', 'red');
+            toast('COULD NOT BUILD OFFER', 'err');
+        });
+    }
+})();
+</script>
+</body>
+</html>

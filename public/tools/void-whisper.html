@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOID WHISPER | Acoustic Jammer & Anti-Eavesdropping Shield</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #050505;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #f43f5e;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(244, 63, 94, 0.04), rgba(16, 185, 129, 0.02), rgba(6, 182, 212, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(30, 27, 75, 0.3);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.15);
+            backdrop-filter: blur(12px);
+        }
+
+        .btn-cyber {
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid #f43f5e;
+            color: #fb7185;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #f43f5e;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.6);
+        }
+
+        .shield-active-glow {
+            animation: shieldPulse 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes shieldPulse {
+            0% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.3), inset 0 0 30px rgba(244, 63, 94, 0.2); border-color: #f43f5e; }
+            100% { box-shadow: 0 0 60px rgba(244, 63, 94, 0.7), inset 0 0 60px rgba(244, 63, 94, 0.4); border-color: #ff0055; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative" id="main-body">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-rose-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-rose-500/20 border border-rose-500 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(244,63,94,0.3)]">
+                🛡️
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-rose-300 uppercase">VOID WHISPER</h1>
+                <p class="text-xs text-rose-500/80 uppercase">ACOUSTIC JAMMER & ANTI-EAVESDROPPING SHIELD</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="status-badge" class="px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                <span>SHIELD STANDBY</span>
+            </div>
+            <button id="btn-arm-shield" onclick="toggleJammer()" class="btn-cyber px-5 py-2 text-xs uppercase font-bold tracking-wider">
+                <i class="fa-solid fa-shield-virus"></i> ARM ACOUSTIC SHIELD
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="w-full max-w-6xl flex-1 my-4 grid grid-cols-1 md:grid-cols-12 gap-4 z-20">
+
+        <!-- Controls HUD (4 Cols) -->
+        <div class="md:col-span-4 hud-card p-5 rounded-xl flex flex-col justify-between text-xs space-y-6">
+            <div>
+                <div class="border-b border-rose-900/50 pb-2 mb-4 font-bold text-rose-300 flex items-center justify-between">
+                    <span><i class="fa-solid fa-sliders"></i> JAMMER PRESETS</span>
+                    <span id="txt-preset-tag" class="text-[10px] text-rose-400 bg-rose-950 px-2 py-0.5 border border-rose-800">WHISPER SHIELD</span>
+                </div>
+
+                <!-- Preset Selection Buttons -->
+                <div class="space-y-2 mb-6">
+                    <span class="text-rose-500 block mb-1">SELECT ACOUSTIC MASKING MODE:</span>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="setPreset('whisper')" id="preset-whisper-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between border-rose-400 bg-rose-500/20">
+                            <span>🤫 WHISPER MASK (2kHz-6kHz)</span>
+                            <span class="text-[10px] text-rose-300">SPEECH MASK</span>
+                        </button>
+
+                        <button onclick="setPreset('ultrasonic')" id="preset-ultra-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between opacity-60 hover:opacity-100">
+                            <span>📡 ULTRASONIC SWEEP (18k-21kHz)</span>
+                            <span class="text-[10px] text-rose-300">MEMS SATURATION</span>
+                        </button>
+
+                        <button onclick="setPreset('pink')" id="preset-pink-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between opacity-60 hover:opacity-100">
+                            <span>🌧️ NATURAL PINK STATIC</span>
+                            <span class="text-[10px] text-rose-300">RAIN SHIELD</span>
+                        </button>
+
+                        <button onclick="setPreset('paranoia')" id="preset-paranoia-btn" class="btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between opacity-60 hover:opacity-100 border-red-500">
+                            <span>☣️ MAXIMUM PARANOIA JAMMER</span>
+                            <span class="text-[10px] text-red-300">MULTI-BAND</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Level & Modulator Sliders -->
+                <div class="space-y-4 border-t border-rose-900/50 pt-4">
+                    <div>
+                        <div class="flex justify-between text-rose-400 mb-1">
+                            <span>JAMMING INTENSITY VOLUME:</span>
+                            <span id="txt-vol-val" class="font-bold text-rose-300">75%</span>
+                        </div>
+                        <input type="range" id="slider-vol" min="0" max="100" value="75" oninput="updateAudioParams()" class="w-full accent-rose-500 cursor-pointer">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-rose-400 mb-1">
+                            <span>PHASE MODULATION SPEED:</span>
+                            <span id="txt-mod-val" class="font-bold text-rose-300">8 Hz</span>
+                        </div>
+                        <input type="range" id="slider-mod" min="1" max="25" value="8" oninput="updateAudioParams()" class="w-full accent-rose-500 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Telemetry Metrics -->
+                <div class="mt-6 border border-rose-900/60 bg-black/60 p-3 rounded space-y-2">
+                    <span class="text-[10px] text-rose-500 uppercase block font-bold">SHIELD METRICS:</span>
+                    <div class="flex justify-between">
+                        <span>MASKING BAND:</span>
+                        <span id="txt-band-range" class="font-bold text-rose-300">2,000 - 6,000 Hz</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>MIC SATURATION:</span>
+                        <span id="txt-sat-level" class="font-bold text-rose-300">98.4%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>WAR ROOM SHIELD:</span>
+                        <span id="txt-shield-state" class="font-bold text-yellow-400">DISARMED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Notice -->
+            <div class="border-t border-rose-900/50 pt-3 text-[10px] text-rose-400/70">
+                <i class="fa-solid fa-triangle-exclamation text-yellow-400"></i> Place smartphone speaker facing MEMS microphones on the table for maximum acoustic saturation.
+            </div>
+        </div>
+
+        <!-- Center Shield Graphic & Spectrum Visualizer (8 Cols) -->
+        <div id="shield-container" class="md:col-span-8 hud-card rounded-xl p-6 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
+            
+            <div class="flex items-center justify-between border-b border-rose-900/50 pb-3 mb-3 text-xs">
+                <span class="font-bold text-rose-300 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> ACOUSTIC CHAMBER SHIELD & SPECTRUM ENGINE
+                </span>
+                <span class="text-[10px] text-rose-500 font-mono">PHASE SWEEP: ACTIVE</span>
+            </div>
+
+            <!-- Shield Hologram Visualizer Display -->
+            <div class="relative w-full flex-1 flex flex-col gap-4 items-center justify-center min-h-[460px]">
+                
+                <!-- Central Dome Graphic -->
+                <div id="dome-visualizer" class="relative w-72 h-72 rounded-full border-2 border-rose-500/40 flex items-center justify-center transition-all duration-500">
+                    <canvas id="spectrum-canvas" width="280" height="280" class="rounded-full"></canvas>
+                    
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                        <i id="shield-icon" class="fa-solid fa-lock text-4xl text-rose-500/40 mb-2 transition-all"></i>
+                        <span id="shield-status-text" class="text-xs font-bold text-rose-400 uppercase tracking-widest">SHIELD INACTIVE</span>
+                        <span id="shield-sub-text" class="text-[9px] text-rose-500/60 mt-1">PRESS ARM TO BEGIN ACOUSTIC MASKING</span>
+                    </div>
+                </div>
+
+                <!-- Frequency Bar Graph Canvas -->
+                <div class="w-full h-24 bg-black/80 border border-rose-900/60 rounded overflow-hidden relative">
+                    <canvas id="bars-canvas" class="w-full h-full object-stretch"></canvas>
+                    <div class="absolute top-1 left-2 text-[9px] text-rose-500 uppercase bg-black/60 px-1 border border-rose-900/50">
+                        ANTI-EAVESDROPPING NOISE SPECTRUM
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Bar -->
+    <footer class="w-full max-w-6xl py-3 border-t border-rose-900/40 flex items-center justify-between text-xs text-rose-500/70 z-20">
+        <span>VOID WHISPER v1.0 // SMART ACOUSTIC MASKING GENERATOR</span>
+        <span>DSP: Web Audio Noise Generator + Biquad Sweeper</span>
+    </footer>
+
+    <script>
+        // --- Web Audio API DSP Engine ---
+        let audioCtx = null;
+        let noiseNode = null;
+        let filterNode = null;
+        let gainNode = null;
+        let oscNode = null;
+        let lfoNode = null;
+        let lfoGain = null;
+        let analyserNode = null;
+
+        let isArmed = false;
+        let currentPreset = 'whisper';
+        let volumeLevel = 0.75;
+        let modSpeed = 8;
+
+        const specCanvas = document.getElementById('spectrum-canvas');
+        const specCtx = specCanvas.getContext('2d');
+        const barsCanvas = document.getElementById('bars-canvas');
+        const barsCtx = barsCanvas.getContext('2d');
+
+        function setPreset(p) {
+            currentPreset = p;
+            document.getElementById('preset-whisper-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${p==='whisper'?'border-rose-400 bg-rose-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('preset-ultra-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${p==='ultrasonic'?'border-rose-400 bg-rose-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('preset-pink-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${p==='pink'?'border-rose-400 bg-rose-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('preset-paranoia-btn').className = `btn-cyber py-2 px-3 text-left text-xs rounded flex items-center justify-between ${p==='paranoia'?'border-red-500 bg-red-500/30':'opacity-60 hover:opacity-100'}`;
+
+            const tags = {
+                whisper: 'WHISPER MASK',
+                ultrasonic: 'ULTRASONIC SWEEP',
+                pink: 'PINK STATIC',
+                paranoia: 'MAX PARANOIA'
+            };
+            const ranges = {
+                whisper: '2,000 - 6,000 Hz',
+                ultrasonic: '18,000 - 21,000 Hz',
+                pink: '20 - 20,000 Hz',
+                paranoia: 'MULTI-BAND SWEEP'
+            };
+
+            document.getElementById('txt-preset-tag').textContent = tags[p];
+            document.getElementById('txt-band-range').textContent = ranges[p];
+
+            if (isArmed) {
+                applyAudioNodes();
+            }
+        }
+
+        function updateAudioParams() {
+            volumeLevel = parseInt(document.getElementById('slider-vol').value) / 100;
+            modSpeed = parseInt(document.getElementById('slider-mod').value);
+
+            document.getElementById('txt-vol-val').textContent = `${Math.round(volumeLevel * 100)}%`;
+            document.getElementById('txt-mod-val').textContent = `${modSpeed} Hz`;
+
+            if (gainNode && audioCtx) {
+                gainNode.gain.setValueAtTime(volumeLevel * 0.4, audioCtx.currentTime);
+            }
+            if (lfoNode && audioCtx) {
+                lfoNode.frequency.setValueAtTime(modSpeed, audioCtx.currentTime);
+            }
+        }
+
+        // Generate Pink Noise Buffer (Human Ear Comfortable Static)
+        function createPinkNoiseBuffer(ctx) {
+            const bufferSize = 5 * ctx.sampleRate;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = buffer.getChannelData(0);
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11;
+                b6 = white * 0.115926;
+            }
+            return buffer;
+        }
+
+        function toggleJammer() {
+            if (!isArmed) {
+                armJammer();
+            } else {
+                disarmJammer();
+            }
+        }
+
+        function armJammer() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyserNode = audioCtx.createAnalyser();
+                analyserNode.fftSize = 256;
+
+                gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(volumeLevel * 0.4, audioCtx.currentTime);
+
+                applyAudioNodes();
+
+                isArmed = true;
+
+                // UI Updates
+                document.getElementById('status-badge').className = "px-3 py-1 text-xs border border-rose-500/50 bg-rose-500/10 text-rose-400 rounded-full flex items-center gap-2";
+                document.getElementById('status-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span> <span>ACOUSTIC SHIELD ARMED</span>`;
+                
+                const btn = document.getElementById('btn-arm-shield');
+                btn.innerHTML = `<i class="fa-solid fa-shield"></i> DISARM SHIELD`;
+                btn.className = "btn-cyber px-5 py-2 text-xs uppercase font-bold tracking-wider bg-rose-600 text-white border-rose-500 shadow-[0_0_25px_rgba(244,63,94,0.8)]";
+
+                document.getElementById('shield-container').classList.add('shield-active-glow');
+                document.getElementById('shield-icon').className = "fa-solid fa-shield-virus text-5xl text-rose-500 mb-2 animate-bounce";
+                document.getElementById('shield-status-text').textContent = "ACOUSTIC SHIELD ACTIVE";
+                document.getElementById('shield-sub-text').textContent = "SATURATING MEMS MICROPHONES";
+                document.getElementById('txt-shield-state').textContent = "ARMED (JAMMING)";
+                document.getElementById('txt-shield-state').className = "font-bold text-rose-500 animate-pulse";
+
+                requestAnimationFrame(renderVisualizers);
+
+            } catch(e) {
+                alert("Audio Engine Initialization Failed.");
+            }
+        }
+
+        function applyAudioNodes() {
+            if (!audioCtx) return;
+
+            // Stop existing nodes
+            if (noiseNode) try { noiseNode.stop(); } catch(e) {}
+            if (oscNode) try { oscNode.stop(); } catch(e) {}
+            if (lfoNode) try { lfoNode.stop(); } catch(e) {}
+
+            // Create Noise Source
+            const buffer = createPinkNoiseBuffer(audioCtx);
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+
+            filterNode = audioCtx.createBiquadFilter();
+
+            if (currentPreset === 'whisper') {
+                filterNode.type = 'bandpass';
+                filterNode.frequency.setValueAtTime(3800, audioCtx.currentTime); // Whisper frequency center
+                filterNode.Q.setValueAtTime(1.2, audioCtx.currentTime);
+            } else if (currentPreset === 'ultrasonic') {
+                filterNode.type = 'highpass';
+                filterNode.frequency.setValueAtTime(18000, audioCtx.currentTime); // Ultrasonic sweep
+            } else if (currentPreset === 'pink') {
+                filterNode.type = 'allpass';
+            } else if (currentPreset === 'paranoia') {
+                filterNode.type = 'bandpass';
+                filterNode.frequency.setValueAtTime(4500, audioCtx.currentTime);
+                filterNode.Q.setValueAtTime(0.8, audioCtx.currentTime);
+            }
+
+            // LFO Phase Modulator
+            lfoNode = audioCtx.createOscillator();
+            lfoGain = audioCtx.createGain();
+            lfoNode.frequency.setValueAtTime(modSpeed, audioCtx.currentTime);
+            lfoGain.gain.setValueAtTime(1200, audioCtx.currentTime);
+
+            lfoNode.connect(lfoGain);
+            lfoGain.connect(filterNode.frequency);
+
+            noiseNode.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(analyserNode);
+            analyserNode.connect(audioCtx.destination);
+
+            noiseNode.start();
+            lfoNode.start();
+        }
+
+        function disarmJammer() {
+            if (noiseNode) try { noiseNode.stop(); } catch(e) {}
+            if (oscNode) try { oscNode.stop(); } catch(e) {}
+            if (lfoNode) try { lfoNode.stop(); } catch(e) {}
+            if (audioCtx) try { audioCtx.close(); } catch(e) {}
+
+            audioCtx = null;
+            isArmed = false;
+
+            document.getElementById('status-badge').className = "px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2";
+            document.getElementById('status-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span> <span>SHIELD STANDBY</span>`;
+
+            const btn = document.getElementById('btn-arm-shield');
+            btn.innerHTML = `<i class="fa-solid fa-shield-virus"></i> ARM ACOUSTIC SHIELD`;
+            btn.className = "btn-cyber px-5 py-2 text-xs uppercase font-bold tracking-wider";
+
+            document.getElementById('shield-container').classList.remove('shield-active-glow');
+            document.getElementById('shield-icon').className = "fa-solid fa-lock text-4xl text-rose-500/40 mb-2";
+            document.getElementById('shield-status-text').textContent = "SHIELD INACTIVE";
+            document.getElementById('shield-sub-text').textContent = "PRESS ARM TO BEGIN ACOUSTIC MASKING";
+            document.getElementById('txt-shield-state').textContent = "DISARMED";
+            document.getElementById('txt-shield-state').className = "font-bold text-yellow-400";
+        }
+
+        // Render Circular Dome Spectrum & Frequency Bar Graph
+        let frame = 0;
+        function renderVisualizers() {
+            if (!isArmed || !analyserNode) return;
+            frame++;
+
+            barsCanvas.width = barsCanvas.clientWidth;
+            barsCanvas.height = barsCanvas.clientHeight;
+
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyserNode.getByteFrequencyData(dataArray);
+
+            // 1. Render Circular Dome Canvas
+            specCtx.clearRect(0, 0, specCanvas.width, specCanvas.height);
+            const cx = specCanvas.width / 2;
+            const cy = specCanvas.height / 2;
+            const radius = 100;
+
+            specCtx.strokeStyle = '#f43f5e';
+            specCtx.lineWidth = 2;
+            specCtx.beginPath();
+
+            for (let i = 0; i < bufferLength; i++) {
+                const angle = (i / bufferLength) * Math.PI * 2 + (frame * 0.02);
+                const amp = (dataArray[i] / 255) * 35;
+                const r = radius + amp;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+
+                if (i === 0) specCtx.moveTo(x, y);
+                else specCtx.lineTo(x, y);
+            }
+            specCtx.closePath();
+            specCtx.stroke();
+
+            // Inner Pulsing Ring
+            specCtx.strokeStyle = 'rgba(244, 63, 94, 0.3)';
+            specCtx.beginPath();
+            specCtx.arc(cx, cy, radius - 15, 0, Math.PI * 2);
+            specCtx.stroke();
+
+            // 2. Render Bars Canvas
+            barsCtx.clearRect(0, 0, barsCanvas.width, barsCanvas.height);
+            const barWidth = barsCanvas.width / bufferLength;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * barsCanvas.height;
+                barsCtx.fillStyle = i % 2 === 0 ? '#f43f5e' : '#e11d48';
+                barsCtx.fillRect(x, barsCanvas.height - barHeight, barWidth - 1, barHeight);
+                x += barWidth;
+            }
+
+            requestAnimationFrame(renderVisualizers);
+        }
+    </script>
+</body>
+</html>

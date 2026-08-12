@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPTICAL MORSE STROBE | Air-Gapped Light Transceiver</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #020617;
+            color: #eab308;
+            overflow-x: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(234, 179, 8, 0.04), rgba(6, 182, 212, 0.02), rgba(244, 63, 94, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(45, 35, 10, 0.3);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            box-shadow: 0 0 30px rgba(234, 179, 8, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cyber {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid #eab308;
+            color: #fde047;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #eab308;
+            color: #000;
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid #f43f5e;
+            color: #fb7185;
+        }
+
+        .btn-danger:hover {
+            background: #f43f5e;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.7);
+        }
+
+        /* Screen Strobe Flash Overlay */
+        #screen-strobe {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.03s linear;
+        }
+
+        #screen-strobe.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Screen Flash Strobe Overlay -->
+    <div id="screen-strobe"></div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-amber-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                🎙️
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-amber-300 uppercase">OPTICAL MORSE STROBE</h1>
+                <p class="text-xs text-amber-500/80 uppercase">AIR-GAPPED LIGHT TRANSCEIVER // FLASHLIGHT & CAMERA OPTICAL DATA PROTOCOL</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div id="status-badge" class="px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                <span>TRANSCEIVER READY</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="w-full max-w-6xl flex-1 my-4 grid grid-cols-1 md:grid-cols-12 gap-4 z-20">
+
+        <!-- Mode Toggle Tabs (Top 12 Cols) -->
+        <div class="md:col-span-12 hud-card p-3 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-3 w-full">
+                <button onclick="setTransceiverMode('tx')" id="mode-tx-btn" class="btn-cyber flex-1 py-2.5 px-4 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 border-amber-400 bg-amber-500/20">
+                    <i class="fa-solid fa-bolt text-sm"></i> TRANSMIT MODE (TX LIGHT FLASHER)
+                </button>
+
+                <button onclick="setTransceiverMode('rx')" id="mode-rx-btn" class="btn-cyber flex-1 py-2.5 px-4 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 opacity-60 hover:opacity-100">
+                    <i class="fa-solid fa-camera-retro text-sm"></i> RECEIVE MODE (RX LIGHT DECODER)
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TRANSMITTER (TX) PANEL ==================== -->
+        <div id="panel-tx" class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 gap-4">
+            
+            <!-- TX Controls (5 Cols) -->
+            <div class="md:col-span-5 hud-card p-5 rounded-xl flex flex-col justify-between text-xs space-y-4">
+                <div>
+                    <div class="border-b border-amber-900/50 pb-2 mb-4 font-bold text-amber-300 flex items-center justify-between">
+                        <span><i class="fa-solid fa-paper-plane"></i> TRANSMITTER DATA</span>
+                        <span class="text-[10px] text-amber-400">OPTICAL LIGHT PULSE</span>
+                    </div>
+
+                    <!-- Preset Messages -->
+                    <div class="mb-4">
+                        <span class="text-amber-500 block mb-1">EMERGENCY PRESETS:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setTxText('SOS')" class="btn-cyber py-1.5 px-2 text-[10px] uppercase font-bold text-center">
+                                🆘 SOS MAYDAY
+                            </button>
+                            <button onclick="setTxText('AIR GAPPED DATA')" class="btn-cyber py-1.5 px-2 text-[10px] uppercase font-bold text-center">
+                                🔒 AIR-GAPPED
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Message Text -->
+                    <div class="mb-4">
+                        <label class="block text-amber-500 mb-1">MESSAGE TO TRANSMIT:</label>
+                        <textarea id="tx-input-text" oninput="updateMorsePreview()" class="w-full h-24 bg-black/80 border border-amber-800 text-amber-200 text-xs p-3 font-mono rounded resize-none focus:border-amber-400 outline-none uppercase" placeholder="TYPE MESSAGE TO TRANSMIT VIA LIGHT..."></textarea>
+                    </div>
+
+                    <!-- Transmission Speed Slider -->
+                    <div class="space-y-4 border-t border-amber-900/50 pt-4">
+                        <div>
+                            <div class="flex justify-between text-amber-400 mb-1">
+                                <span>TRANSMISSION SPEED (WPM):</span>
+                                <span id="txt-wpm-val" class="font-bold text-amber-300">10 WPM</span>
+                            </div>
+                            <input type="range" id="slider-wpm" min="4" max="25" value="10" oninput="updateWpmSpeed()" class="w-full accent-amber-400 cursor-pointer">
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-use-screen" checked class="accent-amber-400 cursor-pointer">
+                            <label for="chk-use-screen" class="text-[11px] text-amber-300 cursor-pointer">
+                                Enable Full-Screen Canvas Strobe Fallback
+                            </label>
+                        </div>
+
+                        <!-- Torch hardware diagnostics -->
+                        <div class="border border-amber-900/60 bg-black/60 p-3 rounded space-y-1">
+                            <span class="text-[10px] text-amber-500 uppercase block font-bold">LED HARDWARE STATUS:</span>
+                            <div id="torch-status" class="text-[10px] font-mono leading-snug text-amber-500/80">
+                                NOT PROBED — press START to request the camera torch.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="border-t border-amber-900/50 pt-3">
+                    <button id="btn-tx-start" onclick="toggleTransmission()" class="btn-cyber w-full py-3 text-sm font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-play"></i> START OPTICAL TRANSMISSION
+                    </button>
+                </div>
+
+                <!-- Android releases the torch when the capture pipeline idles, so the
+                     stream must stay attached to a live (hidden) video sink. -->
+                <video id="torch-keepalive" autoplay playsinline muted class="hidden w-px h-px"></video>
+            </div>
+
+            <!-- TX Live Output & Waveform Display (7 Cols) -->
+            <div class="md:col-span-7 hud-card p-5 rounded-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between border-b border-amber-900/50 pb-3 mb-3 text-xs">
+                    <span class="font-bold text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-wave-square"></i> MORSE CODE ENCODING WAVEFORM
+                    </span>
+                    <span id="tx-status-label" class="text-[10px] text-amber-500 font-mono">STANDBY</span>
+                </div>
+
+                <!-- Live Strobe Bulb & Encoded Morse Box -->
+                <div class="relative w-full flex-1 bg-black/90 border border-amber-900/60 rounded p-4 flex flex-col justify-between min-h-[360px]">
+                    
+                    <div class="flex items-center justify-center flex-1 my-4">
+                        <div id="strobe-bulb-indicator" class="w-28 h-28 rounded-full border-4 border-amber-500/40 flex items-center justify-center text-4xl text-amber-500/30 transition-all duration-75">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                    </div>
+
+                    <!-- Encoded Morse Symbols Output -->
+                    <div class="border border-amber-900/60 bg-black/80 p-3 rounded font-mono">
+                        <span class="text-[10px] text-amber-500 uppercase block mb-1">ENCODED MORSE SYMBOLS:</span>
+                        <div id="tx-morse-output" class="text-sm font-bold text-amber-300 tracking-widest break-all min-h-[32px]">
+                            ...---...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== RECEIVER (RX) PANEL ==================== -->
+        <div id="panel-rx" class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 gap-4 hidden">
+            
+            <!-- RX Controls & Live Signal Readout (4 Cols) -->
+            <div class="md:col-span-4 hud-card p-5 rounded-xl flex flex-col justify-between text-xs space-y-6">
+                <div>
+                    <div class="border-b border-amber-900/50 pb-2 mb-4 font-bold text-amber-300 flex items-center justify-between">
+                        <span><i class="fa-solid fa-satellite-dish"></i> RECEIVER SENSOR</span>
+                        <span class="text-[10px] text-amber-400">CAMERA DSP</span>
+                    </div>
+
+                    <!-- Threshold Slider -->
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="flex justify-between text-amber-400 mb-1">
+                                <span>SLICER POSITION (AUTO-GAIN):</span>
+                                <span id="txt-thresh-val" class="font-bold text-amber-300">55%</span>
+                            </div>
+                            <input type="range" id="slider-rx-thresh" min="20" max="90" value="55" oninput="updateRxParams()" class="w-full accent-amber-400 cursor-pointer">
+                            <p class="text-[10px] text-amber-500/70 mt-1 leading-snug">
+                                Sits between the darkest and brightest levels the camera has recently seen, so it tracks the room instead of a fixed brightness.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Live Signal VU Meter -->
+                    <div class="border border-amber-900/60 bg-black/60 p-3 rounded space-y-2 font-mono">
+                        <span class="text-[10px] text-amber-500 uppercase block font-bold">OPTICAL SIGNAL TELEMETRY:</span>
+                        <div>
+                            <span class="text-amber-500 block mb-1">CURRENT LIGHT INTENSITY:</span>
+                            <div class="w-full bg-amber-950 h-3 rounded overflow-hidden">
+                                <div id="bar-rx-signal" class="bg-amber-400 h-full w-0 transition-all duration-75"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-2">
+                            <span>OPTICAL STATE:</span>
+                            <span id="txt-rx-state" class="font-bold text-yellow-400">SEARCHING LIGHT</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>DECODED SYMBOL:</span>
+                            <span id="txt-rx-symbol" class="font-bold text-amber-300 text-sm">NONE</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>RECOVERED DOT UNIT:</span>
+                            <span id="txt-rx-unit" class="font-bold text-amber-300">120ms (~10 WPM)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="border-t border-amber-900/50 pt-3">
+                    <button id="btn-rx-start" onclick="initRxCamera()" class="btn-cyber w-full py-3 text-sm font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-camera"></i> START LIGHT DECODER CAM
+                    </button>
+                </div>
+            </div>
+
+            <!-- RX Live Video Stream & Decoded Output (8 Cols) -->
+            <div class="md:col-span-8 hud-card p-5 rounded-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between border-b border-amber-900/50 pb-3 mb-3 text-xs">
+                    <span class="font-bold text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-eye"></i> CAMERA OPTICAL SAMPLER
+                    </span>
+                    <button onclick="clearRxText()" class="text-[10px] text-red-400 hover:underline">PURGE DECODED LOGS</button>
+                </div>
+
+                <!-- Camera Stream & Decoded Text Output Container -->
+                <div class="relative w-full flex-1 bg-black/90 border border-amber-900/60 rounded p-4 flex flex-col gap-4 min-h-[400px]">
+                    
+                    <div class="relative w-full h-56 bg-black border border-amber-900/60 rounded overflow-hidden flex items-center justify-center">
+                        <video id="rx-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+                        <canvas id="rx-canvas" class="hidden"></canvas>
+                        
+                        <!-- Target Center Spot Reticle -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="w-16 h-16 border-2 border-amber-400/70 rounded-full animate-ping"></div>
+                            <div class="w-4 h-4 border border-amber-300 absolute"></div>
+                        </div>
+                    </div>
+
+                    <!-- Live Decoded Text Output Box -->
+                    <div class="flex-1 border border-amber-900/60 bg-black/80 p-3 rounded font-mono flex flex-col justify-between">
+                        <span class="text-[10px] text-amber-500 uppercase block mb-1">LIVE DECODED MESSAGE:</span>
+                        <div id="rx-decoded-text" class="text-base font-bold text-emerald-400 tracking-wider break-all flex-1 py-1">
+                            --- AWAITING OPTICAL MORSE STROBE ---
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Stats -->
+    <footer class="w-full max-w-6xl py-3 border-t border-amber-900/40 flex items-center justify-between text-xs text-amber-500/70 z-20">
+        <span>OPTICAL MORSE STROBE v1.0 // EMERGENCY AIR-GAPPED TRANSCEIVER</span>
+        <span>PROTOCOL: INTERNATIONAL MORSE CODE</span>
+    </footer>
+
+    <script>
+        // --- International Morse Code Dictionary ---
+        const MORSE_MAP = {
+            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+            'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+            'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+            'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+            'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
+            '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+            '9': '----.', '0': '-----', ' ': '/'
+        };
+
+        const REVERSE_MORSE_MAP = Object.fromEntries(Object.entries(MORSE_MAP).map(([k, v]) => [v, k]));
+
+        // --- Transceiver State ---
+        let currentMode = 'tx'; // 'tx' or 'rx'
+        let wpm = 10;
+        let isTransmitting = false;
+        let txTimeout = null;
+
+        let audioCtx = null;
+        let torchTrack = null;
+
+        // Shortest pulse a phone LED can reliably reproduce. Anything faster and the
+        // camera driver coalesces or drops toggles.
+        const MIN_TORCH_UNIT_MS = 90;
+
+        function playBeep(freq = 800, duration = 0.1) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function setTransceiverMode(m) {
+            playBeep(600);
+            currentMode = m;
+            document.getElementById('mode-tx-btn').className = `btn-cyber flex-1 py-2.5 px-4 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 ${m==='tx'?'border-amber-400 bg-amber-500/20':'opacity-60 hover:opacity-100'}`;
+            document.getElementById('mode-rx-btn').className = `btn-cyber flex-1 py-2.5 px-4 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 ${m==='rx'?'border-amber-400 bg-amber-500/20':'opacity-60 hover:opacity-100'}`;
+
+            if (m === 'tx') {
+                document.getElementById('panel-tx').classList.remove('hidden');
+                document.getElementById('panel-rx').classList.add('hidden');
+            } else {
+                document.getElementById('panel-tx').classList.add('hidden');
+                document.getElementById('panel-rx').classList.remove('hidden');
+            }
+        }
+
+        function setTxText(text) {
+            playBeep(523);
+            document.getElementById('tx-input-text').value = text;
+            updateMorsePreview();
+        }
+
+        function updateWpmSpeed() {
+            wpm = parseInt(document.getElementById('slider-wpm').value);
+            document.getElementById('txt-wpm-val').textContent = `${wpm} WPM`;
+        }
+
+        function textToMorse(text) {
+            return text.toUpperCase().split('').map(c => MORSE_MAP[c] || '').join(' ');
+        }
+
+        function updateMorsePreview() {
+            const text = document.getElementById('tx-input-text').value;
+            const morse = textToMorse(text);
+            document.getElementById('tx-morse-output').textContent = morse || '...---...';
+        }
+
+        // --- Optical Transmitter Engine (Tx) ---
+
+        function setTorchStatus(text, tone = 'info') {
+            const el = document.getElementById('torch-status');
+            if (!el) return;
+            el.textContent = text;
+            el.className = "text-[10px] font-mono leading-snug " + (
+                tone === 'ok' ? 'text-emerald-400' :
+                tone === 'error' ? 'text-red-400' :
+                tone === 'warn' ? 'text-yellow-400' : 'text-amber-500/80'
+            );
+        }
+
+        // Android exposes the torch only on SOME of the back-facing lenses (the plain
+        // wide lens usually, never the ultra-wide/depth ones). facingMode:'environment'
+        // is free to hand us a lens with no LED attached, so we probe each candidate
+        // and keep the first track that actually reports torch support.
+        async function initTorchAPI() {
+            if (torchTrack) return torchTrack;
+
+            if (!window.isSecureContext) {
+                setTorchStatus("BLOCKED: page is not on HTTPS/localhost. The torch API is unavailable in an insecure context. Screen strobe only.", 'error');
+                return null;
+            }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                setTorchStatus("BLOCKED: this browser has no camera API. Screen strobe only.", 'error');
+                return null;
+            }
+
+            setTorchStatus("PROBING CAMERA LENSES FOR TORCH HARDWARE...", 'info');
+
+            let probeStream = null;
+            try {
+                // A first permission-granting open, so enumerateDevices() returns labels
+                // and deviceIds instead of an anonymous list.
+                probeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            } catch (e) {
+                setTorchStatus("CAMERA DENIED (" + (e.name || 'error') + "). Grant camera permission to drive the LED. Screen strobe only.", 'error');
+                return null;
+            }
+
+            const firstTrack = probeStream.getVideoTracks()[0];
+            if (trackHasTorch(firstTrack)) {
+                return adoptTorchTrack(firstTrack, probeStream);
+            }
+
+            // The default lens has no LED — enumerate and try the other back cameras.
+            let devices = [];
+            try {
+                devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+            } catch (e) { devices = []; }
+
+            const currentId = firstTrack.getSettings ? firstTrack.getSettings().deviceId : null;
+            probeStream.getTracks().forEach(t => t.stop());
+
+            for (const device of devices) {
+                if (device.deviceId === currentId || device.deviceId === 'default') continue;
+                if (/front|user|face/i.test(device.label)) continue;
+
+                let stream = null;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: device.deviceId } } });
+                } catch (e) { continue; }
+
+                const track = stream.getVideoTracks()[0];
+                if (trackHasTorch(track)) {
+                    return adoptTorchTrack(track, stream);
+                }
+                stream.getTracks().forEach(t => t.stop());
+            }
+
+            setTorchStatus("NO LENS ON THIS DEVICE REPORTS TORCH SUPPORT. iOS Safari never exposes it. Falling back to full-screen strobe — keep the screen facing the receiver.", 'warn');
+            return null;
+        }
+
+        function trackHasTorch(track) {
+            if (!track || !track.getCapabilities) return false;
+            try { return track.getCapabilities().torch === true; } catch (e) { return false; }
+        }
+
+        // Keeping the track live (and rendered into an offscreen <video>) matters:
+        // Android drops the torch the moment the capture pipeline goes idle.
+        function adoptTorchTrack(track, stream) {
+            torchTrack = track;
+            const keepAlive = document.getElementById('torch-keepalive');
+            if (keepAlive) {
+                keepAlive.srcObject = stream;
+                keepAlive.play().catch(() => {});
+            }
+            const label = (track.label || 'camera').slice(0, 34);
+            setTorchStatus("TORCH LOCKED ON LENS: " + label, 'ok');
+            return track;
+        }
+
+        // The hardware LED needs a real round-trip per toggle (~30-80ms on most
+        // Android devices). Firing overlapping applyConstraints() calls makes the
+        // driver drop pulses entirely, so writes are serialised: we only ever chase
+        // the LATEST requested state and coalesce anything in between.
+        let torchDesiredState = false;
+        let torchWriteInFlight = false;
+
+        async function driveTorch(isOn) {
+            torchDesiredState = isOn;
+            if (!torchTrack || torchWriteInFlight) return;
+
+            torchWriteInFlight = true;
+            try {
+                let written = null;
+                while (written !== torchDesiredState) {
+                    const target = torchDesiredState;
+                    try {
+                        await torchTrack.applyConstraints({ advanced: [{ torch: target }] });
+                    } catch (e) {
+                        setTorchStatus("TORCH WRITE REJECTED: " + (e.message || e.name) + ". Screen strobe only.", 'error');
+                        torchTrack = null;
+                        return;
+                    }
+                    written = target;
+                }
+            } finally {
+                torchWriteInFlight = false;
+            }
+        }
+
+        function setLightState(isOn) {
+            const useScreen = document.getElementById('chk-use-screen').checked;
+            const screenStrobe = document.getElementById('screen-strobe');
+            const bulb = document.getElementById('strobe-bulb-indicator');
+
+            if (isOn) {
+                if (useScreen) screenStrobe.classList.add('active');
+                bulb.className = "w-28 h-28 rounded-full border-4 border-amber-400 bg-amber-400 text-black flex items-center justify-center text-4xl shadow-[0_0_60px_rgba(234,179,8,0.9)]";
+            } else {
+                if (useScreen) screenStrobe.classList.remove('active');
+                bulb.className = "w-28 h-28 rounded-full border-4 border-amber-500/40 flex items-center justify-center text-4xl text-amber-500/30 transition-all duration-75";
+            }
+
+            driveTorch(isOn);
+        }
+
+        async function toggleTransmission() {
+            if (isTransmitting) {
+                stopTransmission();
+                return;
+            }
+
+            const text = document.getElementById('tx-input-text').value.trim();
+            if (!text) {
+                alert("Please enter a message to transmit.");
+                return;
+            }
+
+            await initTorchAPI();
+
+            isTransmitting = true;
+            document.getElementById('btn-tx-start').innerHTML = `<i class="fa-solid fa-stop"></i> STOP TRANSMISSION`;
+            document.getElementById('btn-tx-start').className = "btn-cyber btn-danger w-full py-3 text-sm font-bold uppercase tracking-wider";
+
+            const morse = textToMorse(text);
+
+            // An LED cannot keep up with a 25 WPM dot (48ms). Below MIN_TORCH_UNIT the
+            // driver simply swallows pulses, which reads as "the flash does nothing".
+            let dotUnit = 1200 / wpm;
+            let clamped = false;
+            if (torchTrack && dotUnit < MIN_TORCH_UNIT_MS) {
+                dotUnit = MIN_TORCH_UNIT_MS;
+                clamped = true;
+            }
+
+            document.getElementById('tx-status-label').textContent = clamped
+                ? `TRANSMITTING @ ${Math.round(1200 / dotUnit)} WPM (LED LIMIT)`
+                : "TRANSMITTING OPTICAL PULSES...";
+
+            let sequence = [];
+            for (let char of morse) {
+                if (char === '.') {
+                    sequence.push({ on: true, duration: dotUnit });
+                    sequence.push({ on: false, duration: dotUnit }); // Symbol gap
+                } else if (char === '-') {
+                    sequence.push({ on: true, duration: dotUnit * 3 });
+                    sequence.push({ on: false, duration: dotUnit }); // Symbol gap
+                } else if (char === ' ') {
+                    sequence.push({ on: false, duration: dotUnit * 2 }); // -> 3 units total letter gap
+                } else if (char === '/') {
+                    sequence.push({ on: false, duration: dotUnit * 6 }); // -> 7 units total word gap
+                }
+            }
+
+            // Absolute deadlines rather than cumulative setTimeout: every setTimeout
+            // rounds up, and over a few hundred pulses that drift stretches the dots
+            // until the receiver's dot/dash classifier can no longer separate them.
+            const startedAt = performance.now();
+            let seqIdx = 0;
+            let deadline = startedAt;
+
+            function runSequence() {
+                if (!isTransmitting || seqIdx >= sequence.length) {
+                    stopTransmission();
+                    return;
+                }
+
+                const item = sequence[seqIdx];
+                setLightState(item.on);
+                deadline += item.duration;
+                seqIdx++;
+
+                txTimeout = setTimeout(runSequence, Math.max(0, deadline - performance.now()));
+            }
+
+            runSequence();
+        }
+
+        function stopTransmission() {
+            isTransmitting = false;
+            clearTimeout(txTimeout);
+            setLightState(false);
+
+            document.getElementById('btn-tx-start').innerHTML = `<i class="fa-solid fa-play"></i> START OPTICAL TRANSMISSION`;
+            document.getElementById('btn-tx-start').className = "btn-cyber w-full py-3 text-sm font-bold uppercase tracking-wider";
+            document.getElementById('tx-status-label').textContent = "STANDBY";
+        }
+
+        // --- Optical Receiver Engine (Rx) ---
+        let rxVideo = document.getElementById('rx-video');
+        let rxCanvas = document.getElementById('rx-canvas');
+        let rxCtx = rxCanvas.getContext('2d', { willReadFrequently: true });
+        let isRxActive = false;
+        let rxSensitivity = 0.55;
+        let rxTimer = null;
+        let rxTrack = null;
+
+        const RX_W = 160, RX_H = 120, RX_BLOCK = 8;
+        const RX_SAMPLE_MS = 8; // ~125Hz — rAF caps at 60Hz and throttles in background
+
+        let lastPulseState = false;
+        let lastStateChangeTime = performance.now();
+        let currentSymbolStream = '';
+        let decodedMessage = '';
+
+        // Adaptive gain control. A phone LED across a room is a tiny blob of highlight,
+        // not a bright frame, so an absolute luma threshold is hopeless: it either never
+        // trips or is permanently tripped by daylight. We instead track the recent
+        // floor/ceiling of the metric and slice between them.
+        let rxFloor = 0.0, rxCeil = 1.0;
+        const RX_ENVELOPE_DECAY = 0.995;
+        const RX_MIN_CONTRAST = 0.06;
+
+        // Dot length is recovered from the signal itself, so RX does not have to be
+        // dialled to the same WPM as TX.
+        let rxUnitMs = 120;
+        const RX_UNIT_MIN = 40, RX_UNIT_MAX = 600;
+
+        function updateRxParams() {
+            rxSensitivity = parseInt(document.getElementById('slider-rx-thresh').value) / 100;
+            document.getElementById('txt-thresh-val').textContent = `${Math.round(rxSensitivity * 100)}%`;
+        }
+
+        async function initRxCamera() {
+            if (isRxActive) return;
+            playBeep(880);
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+                });
+                rxVideo.srcObject = stream;
+                await rxVideo.play();
+
+                rxTrack = stream.getVideoTracks()[0];
+                await lockRxExposure(rxTrack);
+
+                rxCanvas.width = RX_W;
+                rxCanvas.height = RX_H;
+
+                // Reset the envelope tracker so the previous room's levels don't linger.
+                rxFloor = 1.0; rxCeil = 0.0;
+
+                isRxActive = true;
+                document.getElementById('btn-rx-start').classList.add('hidden');
+                rxTimer = setInterval(processRxFrame, RX_SAMPLE_MS);
+
+            } catch(e) {
+                alert("Camera access denied: " + (e.message || e.name));
+            }
+        }
+
+        // Auto-exposure fights us — it sees the LED, darkens the whole frame, and the
+        // pulse contrast collapses. Pin exposure low where the browser allows it.
+        async function lockRxExposure(track) {
+            if (!track || !track.getCapabilities) return;
+            let caps = {};
+            try { caps = track.getCapabilities(); } catch (e) { return; }
+
+            const advanced = [];
+            if (Array.isArray(caps.exposureMode) && caps.exposureMode.includes('manual')) {
+                advanced.push({ exposureMode: 'manual' });
+                if (caps.exposureTime && typeof caps.exposureTime.min === 'number') {
+                    const t = caps.exposureTime.min + (caps.exposureTime.max - caps.exposureTime.min) * 0.05;
+                    advanced.push({ exposureTime: t });
+                }
+            }
+            if (Array.isArray(caps.whiteBalanceMode) && caps.whiteBalanceMode.includes('manual')) {
+                advanced.push({ whiteBalanceMode: 'manual' });
+            }
+            if (!advanced.length) return;
+
+            try { await track.applyConstraints({ advanced }); } catch (e) { /* best effort */ }
+        }
+
+        // Brightest 8x8 block anywhere in the frame, rather than the mean of a fixed
+        // centre patch. A small far-away light dominates its own block but is invisible
+        // in a 40x40 average, and this way aiming does not have to be pixel-perfect.
+        function sampleBrightestBlock() {
+            rxCtx.drawImage(rxVideo, 0, 0, RX_W, RX_H);
+            const data = rxCtx.getImageData(0, 0, RX_W, RX_H).data;
+
+            let best = 0;
+            for (let by = 0; by < RX_H; by += RX_BLOCK) {
+                for (let bx = 0; bx < RX_W; bx += RX_BLOCK) {
+                    let sum = 0;
+                    for (let y = by; y < by + RX_BLOCK; y++) {
+                        let idx = (y * RX_W + bx) * 4;
+                        for (let x = 0; x < RX_BLOCK; x++, idx += 4) {
+                            sum += 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+                        }
+                    }
+                    if (sum > best) best = sum;
+                }
+            }
+            return best / (RX_BLOCK * RX_BLOCK * 255);
+        }
+
+        function flushSymbol() {
+            if (currentSymbolStream === '') return;
+            const letter = REVERSE_MORSE_MAP[currentSymbolStream] || '?';
+            decodedMessage += letter;
+            document.getElementById('rx-decoded-text').textContent = decodedMessage;
+            currentSymbolStream = '';
+            document.getElementById('txt-rx-symbol').textContent = 'NONE';
+        }
+
+        function processRxFrame() {
+            if (!isRxActive) return;
+
+            const level = sampleBrightestBlock();
+
+            // Track the envelope: instant attack toward new extremes, slow relaxation
+            // back toward the middle so the slicer follows the room, not the last frame.
+            rxCeil = Math.max(level, rxCeil * RX_ENVELOPE_DECAY + level * (1 - RX_ENVELOPE_DECAY));
+            rxFloor = Math.min(level, rxFloor * RX_ENVELOPE_DECAY + level * (1 - RX_ENVELOPE_DECAY));
+
+            const contrast = rxCeil - rxFloor;
+            const hasSignal = contrast >= RX_MIN_CONTRAST;
+            const slice = rxFloor + contrast * rxSensitivity;
+            const isLightOn = hasSignal && level >= slice;
+
+            // VU bar now shows position within the adaptive window, which is what the
+            // sensitivity slider actually acts on.
+            const rel = hasSignal ? (level - rxFloor) / contrast : 0;
+            document.getElementById('bar-rx-signal').style.width = `${Math.min(100, Math.max(0, Math.round(rel * 100)))}%`;
+
+            const now = performance.now();
+            const duration = now - lastStateChangeTime;
+
+            if (isLightOn !== lastPulseState) {
+                if (lastPulseState && duration > 25) {
+                    // Light turned OFF -> classify the pulse we just saw.
+                    const isDot = duration < rxUnitMs * 2;
+                    currentSymbolStream += isDot ? '.' : '-';
+                    playBeep(isDot ? 900 : 700, isDot ? 0.05 : 0.1);
+
+                    // Refine the unit estimate from what we measured: dots are one unit,
+                    // dashes three. Slow EMA so one bad pulse can't wreck the timing.
+                    const impliedUnit = isDot ? duration : duration / 3;
+                    if (impliedUnit >= RX_UNIT_MIN && impliedUnit <= RX_UNIT_MAX) {
+                        rxUnitMs = rxUnitMs * 0.8 + impliedUnit * 0.2;
+                    }
+
+                    document.getElementById('txt-rx-symbol').textContent = currentSymbolStream;
+                }
+                lastPulseState = isLightOn;
+                lastStateChangeTime = now;
+            } else if (!isLightOn) {
+                // Gaps are measured in recovered units, not hardcoded milliseconds:
+                // >=2 units ends the letter, >=5 units ends the word.
+                if (duration > rxUnitMs * 2 && currentSymbolStream !== '') {
+                    flushSymbol();
+                } else if (duration > rxUnitMs * 5 && decodedMessage !== '' && !decodedMessage.endsWith(' ')) {
+                    decodedMessage += ' ';
+                    document.getElementById('rx-decoded-text').textContent = decodedMessage;
+                }
+            }
+
+            const stateEl = document.getElementById('txt-rx-state');
+            if (!hasSignal) {
+                stateEl.textContent = 'CALIBRATING / NO CONTRAST';
+                stateEl.className = 'font-bold text-amber-500/60';
+            } else {
+                stateEl.textContent = isLightOn ? 'LIGHT ON (PULSE DETECTED)' : 'SEARCHING LIGHT';
+                stateEl.className = isLightOn ? 'font-bold text-amber-300 animate-pulse' : 'font-bold text-yellow-400';
+            }
+
+            const unitEl = document.getElementById('txt-rx-unit');
+            if (unitEl) unitEl.textContent = `${Math.round(rxUnitMs)}ms (~${Math.round(1200 / rxUnitMs)} WPM)`;
+        }
+
+        function clearRxText() {
+            decodedMessage = '';
+            currentSymbolStream = '';
+            rxUnitMs = 120;
+            rxFloor = 1.0; rxCeil = 0.0;
+            document.getElementById('txt-rx-symbol').textContent = 'NONE';
+            document.getElementById('rx-decoded-text').textContent = '--- AWAITING OPTICAL MORSE STROBE ---';
+        }
+
+        // Initialize preview
+        updateMorsePreview();
+    </script>
+</body>
+</html>

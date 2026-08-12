@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOLOGRAM HAND OS | Minority Report AI Interface</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MediaPipe Hands & Camera Utils -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: #020617;
+            color: #38bdf8;
+            overflow: hidden;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(56, 189, 248, 0.03), rgba(236, 72, 153, 0.02), rgba(16, 185, 129, 0.03));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.15);
+            backdrop-filter: blur(12px);
+        }
+
+        .btn-cyber {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            background: #38bdf8;
+            color: #000;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
+        }
+
+        /* 3D Hologram Gallery Container */
+        #hologram-viewport {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .holo-card {
+            position: absolute;
+            width: 320px;
+            height: 420px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.2), inset 0 0 20px rgba(56, 189, 248, 0.1);
+            transition: transform 0.15s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .holo-card.active {
+            border-color: #38bdf8;
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.5), inset 0 0 30px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Laser Cursor Pointer */
+        #laser-pointer {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #38bdf8;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            transition: width 0.1s, height 0.1s, border-color 0.1s;
+            box-shadow: 0 0 15px #38bdf8;
+        }
+
+        #laser-pointer.pinching {
+            width: 14px;
+            height: 14px;
+            border-color: #f43f5e;
+            background: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 0 25px #f43f5e;
+        }
+
+        /* PIP Camera Preview */
+        #pip-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 220px;
+            height: 165px;
+            border: 2px solid #38bdf8;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 40;
+            background: #000;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        #pip-webcam, #pip-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative">
+
+    <div class="crt-scanlines"></div>
+
+    <!-- Laser Hand Cursor -->
+    <div id="laser-pointer" class="hidden"></div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex items-center justify-between py-4 border-b border-sky-900/50 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-sky-500/20 border border-sky-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+                🖐️
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-sky-300 uppercase">HOLOGRAM HAND OS</h1>
+                <p class="text-xs text-sky-500/80 uppercase">MINORITY REPORT AI // AIR GESTURE 3D CAROUSEL CONTROLLER</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="status-badge" class="px-3 py-1 text-xs border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                <span>INITIALIZING SENSORS...</span>
+            </div>
+            <button id="btn-init-cam" onclick="initSensors()" class="btn-cyber px-4 py-1.5 text-xs uppercase font-bold">
+                <i class="fa-solid fa-camera"></i> ENABLE HAND AI
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Hologram Workspace Viewport -->
+    <main class="w-full max-w-6xl flex-1 my-4 grid grid-cols-1 md:grid-cols-12 gap-4 z-20 relative overflow-hidden">
+        
+        <!-- Left Gesture Telemetry HUD (3 Cols) -->
+        <div class="md:col-span-3 hud-card p-4 rounded-xl flex flex-col justify-between text-xs">
+            <div>
+                <div class="border-b border-sky-900/50 pb-2 mb-4 font-bold text-sky-300 flex items-center justify-between">
+                    <span><i class="fa-solid fa-radar"></i> GESTURE TELEMETRY</span>
+                    <span id="fps-counter" class="text-[10px] text-sky-500">30 FPS</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-sky-500 block mb-1">HAND TRACKING:</span>
+                        <span id="txt-hand-state" class="font-bold text-yellow-400">AWAITING CAMERA</span>
+                    </div>
+
+                    <div>
+                        <span class="text-sky-500 block mb-1">GESTURE RECOGNIZED:</span>
+                        <span id="txt-gesture" class="font-bold text-sky-200 text-sm">NONE</span>
+                    </div>
+
+                    <div>
+                        <span class="text-sky-500 block mb-1">PINCH DISTANCE:</span>
+                        <div class="w-full bg-sky-950 h-2 rounded overflow-hidden mt-1">
+                            <div id="bar-pinch" class="bg-sky-400 h-full w-0 transition-all duration-75"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-sky-500 block mb-1">ZOOM SCALE:</span>
+                        <span id="txt-zoom" class="font-bold text-emerald-400">1.00x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gesture Guide Legend -->
+            <div class="border-t border-sky-900/50 pt-4 space-y-2 text-[11px] text-sky-400/80">
+                <div class="font-bold text-sky-300 mb-1">[AIR GESTURE COMMANDS]</div>
+                <div>👋 <b>SWIPE LEFT / RIGHT</b>: Switch Cards</div>
+                <div>🖐️ <b>PALM UP / DOWN</b>: Tilt Elevation</div>
+                <div>👌 <b>PINCH FINGERS</b>: Live Zoom Card</div>
+                <div>🖱️ <b>MOUSE FALLBACK</b>: Drag to rotate/zoom</div>
+            </div>
+        </div>
+
+        <!-- Center 3D Holographic Canvas Viewport (9 Cols) -->
+        <div class="md:col-span-9 hud-card rounded-xl p-6 relative flex items-center justify-center overflow-hidden">
+            
+            <div id="hologram-viewport" class="relative w-full h-[520px] flex items-center justify-center">
+                <!-- 3D Holographic Cards (Dynamically Manipulated via JS) -->
+                
+                <!-- Card 1 -->
+                <div id="card-0" class="holo-card active">
+                    <div class="flex items-center justify-between text-xs text-sky-400 border-b border-sky-800/40 pb-2">
+                        <span>HOLOGRAM #01</span>
+                        <span>CYBER CITY 2099</span>
+                    </div>
+                    <div class="flex-1 my-3 bg-gradient-to-br from-sky-900/40 to-indigo-950/80 rounded border border-sky-500/30 flex flex-col items-center justify-center p-4 text-center">
+                        <i class="fa-solid fa-city text-5xl text-sky-400 mb-3 animate-pulse"></i>
+                        <span class="text-xs font-bold text-sky-200">NEON METROPOLIS</span>
+                        <span class="text-[10px] text-sky-400/60 mt-1">Spatial 3D Holographic Projection</span>
+                    </div>
+                    <div class="text-[11px] text-sky-300/80">
+                        Autonomous AI grid system operating at sub-millisecond quantum latency.
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div id="card-1" class="holo-card">
+                    <div class="flex items-center justify-between text-xs text-pink-400 border-b border-pink-800/40 pb-2">
+                        <span>HOLOGRAM #02</span>
+                        <span>SYNTH CORE</span>
+                    </div>
+                    <div class="flex-1 my-3 bg-gradient-to-br from-pink-900/40 to-purple-950/80 rounded border border-pink-500/30 flex flex-col items-center justify-center p-4 text-center">
+                        <i class="fa-solid fa-atom text-5xl text-pink-400 mb-3 animate-spin" style="animation-duration: 8s;"></i>
+                        <span class="text-xs font-bold text-pink-200">QUANTUM CORE</span>
+                        <span class="text-[10px] text-pink-400/60 mt-1">Sub-Atomic Particle Stabilizer</span>
+                    </div>
+                    <div class="text-[11px] text-pink-300/80">
+                        Fusion reactor generating 14.8 Terawatts of clean energy.
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div id="card-2" class="holo-card">
+                    <div class="flex items-center justify-between text-xs text-emerald-400 border-b border-emerald-800/40 pb-2">
+                        <span>HOLOGRAM #03</span>
+                        <span>BIOMETRIC MESH</span>
+                    </div>
+                    <div class="flex-1 my-3 bg-gradient-to-br from-emerald-900/40 to-teal-950/80 rounded border border-emerald-500/30 flex flex-col items-center justify-center p-4 text-center">
+                        <i class="fa-solid fa-dna text-5xl text-emerald-400 mb-3 animate-bounce"></i>
+                        <span class="text-xs font-bold text-emerald-200">GENOMIC VAULT</span>
+                        <span class="text-[10px] text-emerald-400/60 mt-1">Synthetic DNA Data Encoding</span>
+                    </div>
+                    <div class="text-[11px] text-emerald-300/80">
+                        100 Petabytes encoded per gram of synthetic DNA strand.
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div id="card-3" class="holo-card">
+                    <div class="flex items-center justify-between text-xs text-amber-400 border-b border-amber-800/40 pb-2">
+                        <span>HOLOGRAM #04</span>
+                        <span>DEEP ORBIT</span>
+                    </div>
+                    <div class="flex-1 my-3 bg-gradient-to-br from-amber-900/40 to-orange-950/80 rounded border border-amber-500/30 flex flex-col items-center justify-center p-4 text-center">
+                        <i class="fa-solid fa-satellite text-5xl text-amber-400 mb-3"></i>
+                        <span class="text-xs font-bold text-amber-200">ORBITAL STATION</span>
+                        <span class="text-[10px] text-amber-400/60 mt-1">Low-Earth Sensor Array</span>
+                    </div>
+                    <div class="text-[11px] text-amber-300/80">
+                        Global satellite constellation providing zero-lag P2P coverage.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Carousel Controls Navigation Overlay -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-slate-900/80 px-6 py-2 rounded-full border border-sky-800/60 z-30">
+                <button onclick="prevCard()" class="btn-cyber px-3 py-1 rounded text-xs">
+                    <i class="fa-solid fa-chevron-left"></i> PREV
+                </button>
+                <span id="txt-card-index" class="text-xs font-bold text-sky-200 font-mono">1 / 4</span>
+                <button onclick="nextCard()" class="btn-cyber px-3 py-1 rounded text-xs">
+                    NEXT <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Picture-in-Picture PIP Camera Stream with Hand Skeleton HUD Overlay -->
+    <div id="pip-container">
+        <video id="pip-webcam" autoplay playsinline muted></video>
+        <canvas id="pip-canvas" width="220" height="165"></canvas>
+    </div>
+
+    <script>
+        // --- System & Gesture State ---
+        let currentCardIndex = 0;
+        const totalCards = 4;
+        let cardZoomScale = 1.0;
+        let cardTiltY = 0;
+        let cardTiltX = 0;
+
+        let handX = 0.5, handY = 0.5;
+        let lastHandX = 0.5;
+        let isPinching = false;
+        let initialPinchDist = null;
+
+        let audioCtx = null;
+
+        // Web Audio Synthesizer for Hologram FX
+        function playHoloSound(freq, type = 'sine', duration = 0.1) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // 3D Carousel Positioning Engine
+        function updateCarouselUI() {
+            document.getElementById('txt-card-index').textContent = `${currentCardIndex + 1} / ${totalCards}`;
+            document.getElementById('txt-zoom').textContent = `${cardZoomScale.toFixed(2)}x`;
+
+            for (let i = 0; i < totalCards; i++) {
+                const card = document.getElementById(`card-${i}`);
+                if (!card) continue;
+
+                const diff = i - currentCardIndex;
+                
+                if (diff === 0) {
+                    // Active Center Card
+                    card.className = "holo-card active";
+                    const tx = (handX - 0.5) * 120;
+                    const ty = (handY - 0.5) * 80;
+                    card.style.transform = `translate3d(${tx}px, ${ty}px, 0px) scale(${cardZoomScale}) rotateY(${cardTiltY}deg) rotateX(${cardTiltX}deg)`;
+                    card.style.opacity = "1";
+                    card.style.zIndex = "30";
+                } else if (diff === 1 || diff === -(totalCards - 1)) {
+                    // Right Card
+                    card.className = "holo-card";
+                    card.style.transform = `translate3d(260px, 0px, -180px) scale(0.75) rotateY(-25deg)`;
+                    card.style.opacity = "0.5";
+                    card.style.zIndex = "10";
+                } else if (diff === -1 || diff === (totalCards - 1)) {
+                    // Left Card
+                    card.className = "holo-card";
+                    card.style.transform = `translate3d(-260px, 0px, -180px) scale(0.75) rotateY(25deg)`;
+                    card.style.opacity = "0.5";
+                    card.style.zIndex = "10";
+                } else {
+                    // Hidden Cards behind
+                    card.className = "holo-card";
+                    card.style.transform = `translate3d(0px, 0px, -350px) scale(0.5)`;
+                    card.style.opacity = "0";
+                    card.style.zIndex = "0";
+                }
+            }
+        }
+
+        function nextCard() {
+            playHoloSound(659, 'triangle');
+            currentCardIndex = (currentCardIndex + 1) % totalCards;
+            cardZoomScale = 1.0;
+            updateCarouselUI();
+        }
+
+        function prevCard() {
+            playHoloSound(523, 'triangle');
+            currentCardIndex = (currentCardIndex - 1 + totalCards) % totalCards;
+            cardZoomScale = 1.0;
+            updateCarouselUI();
+        }
+
+        // --- MediaPipe Hands AI Pipeline ---
+        let hands = null;
+        let camera = null;
+
+        async function initSensors() {
+            const btn = document.getElementById('btn-init-cam');
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> LOADING AI...`;
+
+            const videoElement = document.getElementById('pip-webcam');
+            const canvasElement = document.getElementById('pip-canvas');
+            const canvasCtx = canvasElement.getContext('2d');
+
+            hands = new Hands({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+            });
+
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.6,
+                minTrackingConfidence: 0.6
+            });
+
+            hands.onResults((results) => {
+                canvasCtx.save();
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+                if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                    const landmarks = results.multiHandLandmarks[0];
+
+                    // Draw Skeleton on PIP
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#38bdf8', lineWidth: 2});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#f43f5e', lineWidth: 1, radius: 2});
+
+                    // Track Index Finger Tip (Landmark 8) & Thumb Tip (Landmark 4)
+                    const indexTip = landmarks[8];
+                    const thumbTip = landmarks[4];
+                    const wrist = landmarks[0];
+
+                    // Update Hand Coordinates (Mirrored X)
+                    handX = 1.0 - indexTip.x;
+                    handY = indexTip.y;
+
+                    // Show Laser Cursor Pointer
+                    const laser = document.getElementById('laser-pointer');
+                    laser.classList.remove('hidden');
+                    laser.style.left = `${(1.0 - indexTip.x) * window.innerWidth}px`;
+                    laser.style.top = `${indexTip.y * window.innerHeight}px`;
+
+                    // 1. Calculate Pinch Distance (Distance between index tip & thumb tip)
+                    const dx = indexTip.x - thumbTip.x;
+                    const dy = indexTip.y - thumbTip.y;
+                    const pinchDist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Update Pinch HUD bar
+                    const pinchBarPercent = Math.min(100, Math.max(0, (1.0 - (pinchDist / 0.2)) * 100));
+                    document.getElementById('bar-pinch').style.width = `${pinchBarPercent}%`;
+
+                    if (pinchDist < 0.07) {
+                        // Pinch Gesture Triggered!
+                        if (!isPinching) {
+                            playHoloSound(880, 'sine', 0.15);
+                            isPinching = true;
+                            initialPinchDist = pinchDist;
+                        }
+                        laser.classList.add('pinching');
+                        document.getElementById('txt-gesture').textContent = "👌 PINCH ZOOMING";
+                        
+                        // Pinch Zoom scaling
+                        cardZoomScale = Math.min(1.8, Math.max(0.6, 1.0 + (0.07 - pinchDist) * 8));
+                    } else {
+                        isPinching = false;
+                        laser.classList.remove('pinching');
+                    }
+
+                    // 2. Air Swipe Detection (Velocity of handX)
+                    const deltaX = handX - lastHandX;
+                    if (Math.abs(deltaX) > 0.12 && !isPinching) {
+                        if (deltaX > 0.12) {
+                            document.getElementById('txt-gesture').textContent = "👋 SWIPE RIGHT";
+                            prevCard();
+                        } else {
+                            document.getElementById('txt-gesture').textContent = "👋 SWIPE LEFT";
+                            nextCard();
+                        }
+                    } else if (!isPinching) {
+                        document.getElementById('txt-gesture').textContent = "🖐️ PALM TRACKING";
+                    }
+
+                    lastHandX = handX;
+
+                    // 3. Palm Elevation & Tilt
+                    cardTiltY = (handX - 0.5) * -35;
+                    cardTiltX = (handY - 0.5) * 35;
+
+                    document.getElementById('txt-hand-state').textContent = "LOCKED (ACTIVE)";
+                    document.getElementById('txt-hand-state').className = "font-bold text-emerald-400";
+                    document.getElementById('status-badge').className = "px-3 py-1 text-xs border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center gap-2";
+                    document.getElementById('status-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> <span>AI HAND TRACKING ACTIVE</span>`;
+
+                } else {
+                    document.getElementById('laser-pointer').classList.add('hidden');
+                    document.getElementById('txt-hand-state').textContent = "SEARCHING FOR HAND...";
+                    document.getElementById('txt-hand-state').className = "font-bold text-yellow-400 animate-pulse";
+                    document.getElementById('txt-gesture').textContent = "NONE";
+                }
+
+                canvasCtx.restore();
+                updateCarouselUI();
+            });
+
+            try {
+                camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 320,
+                    height: 240
+                });
+                await camera.start();
+                btn.classList.add('hidden');
+            } catch(e) {
+                alert("Camera access failed. Mouse fallback enabled (Drag to rotate, Scroll to zoom).");
+                btn.textContent = "CAM FAILED";
+            }
+        }
+
+        // Mouse Fallback Interaction (If no camera or testing via mouse)
+        window.addEventListener('mousemove', (e) => {
+            if (hands && camera) return; // If AI active, skip mouse
+            handX = e.clientX / window.innerWidth;
+            handY = e.clientY / window.innerHeight;
+            cardTiltY = (handX - 0.5) * -35;
+            cardTiltX = (handY - 0.5) * 35;
+            updateCarouselUI();
+        });
+
+        window.addEventListener('wheel', (e) => {
+            if (hands && camera) return;
+            if (e.deltaY < 0) {
+                cardZoomScale = Math.min(1.8, cardZoomScale + 0.1);
+            } else {
+                cardZoomScale = Math.max(0.6, cardZoomScale - 0.1);
+            }
+            updateCarouselUI();
+        });
+
+        // Initialize Carousel on Load
+        updateCarouselUI();
+    </script>
+</body>
+</html>
