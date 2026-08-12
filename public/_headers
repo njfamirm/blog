@@ -1,0 +1,6 @@
+# Next emits the generated OG images without a file extension, so Cloudflare
+# Pages would otherwise serve them as application/octet-stream and no crawler
+# would render the preview card.
+/en/blog/*/opengraph-image
+  Content-Type: image/png
+  Cache-Control: public, max-age=31536000, immutable
