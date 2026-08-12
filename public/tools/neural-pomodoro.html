@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURAL POMODORO | AI Focus Enforcer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MediaPipe Face Mesh AI (حذف کتابخانه باگ‌دار دوربین) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #050505;
+            color: #0f0;
+            overflow: hidden;
+            transition: filter 0.3s ease;
+        }
+
+        .crt-scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .hud-panel {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #0f0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .timer-text {
+            font-size: 8rem;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .btn-cyber {
+            background: transparent; border: 1px solid #0f0; color: #0f0;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .btn-cyber:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        .btn-cyber:disabled { opacity: 0.5; cursor: not-allowed; border-color: #333; color: #555; }
+
+        /* The Punishment Screen Overlay */
+        #distraction-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(20, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        
+        .distracted-active #distraction-overlay {
+            opacity: 1; pointer-events: auto;
+        }
+
+        .glitch-text {
+            font-size: 5rem; font-weight: bold; color: #f00;
+            text-shadow: 0 0 20px #f00, 2px 2px 0px #0ff;
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* Picture-in-Picture webcam */
+        #pip-container {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 200px; height: 150px;
+            border: 2px solid #0f0; z-index: 40;
+            overflow: hidden;
+        }
+        #webcam, #ai-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+            transform: scaleX(-1); /* Mirror */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center relative">
+
+    <div class="crt-scanlines"></div>
+
+    <div id="setup-screen" class="z-20 flex flex-col items-center text-center max-w-2xl p-8 hud-panel">
+        <h1 class="text-5xl font-bold mb-4 text-green-400">NEURAL POMODORO</h1>
+        <p class="text-gray-400 mb-6 leading-relaxed">
+            AI-POWERED FOCUS ENFORCER.<br>
+            The timer only runs when your eyes are on the screen. Look away at your phone, and the system halts, blurs, and alarms. <br>
+            <span class="text-green-500 text-sm mt-2 block">🔒 100% LOCAL AI. NO VIDEO IS RECORDED OR SENT.</span>
+        </p>
+        <button id="btn-init" class="btn-cyber px-8 py-4 text-xl w-full">INITIALIZE AI SENSORS</button>
+        <p id="loading-txt" class="text-yellow-500 mt-4 hidden animate-pulse">LOADING NEURAL NETWORKS (PLEASE WAIT)...</p>
+    </div>
+
+    <div id="main-app" class="hidden z-10 w-full flex-col items-center justify-center p-8">
+        
+        <!-- Status Header -->
+        <div class="hud-panel px-6 py-2 mb-8 flex items-center justify-between min-w-[300px]">
+            <span>AI TRACKING:</span>
+            <span id="ai-status" class="text-green-400 font-bold ml-4">LOCKED (FOCUSED)</span>
+        </div>
+
+        <!-- The Big Timer -->
+        <div class="timer-text mb-8" id="timer-display">25:00</div>
+
+        <!-- Controls -->
+        <div class="flex gap-4">
+            <button id="btn-start" class="btn-cyber px-6 py-3">START FOCUS</button>
+            <button id="btn-pause" class="btn-cyber px-6 py-3 opacity-50" disabled>PAUSE (MANUAL)</button>
+            <button id="btn-reset" class="btn-cyber px-6 py-3 border-red-500 text-red-500 hover:bg-red-500">RESET</button>
+        </div>
+
+        <div class="mt-8 text-gray-500 text-sm">
+            Focus Buffer: <span id="buffer-val">0</span>/30 (Tolerance for blinking/glancing)
+        </div>
+    </div>
+
+    <!-- Picture in Picture (Camera feedback) -->
+    <div id="pip-container" class="hidden">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="ai-canvas"></canvas>
+    </div>
+
+    <div id="distraction-overlay">
+        <div class="glitch-text">FOCUS LOST!</div>
+        <div class="text-white text-2xl mt-4 tracking-widest bg-red-900/50 px-4 py-2 border border-red-500">
+            PUT THE PHONE DOWN & LOOK AT THE SCREEN
+        </div>
+        <div class="mt-8 text-gray-400 text-sm animate-pulse">TIMER PAUSED. AWAITING EYE CONTACT...</div>
+    </div>
+
+    <script>
+        // --- UI Elements ---
+        const setupScreen = document.getElementById('setup-screen');
+        const mainApp = document.getElementById('main-app');
+        const btnInit = document.getElementById('btn-init');
+        const loadingTxt = document.getElementById('loading-txt');
+        const timerDisplay = document.getElementById('timer-display');
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+        const aiStatus = document.getElementById('ai-status');
+        const bufferVal = document.getElementById('buffer-val');
+        const pipContainer = document.getElementById('pip-container');
+        
+        const videoElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('ai-canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+
+        // --- Audio System (Synthesizer Beep) ---
+        let audioCtx;
+        let beepInterval;
+        
+        function initAudio() {
+            if(!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playHarshBeep() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sawtooth'; // Harsh annoying sound
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime); // High pitch
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.2); // Drop
+            
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        function triggerAlarm(state) {
+            if (state) {
+                if (!beepInterval) beepInterval = setInterval(playHarshBeep, 500); // Beep twice a second
+                document.body.classList.add('distracted-active');
+            } else {
+                if (beepInterval) {
+                    clearInterval(beepInterval);
+                    beepInterval = null;
+                }
+                document.body.classList.remove('distracted-active');
+            }
+        }
+
+        // --- Timer State ---
+        let WORK_TIME = 25 * 60; // 25 mins in seconds
+        let timeLeft = WORK_TIME;
+        let isTimerActive = false; // Is the user *intending* to run the timer?
+        let systemTimerInterval = null;
+        let isUserFocused = true; // AI output
+        let distractionBuffer = 0; // Tolerance counter
+        const MAX_DISTRACTION_FRAMES = 30; // ~1-1.5 seconds at 30fps
+
+        function updateTimerUI() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+        }
+
+        btnStart.addEventListener('click', () => {
+            initAudio(); // Initialize audio context on user gesture
+            isTimerActive = true;
+            btnStart.disabled = true; btnStart.classList.add('opacity-50');
+            btnPause.disabled = false; btnPause.classList.remove('opacity-50');
+            
+            if(!systemTimerInterval) {
+                systemTimerInterval = setInterval(() => {
+                    // THE CORE RULE: Timer only drops if ACTIVE and FOCUSED
+                    if(isTimerActive && isUserFocused) {
+                        if(timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerUI();
+                        } else {
+                            // Done!
+                            clearInterval(systemTimerInterval);
+                            systemTimerInterval = null;
+                            isTimerActive = false;
+                            playHarshBeep(); setTimeout(playHarshBeep, 500); setTimeout(playHarshBeep, 1000);
+                            alert("POMODORO COMPLETE! Take a break.");
+                        }
+                    }
+                }, 1000);
+            }
+        });
+
+        btnPause.addEventListener('click', () => {
+            isTimerActive = false;
+            btnStart.disabled = false; btnStart.classList.remove('opacity-50');
+            btnPause.disabled = true; btnPause.classList.add('opacity-50');
+        });
+
+        btnReset.addEventListener('click', () => {
+            isTimerActive = false;
+            timeLeft = WORK_TIME;
+            updateTimerUI();
+            btnStart.disabled = false; btnStart.classList.remove('opacity-50');
+            btnPause.disabled = true; btnPause.classList.add('opacity-50');
+        });
+
+        // --- STREAMING_CHUNK: MediaPipe Face Mesh AI Logic ---
+        
+        // Check if user is looking at screen based on landmarks
+        function checkHeadPose(landmarks) {
+            // MediaPipe points (approximate)
+            const noseTip = landmarks[1];
+            const leftCheek = landmarks[234];
+            const rightCheek = landmarks[454];
+            const topForehead = landmarks[10];
+            const bottomChin = landmarks[152];
+
+            // 1. Check Yaw (Looking Left/Right)
+            // Distance from nose to left side vs right side
+            const leftDist = noseTip.x - leftCheek.x;
+            const rightDist = rightCheek.x - noseTip.x;
+            const yawRatio = leftDist / rightDist;
+
+            // 2. Check Pitch (Looking Down/Up) - looking at phone
+            const topDist = noseTip.y - topForehead.y;
+            const bottomDist = bottomChin.y - noseTip.y;
+            const pitchRatio = topDist / bottomDist;
+
+            // Thresholds (Adjusted for typical webcam angles)
+            // Normal yawRatio is ~1.0. If < 0.5 (looked right) or > 2.0 (looked left)
+            // Normal pitchRatio is ~1.0. If < 0.6 (looked way up) or > 2.0 (looked down at phone)
+            
+            let focused = true;
+            if (yawRatio < 0.4 || yawRatio > 2.5) focused = false; // Turned head horizontally
+            if (pitchRatio > 1.8) focused = false; // Looked down heavily (phone)
+            
+            return focused;
+        }
+
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+            let faceDetectedAndFocused = false;
+
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                // Get the first face
+                const landmarks = results.multiFaceLandmarks[0];
+                
+                // Analyze pose
+                faceDetectedAndFocused = checkHeadPose(landmarks);
+
+                // Draw AI feedback on PIP
+                canvasCtx.fillStyle = faceDetectedAndFocused ? '#0f0' : '#f00';
+                // Draw a simple box around the nose area to show tracking
+                const nose = landmarks[1];
+                canvasCtx.fillRect(nose.x * canvasElement.width - 5, nose.y * canvasElement.height - 5, 10, 10);
+            }
+
+            // --- Distraction Buffer Logic (Debouncing) ---
+            if (faceDetectedAndFocused) {
+                // Re-gaining focus decreases buffer quickly
+                distractionBuffer -= 3;
+                if (distractionBuffer < 0) distractionBuffer = 0;
+            } else {
+                // Looking away increases buffer
+                distractionBuffer += 1;
+                if (distractionBuffer > MAX_DISTRACTION_FRAMES) distractionBuffer = MAX_DISTRACTION_FRAMES;
+            }
+
+            bufferVal.textContent = distractionBuffer;
+
+            // Decide Final State based on buffer
+            if (distractionBuffer >= MAX_DISTRACTION_FRAMES) {
+                isUserFocused = false;
+            } else if (distractionBuffer === 0) {
+                isUserFocused = true;
+            }
+
+            // --- UI Updates based on State ---
+            if (isUserFocused) {
+                aiStatus.textContent = "LOCKED (FOCUSED)";
+                aiStatus.className = "text-green-400 font-bold ml-4";
+                pipContainer.style.borderColor = "#0f0";
+                timerDisplay.style.color = "#0f0";
+                timerDisplay.style.textShadow = "0 0 30px rgba(0, 255, 0, 0.5)";
+                triggerAlarm(false); // Disable alarm
+            } else {
+                aiStatus.textContent = "LOST (DISTRACTED)";
+                aiStatus.className = "text-red-500 font-bold ml-4 animate-pulse";
+                pipContainer.style.borderColor = "#f00";
+                timerDisplay.style.color = "#f00";
+                timerDisplay.style.textShadow = "0 0 30px rgba(255, 0, 0, 0.8)";
+                
+                // Trigger punishment ONLY if the user ACTUALLY started the timer
+                if (isTimerActive) {
+                    triggerAlarm(true);
+                }
+            }
+
+            canvasCtx.restore();
+        }
+
+        // --- Init Pipeline ---
+        btnInit.addEventListener('click', async () => {
+            btnInit.classList.add('hidden');
+            loadingTxt.classList.remove('hidden');
+
+            try {
+                // Setup Canvas Dimensions to match internal drawing
+                canvasElement.width = 320;
+                canvasElement.height = 240;
+
+                // Load MediaPipe Face Mesh
+                const faceMesh = new FaceMesh({locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+                }});
+                faceMesh.setOptions({
+                    maxNumFaces: 1,
+                    refineLandmarks: false,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+                faceMesh.onResults(onResults);
+
+                // استفاده از دوربین بومی مرورگر (بسیار پایدارتر از کتابخانه گوگل)
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 320, height: 240, facingMode: "user" }
+                });
+                videoElement.srcObject = stream;
+                
+                // وقتی دوربین روشن شد، پردازش را شروع کن
+                videoElement.onloadedmetadata = async () => {
+                    videoElement.play();
+                    
+                    try {
+                        // ارسال فریم اول به هوش مصنوعی برای گرم شدن موتور
+                        await faceMesh.send({image: videoElement});
+                        
+                        // حلقه تکرار پردازش
+                        async function processFrame() {
+                            if (!videoElement.paused && !videoElement.ended) {
+                                await faceMesh.send({image: videoElement});
+                            }
+                            requestAnimationFrame(processFrame);
+                        }
+                        processFrame();
+
+                        // Swap UI
+                        setupScreen.classList.add('hidden');
+                        mainApp.classList.remove('hidden');
+                        mainApp.classList.add('flex');
+                        pipContainer.classList.remove('hidden');
+                    } catch(aiError) {
+                        throw new Error("هوش مصنوعی لود نشد. فیلترشکن خود را چک کنید.");
+                    }
+                };
+
+            } catch (e) {
+                console.error(e);
+                // نمایش دقیق ارور روی صفحه
+                loadingTxt.textContent = "خطا: " + e.message + " (مطمئن شوید روی Live Server هستید و دسترسی دوربین داده‌اید)";
+                loadingTxt.className = "text-red-500 mt-4 text-sm font-bold bg-black/50 p-2 rounded";
+                btnInit.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

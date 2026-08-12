@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONIC CYPHER | Air-Gapped Data Transfer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #030303;
+            color: #0f0;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CRT Screen Effect */
+        body::before {
+            content: " "; display: block; position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        .cyber-panel {
+            background: rgba(0, 20, 0, 0.7); border: 1px solid #0f0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); backdrop-filter: blur(5px);
+            position: relative;
+        }
+        
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.8); border: 1px solid #0f0; color: #0f0;
+            width: 100%; outline: none; transition: all 0.3s;
+        }
+        .cyber-input:focus { box-shadow: inset 0 0 15px rgba(0,255,0,0.3); }
+
+        .cyber-btn {
+            background: transparent; border: 2px solid #0f0; color: #0f0;
+            text-transform: uppercase; letter-spacing: 2px; font-weight: bold;
+            transition: all 0.2s; cursor: pointer; display: block; width: 100%;
+        }
+        .cyber-btn:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        .cyber-btn:disabled { border-color: #333; color: #333; cursor: not-allowed; }
+        .cyber-btn.btn-red { border-color: #f00; color: #f00; }
+        .cyber-btn.btn-red:hover { background: #f00; color: #000; box-shadow: 0 0 20px #f00; }
+
+        canvas { width: 100%; height: 150px; border: 1px solid #333; background: #000; margin-top: 10px; }
+
+        .led { width: 12px; height: 12px; border-radius: 50%; background: #333; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px #000; transition: background 0.1s; }
+        .led.active-green { background: #0f0; box-shadow: 0 0 10px #0f0; }
+        .led.active-red { background: #f00; box-shadow: 0 0 10px #f00; }
+        .led.active-yellow { background: #ff0; box-shadow: 0 0 10px #ff0; }
+        .led.active-cyan { background: #0ff; box-shadow: 0 0 10px #0ff; }
+
+        .hex-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; opacity: 0.05; background-image: radial-gradient(#0f0 1px, transparent 1px); background-size: 20px 20px; }
+
+        /* Init screen */
+        #init-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
+
+    <div class="hex-bg"></div>
+
+    <!-- Boot Screen -->
+    <div id="init-screen">
+        <h1 class="text-5xl font-bold mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(0,255,0,0.5)] tracking-widest">SONIC CYPHER</h1>
+        <p class="text-gray-400 mb-8 max-w-lg text-sm leading-relaxed">
+            AIR-GAPPED AUDIO DATA TRANSFER PROTOCOL.<br><br>
+            WARNING: High frequency sounds will be generated. Turn up your speakers to transmit, and allow microphone access to receive.
+        </p>
+        <button id="btn-boot" class="cyber-btn p-4 w-64 text-xl">BOOT SYSTEM</button>
+    </div>
+
+    <!-- Main UI -->
+    <div id="main-ui" class="hidden w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 z-10 relative">
+        
+        <!-- Header -->
+        <div class="col-span-1 md:col-span-2 text-center mb-4">
+            <h1 class="text-3xl font-bold tracking-widest border-b border-green-900 pb-2">SONIC NETWORK LINK</h1>
+            <p class="text-xs text-gray-500 mt-2">PROTOCOL: AFSK (Audio Frequency-Shift Keying) | BAUD RATE: ~10 bps</p>
+        </div>
+
+        <!-- TRANSMITTER (TX) PANEL -->
+        <div class="cyber-panel p-6 flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-green-800 pb-2">
+                <h2 class="text-xl font-bold">> TRANSMITTER (TX)</h2>
+                <div class="text-xs"><span class="led" id="led-tx"></span> BROADCASTING</div>
+            </div>
+            
+            <textarea id="tx-input" class="cyber-input p-3 mb-4 resize-none h-32" placeholder="Enter secret message to transmit via audio waves..."></textarea>
+            
+            <button id="btn-transmit" class="cyber-btn p-3 mb-4">ENCODE & TRANSMIT 🔊</button>
+            
+            <div class="mt-auto">
+                <p class="text-xs text-gray-500 mb-1">TX FREQUENCY SPECTRUM:</p>
+                <canvas id="canvas-tx"></canvas>
+            </div>
+        </div>
+
+        <!-- RECEIVER (RX) PANEL -->
+        <div class="cyber-panel p-6 flex flex-col" style="border-color: #0ff;">
+            <div class="flex justify-between items-center mb-4 border-b border-cyan-800 pb-2">
+                <h2 class="text-xl font-bold text-cyan-400">> RECEIVER (RX)</h2>
+                <div class="text-xs"><span class="led" id="led-rx"></span> LISTENING</div>
+            </div>
+
+            <button id="btn-listen" class="cyber-btn p-3 mb-4 border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:text-black">ACTIVATE MICROPHONE 🎤</button>
+
+            <!-- Debug LEDs for incoming frequencies -->
+            <div class="flex gap-4 text-[10px] mb-2 justify-center text-gray-400">
+                <div><span class="led" id="led-f-start"></span> START (3.5k)</div>
+                <div><span class="led" id="led-f-clk"></span> CLK (2.5k)</div>
+                <div><span class="led" id="led-f-1"></span> BIT 1 (1.8k)</div>
+                <div><span class="led" id="led-f-0"></span> BIT 0 (1.2k)</div>
+            </div>
+            
+            <div class="cyber-input p-3 mb-4 h-32 overflow-y-auto font-bold text-cyan-400 border-cyan-900" style="background: rgba(0, 10, 15, 0.8);">
+                <div id="rx-bits" class="text-[10px] text-gray-600 break-all mb-2 leading-none"></div>
+                <div id="rx-output" class="text-lg">WAITING FOR SIGNAL...</div>
+            </div>
+            
+            <div class="mt-auto">
+                <p class="text-xs text-gray-500 mb-1">RX FFT ANALYSIS:</p>
+                <canvas id="canvas-rx" style="border-color: #0ff;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURATION & PROTOCOL ---
+        const PROTOCOL = {
+            FREQ_START: 3500, // Sync Start
+            FREQ_CLOCK: 2500, // Timing pulse
+            FREQ_BIT_1: 1800, // Data 1
+            FREQ_BIT_0: 1200, // Data 0
+            FREQ_END: 800,    // Sync End
+            BIT_DURATION: 0.25, // Seconds per bit pulse (کُندتر اما دقیق‌تر - قبلا 0.1 بود)
+            GAP_DURATION: 0.1, // Seconds gap between pulses (جلوگیری از اکو - قبلا 0.05 بود)
+            FFT_SIZE: 2048,
+            THRESHOLD: 160 // Minimum volume threshold (حساسیت بیشتر برای میکروفون‌های ضعیف - قبلا 180 بود)
+        };
+
+        // --- GLOBAL AUDIO VARIABLES ---
+        let audioCtx = null;
+        let rxAnalyser = null;
+        let rxDataArray = null;
+        let isReceiving = false;
+        let rxBitBuffer = [];
+        let rxStream = null;
+
+        // --- UI ELEMENTS ---
+        const btnBoot = document.getElementById('btn-boot');
+        const initScreen = document.getElementById('init-screen');
+        const mainUi = document.getElementById('main-ui');
+        
+        // TX
+        const txInput = document.getElementById('tx-input');
+        const btnTransmit = document.getElementById('btn-transmit');
+        const ledTx = document.getElementById('led-tx');
+        const canvasTx = document.getElementById('canvas-tx');
+        const ctxTx = canvasTx.getContext('2d');
+        
+        // RX
+        const btnListen = document.getElementById('btn-listen');
+        const rxOutput = document.getElementById('rx-output');
+        const rxBits = document.getElementById('rx-bits');
+        const ledRx = document.getElementById('led-rx');
+        const canvasRx = document.getElementById('canvas-rx');
+        const ctxRx = canvasRx.getContext('2d');
+        
+        // RX LEDs
+        const ledFStart = document.getElementById('led-f-start');
+        const ledFClk = document.getElementById('led-f-clk');
+        const ledF1 = document.getElementById('led-f-1');
+        const ledF0 = document.getElementById('led-f-0');
+
+        // --- INIT ---
+        btnBoot.addEventListener('click', () => {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            
+            initScreen.style.opacity = 0;
+            setTimeout(() => {
+                initScreen.style.display = 'none';
+                mainUi.classList.remove('hidden');
+                drawEmptyCanvas(ctxTx, canvasTx, '#0f0');
+                drawEmptyCanvas(ctxRx, canvasRx, '#0ff');
+            }, 500);
+        });
+
+        // --- HELPER: TEXT TO BINARY ---
+        function stringToBinaryArray(str) {
+            let bits = [];
+            for (let i = 0; i < str.length; i++) {
+                let bin = str.charCodeAt(i).toString(2).padStart(8, '0');
+                for(let char of bin) bits.push(parseInt(char));
+            }
+            return bits;
+        }
+
+        function binaryArrayToString(bits) {
+            let str = '';
+            for (let i = 0; i < bits.length; i += 8) {
+                let byte = bits.slice(i, i + 8).join('');
+                if(byte.length === 8) str += String.fromCharCode(parseInt(byte, 2));
+            }
+            return str;
+        }
+
+        // --- TRANSMITTER (TX) ENGINE ---
+        function playPulse(freq1, freq2, startTime, duration) {
+            if(!audioCtx) return;
+            
+            const osc1 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc1.type = 'sine';
+            osc1.frequency.value = freq1;
+            osc1.connect(gainNode);
+            osc1.start(startTime);
+            osc1.stop(startTime + duration);
+
+            if(freq2 > 0) {
+                const osc2 = audioCtx.createOscillator();
+                osc2.type = 'sine';
+                osc2.frequency.value = freq2;
+                osc2.connect(gainNode);
+                osc2.start(startTime);
+                osc2.stop(startTime + duration);
+            }
+
+            // Envelope to avoid clicking sounds
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.5, startTime + 0.01);
+            gainNode.gain.setValueAtTime(0.5, startTime + duration - 0.01);
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+            
+            gainNode.connect(audioCtx.destination);
+        }
+
+        btnTransmit.addEventListener('click', () => {
+            const text = txInput.value;
+            if(!text) return alert("Enter a message to transmit!");
+            
+            btnTransmit.disabled = true;
+            btnTransmit.textContent = "TRANSMITTING...";
+            ledTx.classList.add('active-red');
+
+            const bits = stringToBinaryArray(text);
+            let time = audioCtx.currentTime + 0.1; // Start slightly in future
+            
+            // 1. Send START signal
+            playPulse(PROTOCOL.FREQ_START, 0, time, 0.4);
+            time += 0.4 + PROTOCOL.GAP_DURATION;
+
+            // 2. Send Data Bits (Clock + Data simultaneous)
+            for (let i = 0; i < bits.length; i++) {
+                let dataFreq = bits[i] === 1 ? PROTOCOL.FREQ_BIT_1 : PROTOCOL.FREQ_BIT_0;
+                playPulse(PROTOCOL.FREQ_CLOCK, dataFreq, time, PROTOCOL.BIT_DURATION);
+                time += PROTOCOL.BIT_DURATION + PROTOCOL.GAP_DURATION;
+            }
+
+            // 3. Send END signal
+            playPulse(PROTOCOL.FREQ_END, 0, time, 0.4);
+            
+            // Calculate total time to re-enable button
+            const totalMs = (time - audioCtx.currentTime) * 1000;
+            setTimeout(() => {
+                btnTransmit.disabled = false;
+                btnTransmit.textContent = "ENCODE & TRANSMIT 🔊";
+                ledTx.classList.remove('active-red');
+            }, totalMs);
+
+            // Fake visualizer for TX side
+            simulateTxVisualizer(totalMs);
+        });
+
+        // --- RECEIVER (RX) ENGINE ---
+        btnListen.addEventListener('click', async () => {
+            if (isReceiving) return; // Already active
+
+            try {
+                rxStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false } });
+                const source = audioCtx.createMediaStreamSource(rxStream);
+                
+                rxAnalyser = audioCtx.createAnalyser();
+                rxAnalyser.fftSize = PROTOCOL.FFT_SIZE;
+                rxAnalyser.smoothingTimeConstant = 0.2; // Fast response
+                source.connect(rxAnalyser);
+                
+                rxDataArray = new Uint8Array(rxAnalyser.frequencyBinCount);
+                
+                btnListen.disabled = true;
+                btnListen.textContent = "MIC ACTIVE - LISTENING...";
+                btnListen.classList.replace('border-cyan-500', 'border-gray-500');
+                btnListen.classList.replace('text-cyan-500', 'text-gray-500');
+                ledRx.classList.add('active-cyan');
+                
+                requestAnimationFrame(rxProcessLoop);
+                
+            } catch (err) {
+                alert("Microphone access denied! Must be served via localhost or HTTPS.");
+                console.error(err);
+            }
+        });
+
+        // Helper to get FFT magnitude for a specific frequency
+        function getMagnitude(freq) {
+            const nyquist = audioCtx.sampleRate / 2;
+            const index = Math.round(freq / nyquist * (PROTOCOL.FFT_SIZE / 2));
+            // Check a small window around the target to account for mic drift
+            let max = 0;
+            for(let i = index - 1; i <= index + 1; i++) {
+                if(rxDataArray[i] > max) max = rxDataArray[i];
+            }
+            return max;
+        }
+
+        let pulseActive = false; // Prevents reading the same pulse twice
+
+        function rxProcessLoop() {
+            if(!rxAnalyser) return;
+            requestAnimationFrame(rxProcessLoop);
+            
+            rxAnalyser.getByteFrequencyData(rxDataArray);
+            drawFFT(ctxRx, canvasRx, rxDataArray, '#0ff');
+
+            // Read magnitudes
+            const magStart = getMagnitude(PROTOCOL.FREQ_START);
+            const magEnd = getMagnitude(PROTOCOL.FREQ_END);
+            const magClock = getMagnitude(PROTOCOL.FREQ_CLOCK);
+            const mag1 = getMagnitude(PROTOCOL.FREQ_BIT_1);
+            const mag0 = getMagnitude(PROTOCOL.FREQ_BIT_0);
+
+            // Update Debug LEDs
+            ledFStart.className = 'led ' + (magStart > PROTOCOL.THRESHOLD ? 'active-red' : '');
+            ledFClk.className = 'led ' + (magClock > PROTOCOL.THRESHOLD ? 'active-yellow' : '');
+            ledF1.className = 'led ' + (mag1 > PROTOCOL.THRESHOLD ? 'active-green' : '');
+            ledF0.className = 'led ' + (mag0 > PROTOCOL.THRESHOLD ? 'active-cyan' : '');
+
+            // STATE MACHINE
+            if (!isReceiving && magStart > PROTOCOL.THRESHOLD) {
+                isReceiving = true;
+                rxBitBuffer = [];
+                rxBits.textContent = "";
+                rxOutput.textContent = "RECEIVING DATA...";
+                rxOutput.style.color = "#ff0";
+            }
+
+            if (isReceiving) {
+                // If Clock tone is present
+                if (magClock > PROTOCOL.THRESHOLD) {
+                    if (!pulseActive) {
+                        pulseActive = true; // Lock it so we read once per pulse
+                        
+                        // Compare Data frequencies
+                        if (mag1 > mag0 && mag1 > PROTOCOL.THRESHOLD - 20) {
+                            rxBitBuffer.push(1);
+                            rxBits.textContent += "1";
+                        } else if (mag0 > mag1 && mag0 > PROTOCOL.THRESHOLD - 20) {
+                            rxBitBuffer.push(0);
+                            rxBits.textContent += "0";
+                        } else {
+                            rxBitBuffer.push(0); // Noise fallback
+                            rxBits.textContent += "?";
+                        }
+                    }
+                } else {
+                    pulseActive = false; // Reset lock when silence happens
+                }
+
+                // If End tone is present
+                if (magEnd > PROTOCOL.THRESHOLD) {
+                    isReceiving = false;
+                    const decodedText = binaryArrayToString(rxBitBuffer);
+                    rxOutput.textContent = decodedText || "[NO VALID DATA DECODED]";
+                    rxOutput.style.color = "#0ff";
+                }
+            }
+        }
+
+        // --- CANVAS DRAWING (UI) ---
+        function drawEmptyCanvas(ctx, canvas, color) {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = color;
+            ctx.font = '10px monospace';
+            ctx.fillText("WAITING FOR SIGNAL...", 10, canvas.height / 2);
+        }
+
+        function drawFFT(ctx, canvas, dataArray, color) {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = (canvas.width / 150); // Show lower freq part
+            let x = 0;
+            
+            ctx.fillStyle = color;
+            for(let i = 0; i < 150; i++) { // Render first 150 bins
+                const barHeight = (dataArray[i] / 255) * canvas.height;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+                x += barWidth;
+            }
+        }
+
+        function simulateTxVisualizer(duration) {
+            let start = Date.now();
+            function draw() {
+                if(Date.now() - start > duration) return drawEmptyCanvas(ctxTx, canvasTx, '#0f0');
+                
+                canvasTx.width = canvasTx.clientWidth;
+                canvasTx.height = canvasTx.clientHeight;
+                ctxTx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctxTx.fillRect(0, 0, canvasTx.width, canvasTx.height);
+                
+                const barWidth = canvasTx.width / 50;
+                let x = 0;
+                ctxTx.fillStyle = '#0f0';
+                for(let i = 0; i < 50; i++) {
+                    const barHeight = Math.random() > 0.5 ? Math.random() * canvasTx.height : 5;
+                    ctxTx.fillRect(x, canvasTx.height - barHeight, barWidth - 1, barHeight);
+                    x += barWidth;
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>

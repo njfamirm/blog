@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIXEL VAULT | Steganography Image Crypto</title>
+    
+    <!-- CryptoJS for AES Encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Tailwind CSS for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #050505;
+            color: #0f0;
+            overflow-x: hidden;
+        }
+
+        /* Subtle scanlines for CRT monitor vibe */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .cyber-panel {
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid #0f0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+        
+        .cyber-panel::after {
+            content: ''; position: absolute; bottom: -1px; right: -1px;
+            width: 15px; height: 15px; border-bottom: 2px solid #0f0; border-right: 2px solid #0f0;
+        }
+        .cyber-panel::before {
+            content: ''; position: absolute; top: -1px; left: -1px;
+            width: 15px; height: 15px; border-top: 2px solid #0f0; border-left: 2px solid #0f0;
+        }
+
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.6); border: 1px solid #333; color: #0f0;
+            transition: all 0.3s ease;
+        }
+        .cyber-input:focus {
+            outline: none; border-color: #0f0; box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+        }
+
+        .cyber-btn {
+            background: transparent; border: 1px solid #0f0; color: #0f0;
+            text-transform: uppercase; font-weight: bold; letter-spacing: 2px;
+            transition: all 0.2s; position: relative; overflow: hidden;
+            z-index: 10;
+        }
+        .cyber-btn:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        .cyber-btn:disabled { border-color: #333; color: #333; cursor: not-allowed; box-shadow: none; background: transparent;}
+
+        .tab-active { background: #0f0; color: #000; }
+        .tab-inactive { background: transparent; color: #555; border-bottom: 1px solid #333; cursor: pointer; }
+        .tab-inactive:hover { color: #0f0; }
+
+        #canvas-preview { width: 100%; max-height: 250px; object-fit: contain; border: 1px dashed #333; margin-top: 10px; display: none;}
+        
+        .matrix-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; opacity: 0.15;
+        }
+
+        /* Scramble text effect class */
+        .scramble-text { filter: blur(0px); transition: filter 0.2s; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Matrix rain canvas background -->
+    <canvas id="matrix-canvas" class="matrix-bg"></canvas>
+
+    <div class="z-10 w-full max-w-4xl relative">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold tracking-widest text-green-500 drop-shadow-[0_0_15px_rgba(0,255,0,0.5)]">PIXEL VAULT</h1>
+            <p class="text-gray-400 mt-2 text-sm tracking-widest">ENCRYPTED LSB STEGANOGRAPHY ENGINE [100% LOCAL]</p>
+        </div>
+
+        <!-- Warning/Info Box -->
+        <div class="mb-6 p-3 bg-green-900/20 border border-green-800 text-green-400 text-xs text-center">
+            🔒 NO DATA LEAVES THIS DEVICE. ALL ENCRYPTION & PIXEL INJECTION HAPPENS IN YOUR BROWSER.
+        </div>
+
+        <!-- Main Panel -->
+        <div class="cyber-panel p-1 flex flex-col md:flex-row gap-4">
+            
+            <!-- Sidebar (Tabs) -->
+            <div class="w-full md:w-1/4 flex flex-col border-r border-green-900/50 p-2">
+                <button id="tab-encrypt" class="text-left p-3 mb-2 font-bold tab-active transition-colors">> HIDE SECRET</button>
+                <button id="tab-decrypt" class="text-left p-3 font-bold tab-inactive transition-colors">> EXTRACT SECRET</button>
+                
+                <div class="mt-auto p-4 text-[10px] text-gray-500 border-t border-gray-800">
+                    <p class="mb-1 text-green-700">SYSTEM SPECS:</p>
+                    <p>ALGO: AES-256</p>
+                    <p>METHOD: 3-BIT LSB RGB</p>
+                    <p>OUTPUT: LOSSLESS PNG</p>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="w-full md:w-3/4 p-4 min-h-[400px] flex flex-col justify-between">
+                
+                <!-- ENCRYPT VIEW -->
+                <div id="view-encrypt" class="block space-y-4">
+                    <h2 class="text-xl border-b border-green-500 pb-2 mb-4">INJECT DATA INTO IMAGE</h2>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs text-green-600">1. SELECT CARRIER IMAGE (PNG/JPG)</label>
+                        <input type="file" id="enc-image-upload" accept="image/png, image/jpeg" class="cyber-input p-2 text-sm">
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs text-green-600">2. ENTER SECRET PAYLOAD</label>
+                        <textarea id="enc-text" rows="3" class="cyber-input p-3 text-sm resize-none" placeholder="Enter seed phrases, passwords, or confidential text here..."></textarea>
+                        <div class="text-[10px] text-gray-500 text-right" id="capacity-indicator">CAPACITY: WAITING FOR IMAGE...</div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs text-green-600">3. ENCRYPTION PASSWORD (REQUIRED)</label>
+                        <input type="password" id="enc-password" class="cyber-input p-2 text-sm" placeholder="••••••••••••">
+                    </div>
+
+                    <button id="btn-inject" class="cyber-btn w-full p-3 mt-4 text-lg">INITIALIZE INJECTION</button>
+                </div>
+
+                <!-- DECRYPT VIEW -->
+                <div id="view-decrypt" class="hidden space-y-4">
+                    <h2 class="text-xl border-b border-green-500 pb-2 mb-4">EXTRACT & DECRYPT</h2>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs text-green-600">1. SELECT VAULT IMAGE (MUST BE PNG)</label>
+                        <input type="file" id="dec-image-upload" accept="image/png" class="cyber-input p-2 text-sm">
+                        <p class="text-[10px] text-red-500">* Do not upload images sent via WhatsApp/Telegram as compression destroys hidden data.</p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 mt-4">
+                        <label class="text-xs text-green-600">2. DECRYPTION PASSWORD</label>
+                        <input type="password" id="dec-password" class="cyber-input p-2 text-sm" placeholder="••••••••••••">
+                    </div>
+
+                    <button id="btn-extract" class="cyber-btn w-full p-3 mt-6 text-lg border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black hover:shadow-[0_0_20px_rgba(234,179,8,0.5)]">EXTRACT PAYLOAD</button>
+                    
+                    <div class="mt-4 flex flex-col gap-2 hidden" id="dec-output-container">
+                        <label class="text-xs text-yellow-500">DECRYPTED SIGNAL ACQUIRED:</label>
+                        <textarea id="dec-output" rows="3" class="cyber-input p-3 text-sm text-white resize-none" readonly></textarea>
+                    </div>
+                </div>
+
+                <!-- Shared Image Preview Area -->
+                <div class="mt-6 flex flex-col items-center">
+                    <canvas id="hidden-canvas" style="display: none;"></canvas>
+                    <canvas id="preview-canvas" class="border border-green-900/50 mt-2 max-w-full" style="display:none; max-height: 250px;"></canvas>
+                    <div id="status-log" class="w-full mt-2 text-xs text-center text-gray-500 h-4">... SYSTEM IDLE ...</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- UI Element Mapping ---
+        const tabEncrypt = document.getElementById('tab-encrypt');
+        const tabDecrypt = document.getElementById('tab-decrypt');
+        const viewEncrypt = document.getElementById('view-encrypt');
+        const viewDecrypt = document.getElementById('view-decrypt');
+        
+        const encImgUpload = document.getElementById('enc-image-upload');
+        const encText = document.getElementById('enc-text');
+        const encPass = document.getElementById('enc-password');
+        const btnInject = document.getElementById('btn-inject');
+        const capacityInd = document.getElementById('capacity-indicator');
+
+        const decImgUpload = document.getElementById('dec-image-upload');
+        const decPass = document.getElementById('dec-password');
+        const btnExtract = document.getElementById('btn-extract');
+        const decOutputCont = document.getElementById('dec-output-container');
+        const decOutput = document.getElementById('dec-output');
+
+        const hiddenCanvas = document.getElementById('hidden-canvas');
+        const hiddenCtx = hiddenCanvas.getContext('2d', { willReadFrequently: true });
+        const previewCanvas = document.getElementById('preview-canvas');
+        const previewCtx = previewCanvas.getContext('2d');
+        const statusLog = document.getElementById('status-log');
+
+        let currentImage = null; // Holds the loaded Image object
+        const DELIMITER = "|||EOF|||"; // Marks the end of our hidden data
+
+        // --- Tab Switching Logic ---
+        function switchTab(isEncrypt) {
+            if (isEncrypt) {
+                tabEncrypt.className = "text-left p-3 mb-2 font-bold tab-active transition-colors";
+                tabDecrypt.className = "text-left p-3 font-bold tab-inactive transition-colors";
+                viewEncrypt.classList.remove('hidden');
+                viewDecrypt.classList.add('hidden');
+            } else {
+                tabDecrypt.className = "text-left p-3 mb-2 font-bold tab-active transition-colors";
+                tabEncrypt.className = "text-left p-3 font-bold tab-inactive transition-colors";
+                viewDecrypt.classList.remove('hidden');
+                viewEncrypt.classList.add('hidden');
+            }
+            // Reset state
+            previewCanvas.style.display = 'none';
+            currentImage = null;
+            statusLog.textContent = "... SYSTEM IDLE ...";
+            statusLog.style.color = "#6b7280";
+            encImgUpload.value = ''; decImgUpload.value = '';
+            decOutputCont.classList.add('hidden');
+            capacityInd.textContent = "CAPACITY: WAITING FOR IMAGE...";
+        }
+
+        tabEncrypt.addEventListener('click', () => switchTab(true));
+        tabDecrypt.addEventListener('click', () => switchTab(false));
+
+        // --- Image Loading & Canvas Preview ---
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    currentImage = img;
+                    
+                    // Draw to hidden canvas (full resolution)
+                    hiddenCanvas.width = img.width;
+                    hiddenCanvas.height = img.height;
+                    hiddenCtx.drawImage(img, 0, 0);
+
+                    // Draw to preview canvas (scaled for UI)
+                    const scale = Math.min(600 / img.width, 250 / img.height, 1);
+                    previewCanvas.width = img.width * scale;
+                    previewCanvas.height = img.height * scale;
+                    previewCtx.drawImage(img, 0, 0, previewCanvas.width, previewCanvas.height);
+                    previewCanvas.style.display = 'block';
+
+                    // Calculate Capacity (3 bits per pixel (R,G,B))
+                    const totalPixels = img.width * img.height;
+                    const maxBits = totalPixels * 3; 
+                    const maxChars = Math.floor(maxBits / 8);
+                    
+                    if(e.target.id === 'enc-image-upload') {
+                        capacityInd.textContent = `MAX CAPACITY: ~${maxChars} CHARACTERS`;
+                        capacityInd.style.color = "#0f0";
+                        log("CARRIER IMAGE LOADED SUCCESSFULLY.", "#0f0");
+                    } else {
+                        log("VAULT IMAGE LOADED. READY FOR EXTRACTION.", "#eab308");
+                    }
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        encImgUpload.addEventListener('change', handleImageUpload);
+        decImgUpload.addEventListener('change', handleImageUpload);
+
+        function log(msg, color="#fff") {
+            statusLog.textContent = `> ${msg}`;
+            statusLog.style.color = color;
+        }
+
+        // --- Helper: String <-> Binary ---
+        function stringToBinary(str) {
+            return str.split('').map(char => {
+                // Ensure 8-bit binary representation per character
+                return char.charCodeAt(0).toString(2).padStart(8, '0');
+            }).join('');
+        }
+
+        function binaryToString(binaryStr) {
+            let str = '';
+            for (let i = 0; i < binaryStr.length; i += 8) {
+                let byte = binaryStr.slice(i, i + 8);
+                if(byte.length === 8) {
+                    str += String.fromCharCode(parseInt(byte, 2));
+                }
+            }
+            return str;
+        }
+
+        // --- Core Steganography: HIDE ---
+        btnInject.addEventListener('click', () => {
+            if (!currentImage) return alert("Upload an image first!");
+            if (!encText.value) return alert("Enter secret payload!");
+            if (!encPass.value) return alert("Enter encryption password!");
+
+            log("ENCRYPTING PAYLOAD WITH AES-256...", "#0ff");
+            
+            // 1. Encrypt Text
+            let encryptedBase64;
+            try {
+                encryptedBase64 = CryptoJS.AES.encrypt(encText.value, encPass.value).toString();
+            } catch(e) {
+                return log("ENCRYPTION FAILED.", "#f00");
+            }
+
+            // 2. Prepare Payload (Ciphertext + Delimiter)
+            const fullPayload = encryptedBase64 + DELIMITER;
+            const binaryPayload = stringToBinary(fullPayload);
+
+            // 3. Inject into Image LSB
+            const imgData = hiddenCtx.getImageData(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+            const pixels = imgData.data;
+
+            // Capacity check
+            if (binaryPayload.length > (pixels.length / 4) * 3) {
+                return alert("Image is too small to hold this amount of data!");
+            }
+
+            log(`INJECTING ${binaryPayload.length} BITS INTO PIXELS...`, "#0ff");
+            btnInject.disabled = true;
+            btnInject.textContent = "INJECTING...";
+
+            // Use setTimeout to allow UI to update before heavy processing
+            setTimeout(() => {
+                let bitIndex = 0;
+                // Loop through pixels. Increment by 4 (R, G, B, A)
+                for (let i = 0; i < pixels.length; i += 4) {
+                    // Inject into R, G, B channels (leave Alpha alone)
+                    for (let j = 0; j < 3; j++) {
+                        if (bitIndex < binaryPayload.length) {
+                            let bit = parseInt(binaryPayload[bitIndex]);
+                            // Clear lowest bit (AND with 254 i.e., 11111110) then set with OR
+                            pixels[i + j] = (pixels[i + j] & 254) | bit;
+                            bitIndex++;
+                        } else {
+                            break; // Finished injecting
+                        }
+                    }
+                    if (bitIndex >= binaryPayload.length) break;
+                }
+
+                // Put modified pixels back
+                hiddenCtx.putImageData(imgData, 0, 0);
+
+                // 4. Download Image
+                log("INJECTION COMPLETE. INITIATING DOWNLOAD...", "#0f0");
+                
+                const link = document.createElement('a');
+                link.download = `pixel-vault-${Date.now()}.png`; // MUST BE PNG
+                link.href = hiddenCanvas.toDataURL('image/png');
+                link.click();
+
+                btnInject.disabled = false;
+                btnInject.textContent = "INITIALIZE INJECTION";
+                log("SECURE IMAGE SAVED TO DISK.", "#0f0");
+
+                // Glitch effect on preview
+                previewCanvas.style.filter = "hue-rotate(90deg) blur(2px)";
+                setTimeout(() => { previewCanvas.style.filter = "none"; }, 500);
+
+            }, 100);
+        });
+
+        // --- Core Steganography: EXTRACT ---
+        btnExtract.addEventListener('click', () => {
+            if (!currentImage) return alert("Upload a vault image first!");
+            if (!decPass.value) return alert("Enter decryption password!");
+
+            log("SCANNING PIXELS FOR HIDDEN DATA...", "#eab308");
+            btnExtract.disabled = true;
+            btnExtract.textContent = "EXTRACTING...";
+            decOutputCont.classList.add('hidden');
+
+            setTimeout(() => {
+                const imgData = hiddenCtx.getImageData(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+                const pixels = imgData.data;
+
+                let binaryExtracted = "";
+                let extractedText = "";
+                let found = false;
+
+                // Loop through pixels to read LSB
+                for (let i = 0; i < pixels.length; i += 4) {
+                    for (let j = 0; j < 3; j++) {
+                        // Extract lowest bit
+                        let bit = pixels[i + j] & 1;
+                        binaryExtracted += bit;
+
+                        // Every 8 bits, we form a character
+                        if (binaryExtracted.length % 8 === 0) {
+                            let charByte = binaryExtracted.slice(-8);
+                            extractedText += String.fromCharCode(parseInt(charByte, 2));
+
+                            // Check if the last characters match our delimiter
+                            if (extractedText.endsWith(DELIMITER)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (found) break;
+                }
+
+                if (!found) {
+                    btnExtract.disabled = false;
+                    btnExtract.textContent = "EXTRACT PAYLOAD";
+                    return log("NO VAULT SIGNATURE FOUND IN THIS IMAGE.", "#f00");
+                }
+
+                // Remove delimiter to get encrypted payload
+                const encryptedPayload = extractedText.replace(DELIMITER, '');
+
+                log("SIGNAL FOUND. ATTEMPTING DECRYPTION...", "#0ff");
+
+                // Decrypt
+                try {
+                    const decryptedBytes = CryptoJS.AES.decrypt(encryptedPayload, decPass.value);
+                    const originalText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+                    if(!originalText) throw new Error("Wrong Password"); // CryptoJS returns empty string if fail
+
+                    // Success!
+                    decOutput.value = originalText;
+                    decOutputCont.classList.remove('hidden');
+                    
+                    // Scramble animation for dramatic effect
+                    let iterations = 0;
+                    const interval = setInterval(() => {
+                        decOutput.value = originalText.split('').map((char, index) => {
+                            if(index < iterations) return char;
+                            return String.fromCharCode(33 + Math.random() * 94);
+                        }).join('');
+                        iterations += originalText.length / 20;
+                        if(iterations >= originalText.length) {
+                            clearInterval(interval);
+                            decOutput.value = originalText;
+                        }
+                    }, 30);
+
+                    log("DECRYPTION SUCCESSFUL. VAULT BREACHED.", "#0f0");
+                } catch(e) {
+                    log("ACCESS DENIED. INCORRECT PASSWORD OR CORRUPT DATA.", "#f00");
+                }
+
+                btnExtract.disabled = false;
+                btnExtract.textContent = "EXTRACT PAYLOAD";
+
+            }, 100);
+        });
+
+        // --- Matrix Background Animation ---
+        const mCanvas = document.getElementById('matrix-canvas');
+        const mCtx = mCanvas.getContext('2d');
+        
+        mCanvas.width = window.innerWidth;
+        mCanvas.height = window.innerHeight;
+        
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~";
+        const fontSize = 14;
+        const columns = mCanvas.width / fontSize;
+        const drops = [];
+        for(let x = 0; x < columns; x++) drops[x] = 1; 
+
+        function drawMatrix() {
+            mCtx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+            
+            mCtx.fillStyle = "#0F0"; 
+            mCtx.font = fontSize + "px monospace";
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > mCanvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener('resize', () => {
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>

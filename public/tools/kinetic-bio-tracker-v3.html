@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINETIC ASCII BIO-TRACKER V3</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #020202; color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        .crt-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+            mix-blend-mode: overlay;
+        }
+
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 40; display: none;
+            padding: 30px; flex-direction: column; justify-content: space-between;
+        }
+        
+        .hud-panel {
+            background: rgba(0, 15, 0, 0.7);
+            border: 1px solid #0f0; border-left: 4px solid #0f0;
+            padding: 15px; width: 320px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
+            backdrop-filter: blur(5px);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            transition: all 0.3s;
+        }
+
+        .hud-title { 
+            font-weight: 900; font-size: 1.1rem; margin-bottom: 15px; 
+            border-bottom: 1px dashed #0f0; padding-bottom: 5px; letter-spacing: 2px;
+        }
+        
+        .hud-row { display: flex; justify-content: space-between; margin-top: 12px; font-size: 0.85rem; font-weight: bold;}
+        
+        .bar-container { width: 100%; height: 8px; background: #111; margin-top: 5px; position: relative; overflow: hidden;}
+        .bar-fill { height: 100%; background: #0f0; width: 0%; transition: width 0.1s, background 0.2s;}
+
+        .radar-box {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 100px; border: 2px solid rgba(0, 255, 0, 0.5);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+        }
+        .radar-sweep {
+            position: absolute; width: 50%; height: 2px; background: #0f0;
+            left: 50%; top: 50%; transform-origin: left center;
+            animation: sweep 2s linear infinite;
+            box-shadow: 0 0 10px #0f0;
+        }
+        @keyframes sweep { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
+
+        #status-text {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            font-size: 2.5rem; font-weight: 900; letter-spacing: 8px;
+            text-shadow: 0 0 15px #0f0; transition: color 0.3s; text-align: center;
+        }
+
+        #camera-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 999; opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .capture-btn-container {
+            position: absolute; bottom: 30px; right: 30px; pointer-events: auto;
+        }
+        .cyber-btn {
+            background: rgba(0,0,0,0.8); color: #0f0; border: 2px solid #0f0;
+            padding: 12px 25px; font-size: 1rem; font-family: inherit; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 3px;
+            box-shadow: 0 0 10px rgba(0,255,0,0.3);
+            transition: all 0.1s;
+        }
+        .cyber-btn:hover { background: #0f0; color: #000; box-shadow: 0 0 30px #0f0; transform: scale(1.05);}
+        .cyber-btn:active { transform: scale(0.95); }
+
+        #ui-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #111 0%, #000 100%); z-index: 100;
+        }
+
+        #hex-stream {
+            position: absolute; left: -10px; top: 0; height: 100%; width: 20px;
+            writing-mode: vertical-rl; text-orientation: mixed;
+            font-size: 0.6rem; color: rgba(0, 255, 0, 0.3); overflow: hidden; white-space: nowrap;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        canvas { display: none; width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    <div id="camera-flash"></div>
+
+    <div id="hud">
+        <div id="status-text">SYSTEM BOOT...</div>
+        
+        <div class="radar-box"><div class="radar-sweep"></div></div>
+        
+        <div style="display: flex; justify-content: space-between; width: 100%;">
+            <!-- Left Panel -->
+            <div class="hud-panel" id="panel-left">
+                <div id="hex-stream"></div>
+                <div class="hud-title">VITAL SENSORS</div>
+                
+                <div class="hud-row"><span>KINETIC (MOTION)</span><span id="txt-motion">0%</span></div>
+                <div class="bar-container"><div class="bar-fill" id="bar-motion"></div></div>
+                
+                <div class="hud-row"><span>ACOUSTIC (DB)</span><span id="txt-audio">0%</span></div>
+                <div class="bar-container"><div class="bar-fill" id="bar-audio"></div></div>
+                
+                <div style="margin-top: 20px; font-size: 0.7rem; color: #888;">
+                    TARGET LOCK: <span id="target-lock" style="color:#0f0">ENGAGED</span><br>
+                    MAX KINETIC BURST: <span id="txt-max-k" style="color:#ff5500">0%</span>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="hud-panel" id="panel-right" style="border-color: #0ff; border-left: 1px solid #0ff; border-right: 4px solid #0ff; text-align: right;">
+                <div class="hud-title" style="border-bottom-color: #0ff;">ZEN_CORE TRACKER</div>
+                
+                <div class="hud-row" style="justify-content: flex-end;">
+                    CURRENT ZEN: <span id="txt-zen" style="margin-left: 10px; font-size: 1.2rem; color: #0ff;">0.0s</span>
+                </div>
+                
+                <div class="hud-row" style="justify-content: flex-end; color: #ffd700;">
+                    BEST RECORD: <span id="txt-max-zen" style="margin-left: 10px;">0.0s</span>
+                </div>
+                
+                <div style="font-size: 0.65rem; margin-top: 15px; color: #aaa;">
+                    > REMAIN ABSOLUTELY STILL<br>
+                    > MINIMIZE AUDIO INPUT
+                </div>
+            </div>
+        </div>
+
+        <div class="capture-btn-container">
+            <button class="cyber-btn" id="capture-btn">[SPACE] TAKE CYBER-SELFIE</button>
+        </div>
+    </div>
+
+    <div id="ui-overlay">
+        <h1 style="font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 0 20px #0f0; letter-spacing: 5px;">AURA SCANNER V3</h1>
+        <h3 style="color: #0ff; margin-bottom: 30px; letter-spacing: 2px;">GAMIFIED BIOMETRIC ENGINE</h3>
+        <div style="margin-bottom: 40px; color: #bbb; max-width: 600px; text-align: left; background: rgba(0,255,0,0.05); padding: 20px; border: 1px solid #333;">
+            <strong style="color:#fff">MISSION:</strong><br><br>
+            <span style="color:#0ff">🧘‍♂️ ZEN CHALLENGE:</span> Sit perfectly still. How long can you survive without breaking focus?<br><br>
+            <span style="color:#f50">🏋️‍♂️ KINETIC BURST:</span> Move fast! Trigger thermal vision. Reach 100% motion for OVERDRIVE.<br><br>
+            <span style="color:#ff0">📸 SHARE:</span> Hit SPACE to snap a high-res ASCII selfie with your stats!
+        </div>
+        <button class="cyber-btn" id="start-btn" style="padding: 20px 50px; font-size: 1.5rem;">[ INITIATE LINK ]</button>
+    </div>
+
+    <video id="video" autoplay playsinline muted style="display:none;"></video>
+    <canvas id="processing-canvas" style="display:none;"></canvas>
+    <canvas id="output-canvas"></canvas>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const captureBtn = document.getElementById('capture-btn');
+        const uiOverlay = document.getElementById('ui-overlay');
+        const hud = document.getElementById('hud');
+        const video = document.getElementById('video');
+        const flash = document.getElementById('camera-flash');
+        
+        const procCanvas = document.getElementById('processing-canvas');
+        const procCtx = procCanvas.getContext('2d', { willReadFrequently: true });
+        
+        const outCanvas = document.getElementById('output-canvas');
+        const outCtx = outCanvas.getContext('2d');
+
+        // UI Elements
+        const barMotion = document.getElementById('bar-motion');
+        const barAudio = document.getElementById('bar-audio');
+        const txtMotion = document.getElementById('txt-motion');
+        const txtAudio = document.getElementById('txt-audio');
+        const txtZen = document.getElementById('txt-zen');
+        const txtMaxZen = document.getElementById('txt-max-zen');
+        const txtMaxK = document.getElementById('txt-max-k');
+        const statusText = document.getElementById('status-text');
+        const panelLeft = document.getElementById('panel-left');
+        const panelRight = document.getElementById('panel-right');
+        const hexStream = document.getElementById('hex-stream');
+
+        // Config & Grid
+        let cellWidth, cellHeight;
+        let numCols = 180; // High resolution ASCII
+        let numRows;
+
+        // Character Sets
+        const charSetZen = [' ', '.', '·', '°', '✧', '✦', '⚝', 'O', '0'];
+        const charSetThermal = [' ', '░', '▒', '▓', '█', 'W', 'M', '@', '8'];
+        const charSetNormal = [' ', '.', ',', ':', ';', 'i', '1', 't', 'f', 'L', 'C', 'G', '0', '8', '@', '█'];
+        const hexChars = "0123456789ABCDEF";
+
+        // Sensors & State
+        let audioContext, analyser, dataArray;
+        let previousFrameData = null;
+        let motionLevel = 0;
+        let audioLevel = 0;
+        let zenTimer = 0;
+        let maxZen = 0;
+        let maxKinetic = 0;
+        let lastTime = 0;
+        let currentState = "IDLE";
+        
+        const MOTION_THRESHOLD = 25; 
+        const ZEN_MAX_NOISE = 15;
+        const ZEN_MAX_MOTION = 5;
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.textContent = "ESTABLISHING UPLINK...";
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480, facingMode: "user" },
+                    audio: true
+                });
+
+                video.srcObject = stream;
+                
+                video.onloadedmetadata = () => {
+                    resizeCanvases();
+                    window.addEventListener('resize', resizeCanvases);
+
+                    setupAudio(stream);
+                    
+                    uiOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        uiOverlay.style.display = 'none';
+                        outCanvas.style.display = 'block';
+                        hud.style.display = 'flex';
+                        lastTime = performance.now();
+                        setInterval(updateHexStream, 100); // Start fake data stream
+                        requestAnimationFrame(renderLoop);
+                    }, 500);
+                };
+            } catch (err) {
+                console.error(err);
+                startBtn.textContent = "ACCESS DENIED (Check Permissions)";
+                startBtn.style.color = "red";
+                startBtn.style.borderColor = "red";
+            }
+        });
+
+        function setupAudio(stream) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+        }
+
+        function resizeCanvases() {
+            outCanvas.width = window.innerWidth;
+            outCanvas.height = window.innerHeight;
+            
+            cellWidth = outCanvas.width / numCols;
+            cellHeight = cellWidth * 1.5; 
+            numRows = Math.floor(outCanvas.height / cellHeight);
+
+            procCanvas.width = numCols;
+            procCanvas.height = numRows;
+
+            outCtx.font = `bold ${Math.ceil(cellHeight)}px 'Courier New', monospace`;
+            outCtx.textAlign = "center";
+            outCtx.textBaseline = "middle";
+            previousFrameData = null; 
+        }
+
+        function updateHexStream() {
+            let str = "";
+            for(let i=0; i<50; i++) str += hexChars[Math.floor(Math.random() * 16)] + " ";
+            hexStream.textContent = str;
+        }
+
+        function takeSnapshot() {
+            // Flash Effect
+            flash.style.opacity = '1';
+            flash.style.transition = 'none';
+            setTimeout(() => { 
+                flash.style.transition = 'opacity 1s ease-out';
+                flash.style.opacity = '0'; 
+            }, 50);
+
+            // Create an offscreen canvas to bake the HUD and ASCII together
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = outCanvas.width;
+            exportCanvas.height = outCanvas.height;
+            const eCtx = exportCanvas.getContext('2d');
+
+            // Draw current ASCII art
+            eCtx.drawImage(outCanvas, 0, 0);
+
+            // Add Watermark & Stats
+            eCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            eCtx.fillRect(20, exportCanvas.height - 120, 400, 100);
+            eCtx.strokeStyle = currentState === 'ZEN' ? '#0ff' : '#0f0';
+            eCtx.lineWidth = 2;
+            eCtx.strokeRect(20, exportCanvas.height - 120, 400, 100);
+
+            eCtx.font = "bold 20px 'Courier New'";
+            eCtx.fillStyle = "#fff";
+            eCtx.textAlign = "left";
+            eCtx.fillText("AURA SCANNER V3 - CYBER RECORD", 40, exportCanvas.height - 90);
+            
+            eCtx.fillStyle = currentState === 'ZEN' ? '#0ff' : (currentState === 'KINETIC' ? '#ff5500' : '#0f0');
+            eCtx.fillText(`STATE: ${currentState}`, 40, exportCanvas.height - 60);
+            eCtx.fillStyle = "#aaa";
+            eCtx.fillText(`ZEN RECORD: ${maxZen.toFixed(1)}s | PEAK KINETIC: ${maxKinetic}%`, 40, exportCanvas.height - 35);
+
+            // Download
+            const link = document.createElement('a');
+            link.download = `cyber-scan-${Date.now()}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && hud.style.display === 'flex') takeSnapshot();
+        });
+        captureBtn.addEventListener('click', takeSnapshot);
+
+        function renderLoop(currentTime) {
+            requestAnimationFrame(renderLoop);
+            if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            // 1. Audio Tracking
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length / 2; i++) sum += dataArray[i];
+            let currentAudio = sum / (dataArray.length / 2);
+            audioLevel = audioLevel * 0.8 + currentAudio * 0.2; 
+            let audioPercent = Math.min(100, Math.floor((audioLevel / 100) * 100));
+
+            // 2. Motion Tracking (Computer Vision)
+            procCtx.save();
+            procCtx.translate(procCanvas.width, 0);
+            procCtx.scale(-1, 1);
+            procCtx.drawImage(video, 0, 0, procCanvas.width, procCanvas.height);
+            procCtx.restore();
+
+            const imgData = procCtx.getImageData(0, 0, procCanvas.width, procCanvas.height);
+            const pixels = imgData.data;
+            
+            let changedPixels = 0;
+            if (previousFrameData) {
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const rDiff = Math.abs(pixels[i] - previousFrameData[i]);
+                    const gDiff = Math.abs(pixels[i+1] - previousFrameData[i+1]);
+                    const bDiff = Math.abs(pixels[i+2] - previousFrameData[i+2]);
+                    if ((rDiff + gDiff + bDiff) / 3 > MOTION_THRESHOLD) changedPixels++;
+                }
+            }
+            previousFrameData = new Uint8ClampedArray(pixels);
+
+            let currentMotionRaw = (changedPixels / (numCols * numRows)) * 100;
+            currentMotionRaw = Math.min(100, currentMotionRaw * 4); // Amplify sensitivity
+            motionLevel = motionLevel * 0.85 + currentMotionRaw * 0.15;
+            let motionPercent = Math.floor(motionLevel);
+
+            if (motionPercent > maxKinetic) {
+                maxKinetic = motionPercent;
+                txtMaxK.textContent = `${maxKinetic}%`;
+            }
+
+            if (motionLevel < ZEN_MAX_MOTION && audioLevel < ZEN_MAX_NOISE) {
+                currentState = "ZEN";
+                zenTimer += deltaTime;
+                if(zenTimer > maxZen) {
+                    maxZen = zenTimer;
+                    txtMaxZen.textContent = maxZen.toFixed(1) + "s";
+                }
+            } else {
+                zenTimer = 0;
+                if (motionLevel > 60 || audioLevel > 80) currentState = "OVERDRIVE";
+                else if (motionLevel > 15) currentState = "KINETIC";
+                else currentState = "IDLE";
+            }
+
+            // Update HUD text & bars
+            barMotion.style.width = `${motionPercent}%`;
+            txtMotion.textContent = `${motionPercent}%`;
+            barAudio.style.width = `${audioPercent}%`;
+            txtAudio.textContent = `${audioPercent}%`;
+            txtZen.textContent = zenTimer.toFixed(1) + "s";
+
+            // Apply State Themes to HUD
+            document.body.style.animation = "none";
+            if (currentState === "ZEN") {
+                statusText.textContent = "STATE: ZEN (FOCUSING)";
+                statusText.style.color = "#0ff"; statusText.style.textShadow = "0 0 15px #0ff";
+                barMotion.style.background = "#0ff"; barAudio.style.background = "#0ff";
+                panelLeft.style.borderColor = "#0ff"; document.querySelector('.radar-box').style.borderColor = "#0ff";
+                document.querySelector('.radar-sweep').style.background = "#0ff"; document.querySelector('.radar-sweep').style.boxShadow = "0 0 10px #0ff";
+            } else if (currentState === "KINETIC") {
+                statusText.textContent = "STATE: KINETIC (BURNING)";
+                statusText.style.color = "#ff5500"; statusText.style.textShadow = "0 0 15px #ff5500";
+                barMotion.style.background = "#ff5500"; barAudio.style.background = "#ff5500";
+                panelLeft.style.borderColor = "#ff5500"; document.querySelector('.radar-box').style.borderColor = "#ff5500";
+                document.querySelector('.radar-sweep').style.background = "#ff5500"; document.querySelector('.radar-sweep').style.boxShadow = "0 0 10px #ff5500";
+            } else if (currentState === "OVERDRIVE") {
+                statusText.textContent = "!! SYSTEM OVERDRIVE !!";
+                statusText.style.color = "#ff0000"; statusText.style.textShadow = "0 0 20px #ff0000";
+                barMotion.style.background = "#ff0000"; barAudio.style.background = "#ff0000";
+                panelLeft.style.borderColor = "#ff0000";
+                document.body.style.animation = "shake 0.4s infinite"; // The Screen Shake effect!
+            } else {
+                statusText.textContent = "STATE: SCANNING...";
+                statusText.style.color = "#0f0"; statusText.style.textShadow = "0 0 10px #0f0";
+                barMotion.style.background = "#0f0"; barAudio.style.background = "#0f0";
+                panelLeft.style.borderColor = "#0f0"; document.querySelector('.radar-box').style.borderColor = "#0f0";
+                document.querySelector('.radar-sweep').style.background = "#0f0"; document.querySelector('.radar-sweep').style.boxShadow = "0 0 10px #0f0";
+            }
+
+            
+            // Fading (Trails) based on state
+            if (currentState === "ZEN") {
+                outCtx.fillStyle = 'rgba(0, 5, 15, 0.08)'; // Deep blue trails
+                outCtx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+            } else if (currentState === "KINETIC") {
+                outCtx.fillStyle = 'rgba(10, 0, 0, 0.2)'; // Reddish trails
+                outCtx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+            } else {
+                outCtx.fillStyle = 'rgba(0, 0, 0, 1)'; // Instant refresh
+                outCtx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+            }
+
+            // Render loop over pixels
+            for (let y = 0; y < numRows; y++) {
+                for (let x = 0; x < numCols; x++) {
+                    const idx = (y * numCols + x) * 4;
+                    const r = pixels[idx];
+                    const g = pixels[idx + 1];
+                    const b = pixels[idx + 2];
+                    
+                    const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+                    if (brightness < 12 && currentState !== "OVERDRIVE") continue; // Skip dark areas for performance
+
+                    const posX = x * cellWidth + (cellWidth / 2);
+                    const posY = y * cellHeight + (cellHeight / 2);
+
+                    if (currentState === "ZEN") {
+                        const charIdx = Math.floor((brightness / 255) * (charSetZen.length - 1));
+                        outCtx.fillStyle = brightness > 200 ? '#fff' : `rgb(0, ${Math.min(255, g+80)}, ${Math.min(255, b+150)})`;
+                        // Organic floating effect
+                        const floatY = Math.sin((currentTime/800) + (x*0.1)) * 3;
+                        outCtx.fillText(charSetZen[charIdx], posX, posY + floatY);
+
+                    } else if (currentState === "KINETIC") {
+                        const charIdx = Math.floor((brightness / 255) * (charSetThermal.length - 1));
+                        // Thermal Color Map
+                        let thR, thG, thB;
+                        if (brightness < 85) { thR = brightness * 3; thG = 0; thB = 0; }
+                        else if (brightness < 170) { thR = 255; thG = (brightness - 85) * 3; thB = 0; }
+                        else { thR = 255; thG = 255; thB = (brightness - 170) * 3; }
+                        
+                        outCtx.fillStyle = `rgb(${thR}, ${thG}, ${thB})`;
+                        outCtx.fillText(charSetThermal[charIdx], posX, posY);
+
+                    } else if (currentState === "OVERDRIVE") {
+                        // Controlled Overdrive Glitch (Keeps the face visible!)
+                        const charIdx = Math.floor((brightness / 255) * (charSetThermal.length - 1));
+                        const realChar = charSetThermal[charIdx]; // کاراکتر واقعی تصویر شما
+                        
+                        if (Math.random() > 0.15) {
+                            // ۸۵ درصد مواقع: افکت سه‌بعدی روی تصویر واقعی شما
+                            const glitchX = (Math.random() - 0.5) * 6; // لرزش ریز
+                            
+                            // کانال قرمز (چپ)
+                            outCtx.fillStyle = 'rgba(255, 0, 0, 0.9)';
+                            outCtx.fillText(realChar, posX - 4 + glitchX, posY);
+                            
+                            // کانال فیروزه‌ای (راست)
+                            outCtx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+                            outCtx.fillText(realChar, posX + 4 + glitchX, posY);
+                            
+                            // هسته اصلی تصویر (سفید و آتشین)
+                            outCtx.fillStyle = brightness > 120 ? '#fff' : '#ff5500';
+                            outCtx.fillText(realChar, posX + glitchX, posY);
+                        } else {
+                            // ۱۵ درصد مواقع: پرش‌های رندوم و خشن برای القای حس خرابی
+                            const randomChar = charSetThermal[Math.floor(Math.random() * charSetThermal.length)];
+                            outCtx.fillStyle = Math.random() > 0.5 ? '#ff0000' : '#ffffff';
+                            outCtx.fillText(randomChar, posX + (Math.random()-0.5)*20, posY);
+                        }
+                    } else {
+                        // True color Normal mode
+                        const charIdx = Math.floor((brightness / 255) * (charSetNormal.length - 1));
+                        outCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                        outCtx.fillText(charSetNormal[charIdx], posX, posY);
+                    }
+                }
+            }
+            
+            // Random Overdrive horizontal noise lines
+            if (currentState === "OVERDRIVE" && Math.random() > 0.75) {
+                // نویزهای خطی کمتر و ملایم‌تر شدند تا سفیدی نزنند
+                outCtx.fillStyle = `rgba(255, 50, 0, ${Math.random() * 0.2})`;
+                outCtx.fillRect(0, Math.random() * outCanvas.height, outCanvas.width, Math.random() * 10 + 2);
+            }
+        }
+    </script>
+</body>
+</html>

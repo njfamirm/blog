@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 export function Header() {
   const pathname = usePathname()
   const isBlog = pathname?.startsWith('/en/blog')
+  const isTools = pathname?.startsWith('/tools')
 
   return (
     <header className="border-b border-border bg-background sticky top-0 z-50">
@@ -18,6 +19,13 @@ export function Header() {
             @njfamirm
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2 font-mono">
+            <Link
+              href="/tools"
+              className={`text-xs sm:text-sm uppercase tracking-wider px-3 py-2 border border-transparent hover:border-foreground hover:bg-foreground hover:text-background transition-none duration-0 ${isTools ? 'bg-foreground text-background font-bold' : 'text-foreground'
+                }`}
+            >
+              Tools
+            </Link>
             <Link
               href="/en/blog"
               className={`text-xs sm:text-sm uppercase tracking-wider px-3 py-2 border border-transparent hover:border-foreground hover:bg-foreground hover:text-background transition-none duration-0 ${isBlog ? 'bg-foreground text-background font-bold' : 'text-foreground'

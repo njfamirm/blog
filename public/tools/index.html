@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB // HTML WEB TOOLS HUB</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-surface: #121212;
+            --bg-card: #171717;
+            --bg-card-hover: #262626;
+            --border-color: #262626;
+            --border-focus: #ffffff;
+            
+            --primary: #ffffff;
+            --text-main: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --text-dim: #525252;
+            
+            --sidebar-width: 320px;
+            --header-height: 64px;
+            
+            --transition: all 0.15s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        #sidebar.collapsed {
+            width: 72px;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            height: var(--header-height);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .brand-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover {
+            color: #fff;
+            background: #fff;
+            color: #000;
+        }
+
+        /* Search Bar */
+        .search-box {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 12px;
+            color: var(--text-dim);
+            font-size: 12px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px 8px 34px;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .collapsed .search-box {
+            display: none;
+        }
+
+        /* Sidebar Nav List */
+        .nav-section {
+            padding: 12px 16px 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .collapsed .nav-section {
+            display: none;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .nav-link.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .nav-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .nav-badge {
+            font-size: 0.65rem;
+            opacity: 0.7;
+        }
+
+        .collapsed .nav-info {
+            display: none;
+        }
+
+        .collapsed .nav-link {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        /* Main Content Viewport */
+        #main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-base);
+        }
+
+        /* Header Bar */
+        #header-bar {
+            height: var(--header-height);
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 5;
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            font-size: 20px;
+        }
+
+        .header-text h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .header-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* Viewport Container */
+        #viewport {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Dashboard Grid View */
+        #dashboard-view {
+            height: 100%;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .hero-banner {
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 65ch;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tool-card:hover {
+            border-color: #fff;
+            background: var(--bg-card-hover);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .card-icon-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-icon {
+            font-size: 20px;
+        }
+
+        .card-code {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .card-category {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .card-preview {
+            width: 100%;
+            height: 80px;
+            background: #000;
+            border: 1px solid var(--border-color);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-preview canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+
+        .launch-btn {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .tool-card:hover .launch-btn {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* Frame Viewport */
+        #frame-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="brand-logo" onclick="showDashboard()">
+                    <div class="brand-icon">LAB</div>
+                    <div>
+                        <div class="brand-title">HTML WebTools</div>
+                        <div class="brand-subtitle">SINGLE-FILE UTILITIES</div>
+                    </div>
+                </a>
+                <button class="toggle-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-chevron-left" id="toggle-icon"></i>
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tool-search" class="search-input" placeholder="SEARCH TOOLS..." oninput="filterTools()">
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="nav-section">INDEXED UTILITIES</div>
+            <ul class="nav-list" id="nav-list">
+                <li class="nav-item">
+                    <div class="nav-link active" id="nav-home" onclick="showDashboard()">
+                        <span class="nav-icon">🏠</span>
+                        <div class="nav-info">
+                            <div class="nav-title">DASHBOARD</div>
+                            <div class="nav-badge">ALL UTILITIES</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main id="main-wrapper">
+            <!-- Header Bar -->
+            <header id="header-bar">
+                <div class="header-title-container">
+                    <span class="header-icon" id="header-icon">🏠</span>
+                    <div class="header-text">
+                        <h2 id="header-title">EXPERIMENTAL TOOLS HUB</h2>
+                        <p id="header-desc">SELECT A TOOL TO LAUNCH IN EMBEDDED WORKSPACE</p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="action-btn" id="reload-btn" onclick="reloadCurrentTool()" style="display: none;">
+                        <i class="fa-solid fa-rotate-right"></i> RELOAD
+                    </button>
+
+                    <button class="action-btn" id="fullscreen-btn" onclick="toggleFullscreen()" style="display: none;">
+                        <i class="fa-solid fa-expand"></i> FULLSCREEN
+                    </button>
+
+                    <a href="#" id="open-newtab-btn" target="_blank" class="action-btn" style="display: none;">
+                        <i class="fa-solid fa-up-right-from-square"></i> NEW TAB ↗
+                    </a>
+                </div>
+            </header>
+
+            <!-- Viewport Container -->
+            <div id="viewport">
+                <!-- Dashboard View -->
+                <div id="dashboard-view">
+                    <div class="hero-banner">
+                        <h1 class="hero-title">LAB // EXPERIMENTAL SINGLE-FILE TOOLS</h1>
+                        <p class="hero-desc">
+                            A curated suite of client-side web applications for AI vision, audio telemetry, steganography, and acoustic air-gapped data transfer. All utilities execute 100% locally in browser memory.
+                        </p>
+                    </div>
+
+                    <div class="tools-grid" id="tools-grid">
+                        <!-- Cards injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Frame Viewer Container -->
+                <div id="frame-container">
+                    <iframe id="tool-frame" src="about:blank" title="Tool Workspace"></iframe>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const TOOLS_DATA = [
+            {
+                id: 'neural-pomodoro',
+                code: 'TOOL-01',
+                title: 'Neural Pomodoro',
+                file: 'neural-pomodoro.html',
+                icon: '🧠',
+                category: 'AI // FOCUS',
+                desc: 'AI-driven focus tracking pomodoro timer with webcam facial posture & landmark attention telemetry.',
+                previewType: 'radar'
+            },
+            {
+                id: 'pixel-vault',
+                code: 'TOOL-02',
+                title: 'Pixel Vault',
+                file: 'pixel-vault.html',
+                icon: '🔐',
+                category: 'SECURITY // CRYPTO',
+                desc: 'Client-side AES-256 encryption engine hiding secret payloads within image pixel channel bytes.',
+                previewType: 'pixels'
+            },
+            {
+                id: 'sonic-cypher',
+                code: 'TOOL-03',
+                title: 'Sonic Cypher',
+                file: 'sonic-cypher.html',
+                icon: '📡',
+                category: 'AIR-GAPPED // AUDIO',
+                desc: 'Ultrasonic acoustic data transmission protocol for secure air-gapped device communication.',
+                previewType: 'wave'
+            },
+            {
+                id: 'void-mirror',
+                code: 'TOOL-04',
+                title: 'Void Mirror',
+                file: 'void-mirror.html',
+                icon: '🪞',
+                category: 'AI // VISION',
+                desc: 'Local real-time biometric analysis engine & facial 3D topology tracking via MediaPipe.',
+                previewType: 'mesh'
+            },
+            {
+                id: 'kinetic-v3',
+                code: 'TOOL-05',
+                title: 'Kinetic Bio Tracker V3',
+                file: 'kinetic-bio-tracker-v3.html',
+                icon: '👾',
+                category: 'AUDIO-VISUAL // ASCII',
+                desc: 'Real-time camera feed transformation to kinetic ASCII art with motion contour tracking.',
+                previewType: 'matrix'
+            },
+            {
+                id: 'kinetic-v2',
+                code: 'TOOL-06',
+                title: 'Kinetic ASCII Mirror V2',
+                file: 'kinetic-bio-tracker-v2.html',
+                icon: '🎙️',
+                category: 'AUDIO-VISUAL // ASCII',
+                desc: 'Audio-reactive matrix visualizer responding to live microphone spectrum frequencies.',
+                previewType: 'equalizer'
+            },
+            {
+                id: 'ascii-v1',
+                code: 'TOOL-07',
+                title: 'Audio ASCII Mirror V1',
+                file: 'ascii-mirror-v1.html',
+                icon: '🎵',
+                category: 'AUDIO-VISUAL // ASCII',
+                desc: 'Minimalist audio-reactive live ASCII camera density filter and waveform generator.',
+                previewType: 'ascii'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSidebarNav();
+            renderDashboardCards();
+        });
+
+        function renderSidebarNav() {
+            const navList = document.getElementById('nav-list');
+            TOOLS_DATA.forEach(tool => {
+                const li = document.createElement('li');
+                li.className = 'nav-item';
+                li.innerHTML = `
+                    <div class="nav-link" id="nav-${tool.id}" onclick="loadTool('${tool.id}')">
+                        <span class="nav-icon">${tool.icon}</span>
+                        <div class="nav-info">
+                            <div class="nav-title">${tool.title}</div>
+                            <div class="nav-badge">${tool.code}</div>
+                        </div>
+                    </div>
+                `;
+                navList.appendChild(li);
+            });
+        }
+
+        function renderDashboardCards(toolsToRender = TOOLS_DATA) {
+            const grid = document.getElementById('tools-grid');
+            grid.innerHTML = '';
+
+            toolsToRender.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.onclick = () => loadTool(tool.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon-badge">
+                                <span class="card-icon">${tool.icon}</span>
+                                <span class="card-code">${tool.code}</span>
+                            </div>
+                            <span class="card-category">${tool.category}</span>
+                        </div>
+                        <div class="card-title">${tool.title}</div>
+                        <div class="card-preview">
+                            <canvas id="canvas-${tool.id}" width="220" height="70"></canvas>
+                        </div>
+                        <div class="card-desc">${tool.desc}</div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="launch-btn" onclick="event.stopPropagation(); loadTool('${tool.id}')">
+                            LAUNCH ↗
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+                startCanvasAnimation(tool.id, tool.previewType);
+            });
+        }
+
+        function startCanvasAnimation(id, type) {
+            setTimeout(() => {
+                const canvas = document.getElementById(`canvas-${id}`);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let frame = 0;
+
+                function anim() {
+                    frame++;
+                    const w = canvas.width;
+                    const h = canvas.height;
+                    ctx.clearRect(0, 0, w, h);
+
+                    if (type === 'radar') {
+                        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                        ctx.beginPath(); ctx.arc(w/2, h/2, 22, 0, Math.PI*2); ctx.stroke();
+                        const a = frame * 0.05;
+                        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                        ctx.beginPath(); ctx.moveTo(w/2, h/2); ctx.arc(w/2, h/2, 28, a-0.5, a); ctx.fill();
+                    } else if (type === 'pixels') {
+                        for (let r=0; r<4; r++) {
+                            for (let c=0; c<10; c++) {
+                                ctx.fillStyle = (r+c+frame)%4===0 ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.15)';
+                                ctx.fillRect(c*20+10, r*14+8, 16, 10);
+                            }
+                        }
+                    } else if (type === 'wave') {
+                        ctx.strokeStyle = '#fff';
+                        ctx.beginPath();
+                        for (let x=0; x<w; x+=3) {
+                            const y = h/2 + Math.sin(x*0.06 + frame*0.1)*14;
+                            if (x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    } else if (type === 'mesh') {
+                        ctx.fillStyle = '#fff';
+                        for(let i=0; i<6; i++) {
+                            const x = w/2 + Math.sin(frame*0.08+i)*25;
+                            const y = h/2 + Math.cos(frame*0.08+i)*15;
+                            ctx.fillRect(x-1.5, y-1.5, 3, 3);
+                        }
+                    } else if (type === 'matrix' || type === 'equalizer' || type === 'ascii') {
+                        ctx.font = '10px monospace';
+                        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                        ctx.fillText(`[${type.toUpperCase()} // ${frame % 99}]`, 30, h/2 + 4);
+                    }
+
+                    requestAnimationFrame(anim);
+                }
+                anim();
+            }, 50);
+        }
+
+        function loadTool(toolId) {
+            const tool = TOOLS_DATA.find(t => t.id === toolId);
+            if (!tool) return;
+
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${toolId}`);
+            if (activeNav) activeNav.classList.add('active');
+
+            document.getElementById('header-icon').textContent = tool.icon;
+            document.getElementById('header-title').textContent = tool.title;
+            document.getElementById('header-desc').textContent = `${tool.code} // ${tool.category}`;
+
+            document.getElementById('reload-btn').style.display = 'flex';
+            document.getElementById('fullscreen-btn').style.display = 'flex';
+            
+            const newTabBtn = document.getElementById('open-newtab-btn');
+            newTabBtn.href = tool.file;
+            newTabBtn.style.display = 'flex';
+
+            document.getElementById('dashboard-view').style.display = 'none';
+            const frameContainer = document.getElementById('frame-container');
+            const iframe = document.getElementById('tool-frame');
+            
+            frameContainer.style.display = 'block';
+            iframe.src = tool.file;
+        }
+
+        function showDashboard() {
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-home').classList.add('active');
+
+            document.getElementById('header-icon').textContent = '🏠';
+            document.getElementById('header-title').textContent = 'EXPERIMENTAL TOOLS HUB';
+            document.getElementById('header-desc').textContent = 'SELECT A TOOL TO LAUNCH IN EMBEDDED WORKSPACE';
+
+            document.getElementById('reload-btn').style.display = 'none';
+            document.getElementById('fullscreen-btn').style.display = 'none';
+            document.getElementById('open-newtab-btn').style.display = 'none';
+
+            document.getElementById('frame-container').style.display = 'none';
+            document.getElementById('tool-frame').src = 'about:blank';
+            document.getElementById('dashboard-view').style.display = 'block';
+        }
+
+        function reloadCurrentTool() {
+            const iframe = document.getElementById('tool-frame');
+            if (iframe && iframe.src) iframe.src = iframe.src;
+        }
+
+        function toggleFullscreen() {
+            const frameContainer = document.getElementById('frame-container');
+            if (!document.fullscreenElement) {
+                if (frameContainer.requestFullscreen) frameContainer.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function filterTools() {
+            const query = document.getElementById('tool-search').value.toLowerCase().trim();
+            const filtered = TOOLS_DATA.filter(t => 
+                t.title.toLowerCase().includes(query) ||
+                t.code.toLowerCase().includes(query) ||
+                t.category.toLowerCase().includes(query)
+            );
+            renderDashboardCards(filtered);
+        }
+    </script>
+</body>
+</html>

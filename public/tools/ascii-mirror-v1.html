@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio-Reactive ASCII Mirror</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Container for the ASCII art */
+        #ascii-container {
+            display: none; /* Hidden until initialized */
+            text-align: center;
+            white-space: pre;
+            line-height: 8px; /* Tightly packed for better image resolution */
+            font-size: 8px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            transition: color 0.1s;
+        }
+
+        /* The loud state: Red and shaking */
+        .state-loud {
+            color: #ff003c !important;
+            animation: shake 0.2s infinite;
+            text-shadow: 0 0 10px #ff003c;
+        }
+
+        /* Subtle glow for talking state */
+        .state-talking {
+            color: #00ffcc !important;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+
+        /* Camera Shake Animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* UI Overlay Styling */
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            z-index: 10;
+        }
+
+        .cyber-btn {
+            background: transparent;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2), inset 0 0 15px rgba(0, 255, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .cyber-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.6), inset 0 0 30px rgba(0, 255, 0, 0.6);
+        }
+
+        #status-text {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.7;
+            max-width: 80%;
+            text-align: center;
+            direction: ltr;
+        }
+        
+        #error-msg {
+            color: #ff003c;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Start UI overlay -->
+    <div id="ui-overlay">
+        <h1 style="letter-spacing: 5px; margin-bottom: 40px; text-shadow: 0 0 10px #0f0;">ASCII NEURAL MIRROR</h1>
+        <button class="cyber-btn" id="start-btn">Initialize Connection</button>
+        <div id="status-text">
+            نیاز به دسترسی دوربین (برای تصویر) و میکروفون (برای تحلیل صدا) دارد.<br>
+            پس از اتصال:<br>
+            - سکوت: پیکسل‌های نقطه‌ای (.)<br>
+            - صحبت عادی: حروف الفبا (A-Z)<br>
+            - صدای بلند/بیس: بلوک‌های قرمز (█)
+        </div>
+        <div id="error-msg"></div>
+    </div>
+
+    <!-- The actual ASCII output -->
+    <div id="ascii-container"></div>
+
+    <!-- Hidden elements for processing -->
+    <video id="video" autoplay playsinline muted style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        // DOM Elements
+        const startBtn = document.getElementById('start-btn');
+        const uiOverlay = document.getElementById('ui-overlay');
+        const asciiContainer = document.getElementById('ascii-container');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const errorMsg = document.getElementById('error-msg');
+
+        // ASCII Configuration
+        // Width of the ASCII art in characters (controls resolution)
+        const ASCII_WIDTH = 120; 
+        
+        // Character sets mapped from darkest (index 0) to lightest (last index)
+        const CHARSETS = {
+            silence: [' ', ' ', ' ', '.', '.', '.', ',', '-', '~', ':'],
+            talking: [' ', 'a', 'c', 'e', 'm', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+            loud:    [' ', '░', '▒', '▓', '█', '█', '█', '█']
+        };
+
+        // Audio API variables
+        let audioContext;
+        let analyser;
+        let dataArray;
+        
+        // thresholds
+        const TALK_THRESHOLD = 15; // Volume out of 255
+        const LOUD_THRESHOLD = 70; // Volume out of 255
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.textContent = "CONNECTING...";
+            try {
+                // Request both video and audio
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 },
+                    audio: true
+                });
+
+                // Set up Video
+                video.srcObject = stream;
+                
+                // Wait for video to load its metadata so we know the height/width
+                video.onloadedmetadata = () => {
+                    // Set up canvas dimensions based on video aspect ratio
+                    // Multiply height by 0.5 because ASCII characters are roughly twice as tall as they are wide
+                    const aspectRatio = video.videoHeight / video.videoWidth;
+                    canvas.width = ASCII_WIDTH;
+                    canvas.height = Math.floor(ASCII_WIDTH * aspectRatio * 0.5);
+                    
+                    // Set up Audio Context
+                    setupAudio(stream);
+                    
+                    // Hide UI, Show ASCII
+                    uiOverlay.style.display = 'none';
+                    asciiContainer.style.display = 'block';
+                    
+                    // Start render loop
+                    renderASCII();
+                };
+
+            } catch (err) {
+                console.error(err);
+                startBtn.textContent = "INITIALIZE CONNECTION";
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = "خطا: لطفاً دسترسی به دوربین و میکروفون را مجاز کنید.";
+            }
+        });
+
+        function setupAudio(stream) {
+            // Create AudioContext (must be created after user gesture)
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create source from the microphone stream
+            const source = audioContext.createMediaStreamSource(stream);
+            
+            // Create an analyser node
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256; // Defines array size for frequency data
+            
+            // Connect source to analyser
+            source.connect(analyser);
+            
+            // Note: We DO NOT connect analyser to destination, so we don't hear ourselves!
+            
+            // Create data array to hold volume levels
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+        }
+
+        function renderASCII() {
+            requestAnimationFrame(renderASCII);
+
+            if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+            // 1. Analyze Audio Volume
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            // Calculate average volume (ignoring the very highest frequencies)
+            for (let i = 0; i < dataArray.length / 2; i++) {
+                sum += dataArray[i];
+            }
+            const averageVolume = sum / (dataArray.length / 2);
+
+            // 2. Determine State and Charset
+            let currentCharset;
+            if (averageVolume > LOUD_THRESHOLD) {
+                currentCharset = CHARSETS.loud;
+                asciiContainer.className = 'state-loud';
+            } else if (averageVolume > TALK_THRESHOLD) {
+                currentCharset = CHARSETS.talking;
+                asciiContainer.className = 'state-talking';
+            } else {
+                currentCharset = CHARSETS.silence;
+                asciiContainer.className = '';
+            }
+
+            // 3. Draw Video to Canvas (Mirrored)
+            ctx.save();
+            ctx.translate(canvas.width, 0); // Move origin to right edge
+            ctx.scale(-1, 1); // Flip horizontally
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+
+            // 4. Read Pixel Data
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            
+            let asciiStr = '';
+
+            // 5. Convert Pixels to ASCII
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const offset = (y * canvas.width + x) * 4;
+                    const r = pixels[offset];
+                    const g = pixels[offset + 1];
+                    const b = pixels[offset + 2];
+                    
+                    // Calculate human-perceived brightness
+                    const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+                    
+                    // Map brightness (0-255) to character array index
+                    // Darker = 0, Brighter = length - 1
+                    const charIndex = Math.floor((brightness / 255) * (currentCharset.length - 1));
+                    
+                    // Add character to string. If it's a space, use a non-breaking space for layout stability
+                    const char = currentCharset[charIndex];
+                    asciiStr += (char === ' ') ? '&nbsp;' : char;
+                }
+                asciiStr += '<br>';
+            }
+
+            // 6. Update DOM
+            asciiContainer.innerHTML = asciiStr;
+        }
+    </script>
+</body>
+</html>
