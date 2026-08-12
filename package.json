@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "njfamirm-blog",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,43 +10,26 @@
     "deploy": "pnpm run build && wrangler pages deploy out"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.1",
-    "autoprefixer": "^10.4.20",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
-    "input-otp": "1.4.1",
-    "lucide-react": "^0.544.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-hook-form": "^7.54.1",
-    "react-resizable-panels": "^2.1.7",
+    "lucide-react": "^1.30.0",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "rehype-highlight": "^7.0.2",
     "rehype-stringify": "^10.0.1",
     "remark": "^15.0.1",
-    "remark-html": "^16.0.1",
-    "remark-rehype": "^11.1.2",
-    "sonner": "^1.7.1",
-    "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7",
-    "vaul": "^1.1.2",
-    "wrangler": "^4.65.0"
+    "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^22",
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "autoprefixer": "^10.5.4",
     "babel-plugin-react-compiler": "^1.0.0",
-    "postcss": "^8.5",
+    "postcss": "^8.5.26",
     "tailwindcss": "^3.4.17",
-    "typescript": "5.7.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.7",
-      "@types/react-dom": "19.2.3"
-    }
+    "typescript": "5.7.3",
+    "wrangler": "^4.120.1"
   }
 }

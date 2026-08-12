@@ -14,9 +14,9 @@
     height: 100%;
     z-index: -2;
     pointer-events: none;
-    background-image: 
-      linear-gradient(to right, var(--border) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-image:
+      linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
     background-size: 40px 40px;
     opacity: 0.2; /* Visible grid */
     mask-image: linear-gradient(to bottom, black 80%, transparent); 
@@ -34,8 +34,8 @@
     pointer-events: none;
     background-image: repeating-linear-gradient(
       45deg,
-      var(--foreground) 0,
-      var(--foreground) 0.5px,
+      hsl(var(--foreground)) 0,
+      hsl(var(--foreground)) 0.5px,
       transparent 0,
       transparent 4px
     );
@@ -52,19 +52,11 @@
 @layer base {
   :root {
     /* Strict Monochrome Palette (Zinc-based) */
-    
+    color-scheme: light dark;
+
     /* Light Mode: White Background, Zinc-900 Text */
     --background: 0 0% 100%; /* #FFFFFF */
     --foreground: 240 5.9% 10%; /* Zinc-900 */
-
-    --card: 0 0% 100%;
-    --card-foreground: 240 5.9% 10%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 5.9% 10%;
-
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%; /* Zinc-100 */
     --secondary-foreground: 240 5.9% 10%;
@@ -72,15 +64,7 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
     --border: 240 5.9% 90%; /* Zinc-200 */
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
 
     --radius: 0rem; /* Strict Sharp Edges */
 
@@ -102,30 +86,13 @@
       --background: 0 0% 0%; /* #000000 */
       --foreground: 0 0% 98%; /* Zinc-50 */
 
-      --card: 0 0% 0%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 0 0% 0%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-
       --secondary: 240 3.7% 15.9%; /* Zinc-800 */
       --secondary-foreground: 0 0% 98%;
 
       --muted: 240 3.7% 15.9%;
       --muted-foreground: 240 5% 64.9%;
 
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
       --border: 240 3.7% 15.9%; /* Zinc-800 */
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
 
       /* Syntax Highlighting - Dark */
       --code-bg: 240 3.7% 10%; /* Very dark zinc */
@@ -137,37 +104,6 @@
       --code-number: #d19a66;
       --code-attribute: #d19a66;
       --code-built-in: #e5c07b;
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 0 0% 0%;
-      --foreground: 0 0% 98%;
-
-      --card: 0 0% 0%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 0 0% 0%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
     }
   }
 }
@@ -247,7 +183,7 @@
     pre code {
       @apply font-mono text-[13px] leading-relaxed antialiased;
       font-feature-settings: "liga" 0;
-      color: var(--foreground);
+      color: hsl(var(--foreground));
     }
 
     /* Syntax Highlighting (Theme-Aware) */

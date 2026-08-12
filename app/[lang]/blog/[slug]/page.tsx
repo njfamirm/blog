@@ -1,14 +1,11 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getPostData, getAllPostSlugs } from '@/lib/blog'
+import { Footer } from '@/components/footer'
 import type { Metadata } from 'next'
 
 export async function generateStaticParams() {
-  const posts = getAllPostSlugs()
-  return posts.map((post) => ({
-    lang: 'en',
-    slug: post.params.slug,
-  }))
+  return getAllPostSlugs().map((slug) => ({ lang: 'en', slug }))
 }
 
 export async function generateMetadata({
@@ -25,6 +22,19 @@ export async function generateMetadata({
     alternates: post.canonical ? {
       canonical: post.canonical,
     } : undefined,
+    openGraph: {
+      type: 'article',
+      title: post.title,
+      description: post.summary,
+      url: `/en/blog/${slug}`,
+      publishedTime: post.date,
+      tags: post.tags,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.summary,
+    },
   }
 }
 
@@ -58,7 +68,7 @@ export default async function BlogPostPage({
           {/* Metadata */}
           <div className="flex flex-col gap-3 mb-6">
             <div className="flex items-center gap-6 font-mono text-xs sm:text-sm text-muted-foreground">
-              <span>{post.date}</span>
+              <time dateTime={post.date}>{post.date}</time>
             </div>
             {post.canonical && (
               <div className="font-mono text-[10px] sm:text-xs text-muted-foreground break-all sm:break-normal">
@@ -109,19 +119,7 @@ export default async function BlogPostPage({
         </div>
       </article>
 
-      {/* Footer */}
-      <footer className="border-t border-border mt-24">
-        <div className="container mx-auto px-4 sm:px-6 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="font-mono text-[10px] sm:text-xs text-muted-foreground text-center md:text-left">
-              © 2026 Amir Mohammad Najafi.
-            </p>
-            <p className="font-mono text-[10px] sm:text-xs text-muted-foreground">
-              ENGINEERED LOGIC → TEAM COLLABORATION → SHIPPED.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

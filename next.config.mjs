@@ -4,10 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  reactCompiler: true
+  reactCompiler: true,
 }
 
 export default nextConfig

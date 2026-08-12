@@ -1,10 +1,9 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next'
+import { site } from '@/lib/site'
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-static'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://www.njfamirm.ir';
-  
   return {
     rules: [
       {
@@ -12,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-  };
+    sitemap: `${site.url}/sitemap.xml`,
+  }
 }
