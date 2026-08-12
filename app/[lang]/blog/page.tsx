@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   const posts = getSortedPostsData()
   const numbers = getPostNumbers()
-  const tags = getAllTags()
+  const tags = getAllTags().slice(0, 8)
 
   return (
     <div className="min-h-screen selection:bg-foreground selection:text-background text-foreground">

@@ -4,7 +4,6 @@ summary: "Ever wondered if the AI you're using *thinks* like you do? Dive into t
 date: 2025-07-09
 tags:
   - AI
-  - LLM
 canonical: https://medium.com/@njfamirm/ai-vs-human-brain-6f9da5295f75
 ---
 

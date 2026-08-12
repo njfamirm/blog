@@ -3,9 +3,9 @@ title: 'Mastering Eleventy Folder Structures: From Default Setups to Real-World 
 summary: "Explore the essentials of Eleventy's folder structure in this guide, perfect for optimizing your project's efficiency and scalability. Learn from basic setups to advanced custom structures, ensuring your 11ty site is perfectly organized for peak performance."
 date: 2024-01-24
 tags:
-  - eleventy
+  - 11ty
   - jamstack
-  - static-site-generator
+  - ssg
   - best-practice
 canonical: https://medium.com/@njfamirm/eleventy-folder-structure-guide-89824d1cb5b7
 ---

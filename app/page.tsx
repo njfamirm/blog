@@ -9,7 +9,7 @@ export default function Page() {
   const allPosts = getSortedPostsData()
   const latestPosts = allPosts.slice(0, 8)
   const numbers = getPostNumbers()
-  const tags = getAllTags()
+  const tags = getAllTags().slice(0, 8)
   return (
     <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-foreground selection:text-background">
       {/* 

@@ -7,7 +7,7 @@ tags:
   - software-architecture
   - team-psychology
   - technical-debt
-  - generative-ai
+  - AI
   - refactoring
 ---
 
