@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { getPostData, getAllPostSlugs } from '@/lib/blog'
+import { getPostData, getAllPostSlugs, getAdjacentPosts, tagSlug } from '@/lib/blog'
 import { Footer } from '@/components/footer'
+import { PostNav } from '@/components/post-nav'
 import type { Metadata } from 'next'
 
 export async function generateStaticParams() {
@@ -45,12 +46,11 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params
   const post = await getPostData(slug)
+  const { newer, older } = getAdjacentPosts(slug)
 
   return (
     <div className="min-h-screen selection:bg-foreground selection:text-background text-foreground">
-      {/* Article */}
       <article className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
-        {/* Back Link */}
         <Link
           href="/en/blog"
           className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground hover:bg-foreground hover:text-background transition-none duration-0 px-3 py-2 border border-transparent hover:border-foreground mb-8 md:mb-12"
@@ -65,7 +65,6 @@ export default async function BlogPostPage({
             {post.title}
           </h1>
 
-          {/* Metadata */}
           <div className="flex flex-col gap-3 mb-6">
             <div className="flex items-center gap-6 font-mono text-xs sm:text-sm text-muted-foreground">
               <time dateTime={post.date}>{post.date}</time>
@@ -85,22 +84,21 @@ export default async function BlogPostPage({
             )}
           </div>
 
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
+          {post.tags.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {post.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="border border-border px-2 sm:px-3 py-1 sm:py-1.5 font-mono text-[10px] sm:text-xs text-muted-foreground"
+                  href={`/en/tag/${tagSlug(tag)}`}
+                  className="border border-border px-2 sm:px-3 py-1 sm:py-1.5 font-mono text-[10px] sm:text-xs text-muted-foreground hover:bg-foreground hover:text-background hover:border-foreground transition-none duration-0"
                 >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}
         </header>
 
-        {/* Article Content */}
         <div className="max-w-2xl mx-auto">
           <div
             className="blog-content"
@@ -108,13 +106,15 @@ export default async function BlogPostPage({
           />
         </div>
 
-        {/* Related Articles / CTA */}
+        {/* Neighbouring posts */}
         <div className="max-w-2xl mx-auto mt-16 md:mt-24 pt-8 md:pt-12 border-t border-border">
+          <PostNav newer={newer} older={older} />
           <Link
             href="/en/blog"
-            className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-mono text-xs sm:text-sm uppercase tracking-wider hover:bg-background hover:text-foreground transition-none duration-0 border border-foreground"
+            className="inline-flex items-center gap-2 mt-6 font-mono text-xs uppercase tracking-wider text-muted-foreground px-3 py-2 border border-transparent hover:bg-foreground hover:text-background hover:border-foreground transition-none duration-0"
           >
-            Read More Articles
+            <ArrowLeft className="h-3 w-3" />
+            All Writing
           </Link>
         </div>
       </article>

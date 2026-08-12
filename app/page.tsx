@@ -1,10 +1,15 @@
-import { getSortedPostsData } from '@/lib/blog'
-import { PostCard } from '@/components/post-card'
+import Link from 'next/link'
+import { getSortedPostsData, getPostNumbers, getAllTags } from '@/lib/blog'
+import { PostLog } from '@/components/post-log'
+import { TagIndex } from '@/components/tag-index'
 import { Footer } from '@/components/footer'
 import { links } from '@/lib/site'
 
 export default function Page() {
-  const latestPosts = getSortedPostsData().slice(0, 5)
+  const allPosts = getSortedPostsData()
+  const latestPosts = allPosts.slice(0, 8)
+  const numbers = getPostNumbers()
+  const tags = getAllTags()
   return (
     <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-foreground selection:text-background">
       {/* 
@@ -61,19 +66,40 @@ export default function Page() {
           </nav>
         </section>
 
-        {/* 
-          Area: Writings Log / Feed
-          Content: Top 5 Architectural Essays. Technical logs with monospace metadata.
-          INTERACTION: HOVER (Subtle fill + left accent bar).
+        {/*
+          Area: Topics
+          Content: Every tag, linking into the tag pages.
+          INTERACTION: PER-TAG HOVER (Hard Invert).
         */}
         <section className="md:col-span-12 bg-background border-t border-border">
           <div className="p-6 md:p-8 border-b border-border bg-background">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Recent Writing</h2>
+            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">[TOPICS]</h2>
           </div>
-          <div className="grid grid-cols-1 divide-y divide-border">
-            {latestPosts.map((post) => (
-              <PostCard key={post.slug} post={post} />
-            ))}
+          <div className="p-6 md:p-8">
+            <TagIndex tags={tags} />
+          </div>
+        </section>
+
+        {/*
+          Area: Writings Log / Feed
+          Content: Latest 8 entries as a year-grouped log, same shape as /en/blog.
+          INTERACTION: HOVER (Hard Invert).
+        */}
+        <section className="md:col-span-12 bg-background border-t border-border">
+          <div className="p-6 md:p-8 border-b border-border bg-background flex items-center justify-between gap-4">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Recent Writing</h2>
+            <span className="font-mono text-xs text-muted-foreground tabular-nums">
+              {latestPosts.length}/{allPosts.length}
+            </span>
+          </div>
+          <div className="p-6 md:p-8">
+            <PostLog posts={latestPosts} numbers={numbers} />
+            <Link
+              href="/en/blog"
+              className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-wider text-muted-foreground px-3 py-2 border border-border hover:bg-foreground hover:text-background hover:border-foreground transition-none duration-0"
+            >
+              All Writing →
+            </Link>
           </div>
         </section>
 

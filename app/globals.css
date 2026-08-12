@@ -293,6 +293,18 @@
       @apply font-semibold underline hover:bg-foreground hover:text-background transition-none duration-0 px-1;
     }
 
+    /* Heading anchors: hidden until the heading is hovered */
+    a.heading-anchor {
+      @apply no-underline font-normal text-muted-foreground opacity-0 ml-1;
+    }
+
+    h2:hover a.heading-anchor,
+    h3:hover a.heading-anchor,
+    h4:hover a.heading-anchor,
+    a.heading-anchor:focus {
+      @apply opacity-100;
+    }
+
     /* Tables */
     table {
       @apply mt-8 mb-8 w-full border-collapse border border-border;

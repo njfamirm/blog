@@ -1,5 +1,6 @@
 import { site, links } from '@/lib/site'
 
+
 export function Footer() {
   return (
     <footer className="border-t border-border mt-24">
@@ -20,9 +21,6 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <p className="font-mono text-[10px] sm:text-xs text-muted-foreground">
             © {new Date().getFullYear()} {site.name}.
-          </p>
-          <p className="font-mono text-[10px] sm:text-xs text-muted-foreground">
-            ENGINEERED LOGIC → TEAM COLLABORATION → SHIPPED.
           </p>
         </div>
       </div>
