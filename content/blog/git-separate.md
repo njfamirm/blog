@@ -20,7 +20,7 @@ TDB, or Trunk-based pattern is a modern way for developers to work together usin
 The key difference between this approach and git-flow workflow is **scope**.
 Feature branches typically involve multiple developers and take days or even weeks of work. In contrast, branches in TDB typically last no more than a few hours, with many developers merging their changes into the trunk frequently.
 
-{% image "/img/blog/git-separate/trunk-based-deployment.jpg", "Trunk-based deployment process explanation." %}
+![Trunk-based deployment process explanation.](/img/blog/git-separate/trunk-based-deployment.jpg)
 
 The above paragraph was taken from the Google Cloud [article](https://cloud.google.com/architecture/devops/devops-tech-trunk-based-development) about DevOps in trunk-based development, you can refer to this article for more information.
 
@@ -35,7 +35,7 @@ There are two git commands we need to learn for solving this problem. I'll expla
 
 Rebasing is the process of moving or combining a sequence of commits to a new base commit. changing the base of your branch from one commit to another making it appear as if you'd created your branch from a different commit. Internally, Git accomplishes this by creating new commits and applying them to the specified base.
 
-{% image "/img/blog/git-separate/git-rebase.jpg", "Git rebase explanation" %}
+![Git rebase explanation](/img/blog/git-separate/git-rebase.jpg)
 
 read more about this command on the [Atlassian blog](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase).
 
@@ -51,7 +51,7 @@ Now that we know about Trunk-based deployment, git rebase, and git cherry-pick c
 
 Let's say we have a commit history like this:
 
-{% image "/img/blog/git-separate/big-pr-screenshot.jpg", "screenshot of Github pull request with many commits." %}
+![screenshot of Github pull request with many commits.](/img/blog/git-separate/big-pr-screenshot.jpg)
 
 This is a bad situation because it makes the review process too long and complicated. We need to separate these commits into multiple branches, one for each feature and package.
 
@@ -65,18 +65,18 @@ git cherry-pick <hash of first commit>
 git cherry-pick <hash of second commit>
 ```
 
-{% image "/img/blog/git-separate/git-commit-screenshot.jpg", "Screenshot of terminal use git cherry-pick to separate commit." %}
+![Screenshot of terminal use git cherry-pick to separate commit.](/img/blog/git-separate/git-commit-screenshot.jpg)
 
 > if you have a conflict when want to cherry-pick, you must first rebase your branch with a trunk to resolve any conflict, if you still have conflict, that's occurred maybe because you don't commit correctly! you can use rebase to fix the commit issue.
 
 Now we have a new branch with new two commits. We can create a pull request for this branch and merge it into the trunk branch.
 Once the pull request is approved and merged, we can rebase the first branch with the trunk branch.
 
-{% image "/img/blog/git-separate/git-rebase-branch-screenshot.jpg", "Screenshot of terminal use git rebase." %}
+![Screenshot of terminal use git rebase.](/img/blog/git-separate/git-rebase-branch-screenshot.jpg)
 
 This will remove the two commits from the first branch and keep our commit history clean, then you must force push the branch.
 
-{% image "/img/blog/git-separate/smaller-pr-screenshot.jpg", "Screenshot of Github pull request with fewer commits that are removed by git rebase and cherry-pick." %}
+![Screenshot of Github pull request with fewer commits that are removed by git rebase and cherry-pick.](/img/blog/git-separate/smaller-pr-screenshot.jpg)
 
 We can use the same process to separate the other commits in our history. This will give us a nice, clean commit history with one commit per feature and package, with a full cover of the trunk-based deployment pattern.
 

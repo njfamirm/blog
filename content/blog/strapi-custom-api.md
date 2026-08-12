@@ -118,7 +118,7 @@ yarn strapi generate
 
 </details>
 
-{% image "/img/blog/strapi-custom-api/content-type.jpg", "Screenshot of strapi content type" %}
+![Screenshot of strapi content type](/img/blog/strapi-custom-api/content-type.jpg)
 
 Very good, Now we have simple reading list in strapi, let's make them searchable!
 
@@ -220,12 +220,12 @@ Now this route is accessible at <a href="http://localhost:1337/api/reading-list-
 
 By default, this API can't be accessible publicly so set the correct permission.
 
-{% image "/img/blog/strapi-custom-api/api-permission.jpg", "Screenshot of set permission for strapi custom API" %}
+![Screenshot of set permission for strapi custom API](/img/blog/strapi-custom-api/api-permission.jpg)
 
 ## Result
 
 Congratulations 🎉, we create a custom API for searching in our reading-list using Strapi CMS.
 
-{% image "/img/blog/strapi-custom-api/api-result.jpg", "Screenshot of reading list custom API response" %}
+![Screenshot of reading list custom API response](/img/blog/strapi-custom-api/api-result.jpg)
 
 I hope this article is useful for you, and it is a step towards a society where we grow together ♥️
