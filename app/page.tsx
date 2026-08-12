@@ -1,5 +1,7 @@
 import { getSortedPostsData } from '@/lib/blog'
 import { PostCard } from '@/components/post-card'
+import { Footer } from '@/components/footer'
+import { links } from '@/lib/site'
 
 export default function Page() {
   const latestPosts = getSortedPostsData().slice(0, 5)
@@ -44,16 +46,11 @@ export default function Page() {
           </div>
 
           <nav className="flex-1 flex flex-col">
-            {[
-              { label: 'linkedin.com/in/njfamirm-me', href: 'https://www.linkedin.com/in/njfamirm-me/' },
-              { label: 'github.com/njfamirm', href: 'https://github.com/njfamirm/' },
-              { label: 'medium.com/@njfamirm', href: 'https://medium.com/@njfamirm' },
-              { label: 'njfamirm@gmail.com', href: 'mailto:njfamirm@gmail.com' }
-            ].map((link) => (
+            {links.map((link) => (
               <a
-                key={link.label}
+                key={link.short}
                 href={link.href}
-                target={link.label.startsWith('njfamirm@') ? '_self' : '_blank'}
+                target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center p-6 md:p-8 font-mono text-sm md:text-base border-b border-border last:border-b-0 hover:bg-foreground hover:text-background transition-none duration-0 break-all sm:break-normal"
               >
@@ -66,7 +63,7 @@ export default function Page() {
         {/* 
           Area: Writings Log / Feed
           Content: Top 5 Architectural Essays. Technical logs with monospace metadata.
-          INTERACTION: HOVER (Hard Invert).
+          INTERACTION: HOVER (Subtle fill + left accent bar).
         */}
         <section className="md:col-span-12 bg-background border-t border-border">
           <div className="p-6 md:p-8 border-b border-border bg-background">
@@ -80,6 +77,8 @@ export default function Page() {
         </section>
 
       </main>
+
+      <Footer />
     </div>
   )
 }
