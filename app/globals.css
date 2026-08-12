@@ -158,15 +158,15 @@
 
     /* Headings */
     h2 {
-      @apply mt-16 mb-6 text-4xl font-black tracking-tight;
+      @apply mt-12 mb-5 text-2xl md:text-3xl font-bold tracking-tight;
     }
 
     h3 {
-      @apply mt-12 mb-4 text-2xl font-bold tracking-tight;
+      @apply mt-9 mb-4 text-xl md:text-2xl font-bold tracking-tight;
     }
 
     h4 {
-      @apply mt-8 mb-3 text-xl font-bold;
+      @apply mt-7 mb-3 text-lg font-bold;
     }
 
     /* Inline Code */
@@ -258,9 +258,25 @@
       @apply font-bold;
     }
 
-    /* Blockquotes */
+    /* Blockquotes / Callouts */
     blockquote {
-      @apply my-8 border-l-4 border-foreground bg-secondary bg-opacity-5 px-6 py-4 italic;
+      @apply my-8 border border-border border-l-4 border-l-foreground bg-secondary/30 p-5 md:p-6 shadow-sm;
+    }
+
+    blockquote p {
+      @apply my-0 font-sans text-base md:text-lg leading-relaxed text-foreground/90 not-italic;
+    }
+
+    blockquote p + p {
+      @apply mt-4;
+    }
+
+    blockquote strong {
+      @apply text-foreground font-semibold;
+    }
+
+    blockquote code:not(pre code) {
+      @apply bg-background px-1.5 py-0.5 border border-border;
     }
 
     /* Paragraphs and Lists */

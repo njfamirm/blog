@@ -61,7 +61,7 @@ export default async function BlogPostPage({
 
         {/* Article Header */}
         <header className="max-w-3xl mx-auto mb-12 md:mb-16 border-b border-border pb-8 md:pb-12">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[0.95] text-balance font-mono">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter mb-6 leading-tight text-balance font-mono">
             {post.title}
           </h1>
 
@@ -70,7 +70,7 @@ export default async function BlogPostPage({
               <time dateTime={post.date}>{post.date}</time>
             </div>
             {post.canonical && (
-              <div className="font-mono text-[10px] sm:text-xs text-muted-foreground break-all sm:break-normal">
+              <div className="font-mono text-xs text-muted-foreground break-all sm:break-normal">
                 Originally published at:{' '}
                 <a
                   href={post.canonical}
@@ -90,7 +90,7 @@ export default async function BlogPostPage({
                 <Link
                   key={tag}
                   href={`/en/tag/${tagSlug(tag)}`}
-                  className="border border-border px-2 sm:px-3 py-1 sm:py-1.5 font-mono text-[10px] sm:text-xs text-muted-foreground hover:bg-foreground hover:text-background hover:border-foreground transition-none duration-0"
+                  className="border border-border px-2.5 sm:px-3 py-1 font-mono text-xs sm:text-sm text-muted-foreground hover:bg-foreground hover:text-background hover:border-foreground transition-none duration-0"
                 >
                   #{tag}
                 </Link>
@@ -99,7 +99,7 @@ export default async function BlogPostPage({
           )}
         </header>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div
             className="blog-content"
             dangerouslySetInnerHTML={{ __html: post.contentHtml }}
@@ -107,7 +107,7 @@ export default async function BlogPostPage({
         </div>
 
         {/* Neighbouring posts */}
-        <div className="max-w-2xl mx-auto mt-16 md:mt-24 pt-8 md:pt-12 border-t border-border">
+        <div className="max-w-3xl mx-auto mt-16 md:mt-24 pt-8 md:pt-12 border-t border-border">
           <PostNav newer={newer} older={older} />
           <Link
             href="/en/blog"

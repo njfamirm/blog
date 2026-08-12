@@ -30,10 +30,10 @@ export default function BlogPage() {
         </Link>
 
         <div className="mb-12 md:mb-16 border-b border-border pb-8 md:pb-12">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 leading-[0.9] font-mono text-balance">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter mb-4 leading-none font-mono text-balance">
             Writing
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed">
             Technical insights on architecture, leadership, and building systems that create business value.
           </p>
         </div>
