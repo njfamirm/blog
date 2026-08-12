@@ -22,7 +22,8 @@ export default function Page() {
         */}
         <section className="md:col-span-8 bg-background p-6 md:p-8 flex flex-col justify-between min-h-[50vh]">
           <div className="flex-1 flex flex-col justify-center">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[8rem] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance font-sans">
+            {/* Fluid size: a fixed 8rem overflowed this column between 1024px and ~1450px. */}
+            <h1 className="text-[clamp(2.75rem,8.5vw,8rem)] font-black tracking-tighter leading-[0.8] mb-8 uppercase text-balance font-sans">
               NAVIGATING <br /> COMPLEXITY.
             </h1>
           </div>
