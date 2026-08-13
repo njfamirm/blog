@@ -2,6 +2,7 @@
 title: "Not-Invented-Here Syndrome: An Honest Audit of My Three Years"
 summary: "For three years we wrote everything ourselves — the database, the backend, the state machine. An honest audit of what not-invented-here syndrome actually cost, and why every migration since has deleted code."
 date: 2026-08-12
+canonical: "https://medium.com/@njfamirm/not-invented-here-syndrome-an-honest-audit-of-my-three-years-34411da58047"
 tags:
   - software-architecture
   - engineering-culture
@@ -9,8 +10,6 @@ tags:
   - dependencies
   - refactoring
 ---
-
-**The short version:** for three years we treated every dependency as a compromise and built our own database, HTTP layer, state machine, and signals. It was measurably fast and structurally unsound. Migrating to Postgres, Hono, XState, React, and Astro **deleted** thousands of lines rather than adding them. Not-invented-here syndrome doesn't produce a leaner codebase; it produces one nobody else can help you carry.
 
 A few days ago I stumbled on one of my own old LinkedIn posts, where I challenged the community: _"If you wanted to convince someone like me, who uses a web component library like lit.dev, to use React, what reasons would you give? Keeping in mind that we want to build a high-quality project, not just something easy to learn..."_
 

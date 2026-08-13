@@ -35,11 +35,14 @@ export async function generateMetadata({
       publishedTime: post.date,
       authors: [site.name],
       tags: post.tags,
+      // Falls back to the generated opengraph-image when a post has no cover.
+      ...(post.cover ? { images: [post.cover] } : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.summary,
+      ...(post.cover ? { images: [post.cover] } : {}),
     },
   }
 }
@@ -66,7 +69,7 @@ export default async function BlogPostPage({
     inLanguage: 'en',
     url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': post.canonical ?? url },
-    image: `${url}/opengraph-image`,
+    image: post.cover ? `${site.url}${post.cover}` : `${url}/opengraph-image`,
     keywords: post.tags.join(', '),
     author: {
       '@type': 'Person',
@@ -135,6 +138,16 @@ export default async function BlogPostPage({
         </header>
 
         <div className="max-w-3xl mx-auto">
+          {post.cover && (
+            /* eslint-disable-next-line @next/next/no-img-element -- static export, images unoptimized */
+            <img
+              src={post.cover}
+              alt={post.title}
+              width={1600}
+              height={800}
+              className="w-full mb-12 md:mb-16 border border-border"
+            />
+          )}
           <div
             className="blog-content"
             dangerouslySetInnerHTML={{ __html: post.contentHtml }}

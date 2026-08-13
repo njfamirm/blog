@@ -18,6 +18,7 @@ export interface PostMeta {
   tags: string[]
   canonical?: string
   draft?: boolean
+  cover?: string
 }
 
 export interface Post extends PostMeta {
@@ -27,6 +28,23 @@ export interface Post extends PostMeta {
 /** URL form of a tag. Display casing varies ("AI", "LLM"), links must not. */
 export function tagSlug(tag: string) {
   return tag.toLowerCase()
+}
+
+const coverExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif']
+
+/**
+ * Covers live at public/img/blog/<slug>/cover.<ext> by convention, so a post
+ * gets one by dropping the file in. Frontmatter `cover` overrides the lookup.
+ */
+function findCover(slug: string, fromMatter?: string): string | undefined {
+  if (fromMatter) return fromMatter
+
+  for (const ext of coverExtensions) {
+    const publicPath = `/img/blog/${slug}/cover.${ext}`
+    if (fs.existsSync(path.join(process.cwd(), 'public', publicPath))) {
+      return publicPath
+    }
+  }
 }
 
 function readPostFile(slug: string) {
@@ -45,6 +63,7 @@ function readPostFile(slug: string) {
     tags: (data.tags || []).map(String) as string[],
     canonical: data.canonical as string | undefined,
     draft: data.draft === true,
+    cover: findCover(slug, data.cover as string | undefined),
   }
 
   return { meta, content }
