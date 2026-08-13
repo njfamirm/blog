@@ -76,71 +76,64 @@
     </div>
 
     <!-- Main UI -->
-    <div id="main-ui" class="hidden w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 z-10 relative">
-        
+    <div id="main-ui" class="hidden w-full max-w-2xl grid grid-cols-1 gap-6 z-10 relative">
         <!-- Header -->
-        <div class="col-span-1 md:col-span-2 text-center mb-4">
-            <h1 class="text-3xl font-bold tracking-widest border-b border-green-900 pb-2">SONIC NETWORK LINK</h1>
-            <p class="text-xs text-gray-500 mt-2">16-FSK + REED-SOLOMON FEC | REPEAT-UNTIL-ACKNOWLEDGED | CROSS-PASS ACCUMULATION | 10 baud | UTF-8</p>
+        <div class="col-span-1 text-center mb-4">
+            <h1 class="text-3xl font-bold tracking-widest border-b border-green-900 pb-2">SONIC CHAT LINK</h1>
+            <p class="text-xs text-gray-500 mt-2">16-FSK + REED-SOLOMON FEC | ARQ CHAT LINK | 10 baud | UTF-8</p>
         </div>
 
-        <!-- TRANSMITTER (TX) PANEL -->
-        <div class="cyber-panel p-6 flex flex-col">
+        <!-- CHAT PANEL -->
+        <div class="cyber-panel p-6 flex flex-col h-[700px]">
             <div class="flex justify-between items-center mb-4 border-b border-green-800 pb-2">
-                <h2 class="text-xl font-bold">> TRANSMITTER (TX)</h2>
-                <div class="text-xs"><span class="led" id="led-tx"></span> BROADCASTING</div>
+                <h2 class="text-xl font-bold">> CHAT TERMINAL</h2>
+                <div class="text-xs flex gap-4">
+                    <span><span class="led" id="led-tx"></span> TX</span>
+                    <span><span class="led" id="led-rx"></span> RX</span>
+                </div>
             </div>
-            
-            <textarea id="tx-input" class="cyber-input p-3 mb-4 resize-none h-32" placeholder="Enter secret message to transmit via audio waves..."></textarea>
+
+            <div class="flex gap-2 mb-4">
+                <button id="btn-listen" class="cyber-btn p-3 flex-1 border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:text-black">CONNECT MICROPHONE & START 🎤</button>
+                <button id="btn-ping" class="cyber-btn p-3 w-32 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black" disabled>PING 🏓</button>
+            </div>
 
             <!-- Carrier band selection -->
-            <div class="mb-4">
-                <label class="text-xs text-gray-500 block mb-1">CARRIER BAND:</label>
+            <div class="mb-3">
                 <select id="sel-band" class="cyber-input p-2 w-full text-xs">
-                    <option value="ultrasonic">ULTRASONIC — SILENT</option>
-                    <option value="audible">AUDIBLE — LOUD, LONGER RANGE</option>
+                    <option value="ultrasonic">ULTRASONIC (17.0 - 19.6 kHz)</option>
+                    <option value="audible">AUDIBLE (1.5 - 4.1 kHz)</option>
                 </select>
                 <p id="band-label" class="text-[10px] text-gray-600 mt-1"></p>
             </div>
 
-            <button id="btn-transmit" class="cyber-btn p-3 mb-2">ENCODE &amp; TRANSMIT 🔊</button>
-
-            <div class="text-[10px] mb-4 text-gray-400 border border-green-900/60 rounded px-3 py-2">
-                LINK: <span id="tx-state" class="text-green-400 font-bold">IDLE</span>
+            <!-- Chat Log -->
+            <div id="chat-log" class="cyber-input p-4 mb-4 flex-1 overflow-y-auto flex flex-col gap-3 font-mono text-sm" style="background: rgba(0, 10, 15, 0.8); border-color: #0ff;">
+                <div class="text-xs text-gray-500 text-center">--- SYSTEM READY. CONNECT MIC TO START ---</div>
             </div>
 
-            <div class="mt-auto">
-                <p class="text-xs text-gray-500 mb-1">TX FREQUENCY SPECTRUM:</p>
-                <canvas id="canvas-tx"></canvas>
+            <!-- Telemetry -->
+            <div class="flex justify-between text-[10px] mb-3 text-gray-400 border border-green-900/60 rounded px-3 py-2">
+                <div>TX LINK: <span id="tx-state" class="text-green-400 font-bold">IDLE</span></div>
+                <div>RX LINK: <span id="rx-state" class="text-cyan-400 font-bold">IDLE</span></div>
+                <div>MARGIN: <span id="rx-snr" class="text-cyan-400 font-bold">0.0x</span></div>
             </div>
+
+            <!-- Input area -->
+            <div class="flex gap-2">
+                <textarea id="tx-input" class="cyber-input p-3 resize-none h-14 flex-1" placeholder="Type a message (max 60 chars)..."></textarea>
+                <button id="btn-transmit" class="cyber-btn w-28 text-sm" disabled>SEND 🔊</button>
+            </div>
+            
+            <div class="mt-3 flex gap-2 h-14">
+                <canvas id="canvas-tx" class="flex-1 w-1/2"></canvas>
+                <canvas id="canvas-rx" class="flex-1 w-1/2" style="border-color: #0ff;"></canvas>
+            </div>
+            
+            <!-- Hidden fallback elements to prevent JS reference errors -->
+            <div id="rx-output" class="hidden"></div>
+            <div id="rx-bits" class="hidden"></div>
         </div>
-
-        <!-- RECEIVER (RX) PANEL -->
-        <div class="cyber-panel p-6 flex flex-col" style="border-color: #0ff;">
-            <div class="flex justify-between items-center mb-4 border-b border-cyan-800 pb-2">
-                <h2 class="text-xl font-bold text-cyan-400">> RECEIVER (RX)</h2>
-                <div class="text-xs"><span class="led" id="led-rx"></span> LISTENING</div>
-            </div>
-
-            <button id="btn-listen" class="cyber-btn p-3 mb-4 border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:text-black">ACTIVATE MICROPHONE 🎤</button>
-
-            <!-- Link telemetry -->
-            <div class="flex justify-between text-[10px] mb-2 text-gray-400 border border-cyan-900/60 rounded px-3 py-2">
-                <div>LINK STATE: <span id="rx-state" class="text-cyan-400 font-bold">IDLE</span></div>
-                <div>TONE MARGIN: <span id="rx-snr" class="text-cyan-400 font-bold">0.0x</span></div>
-            </div>
-
-            <div class="cyber-input p-3 mb-4 h-32 overflow-y-auto font-bold text-cyan-400 border-cyan-900" style="background: rgba(0, 10, 15, 0.8);">
-                <div id="rx-bits" class="text-[10px] text-gray-600 break-all mb-2 leading-none"></div>
-                <div id="rx-output" class="text-lg">WAITING FOR SIGNAL...</div>
-            </div>
-
-            <div class="mt-auto">
-                <p class="text-xs text-gray-500 mb-1">RX TONE BANK (each bar is one symbol):</p>
-                <canvas id="canvas-rx" style="border-color: #0ff;"></canvas>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -212,7 +205,7 @@
             // on a real handset a played tone reads >1000x, while silence sits near 5x,
             // so there is an enormous gap to place this in.
             PRESENCE_MARGIN: 25,
-            MAX_PAYLOAD: 200,
+            MAX_PAYLOAD: 60,
             // Sample only the back half of each tone. The front of a tone is still
             // contaminated by the echo of the one before it.
             SAMPLE_FROM: 0.45,
@@ -221,11 +214,11 @@
             // Fixed parity: 32 bytes repairs up to 16 corrupted bytes per frame, and
             // being constant means the frame needs no "parity length" field that
             // could itself be corrupted.
-            PARITY_BYTES: 32,
+            PARITY_BYTES: 16,
             HEADER_SYMBOLS: 4,      // message id byte + payload length byte, as nibbles
 
             // Repeat-until-acknowledged.
-            INTER_FRAME_MS: 500,    // fully silent gap between passes — safe listening window
+            INTER_FRAME_MS: 7000,    // fully silent gap between passes — safe listening window
             MAX_PASSES: 20,
             MAX_AIRTIME_MS: 180000, // hard stop after 3 minutes regardless
 
@@ -263,6 +256,7 @@
 
         // TX
         const txInput = document.getElementById('tx-input');
+        const chatLog = document.getElementById('chat-log');
         const btnTransmit = document.getElementById('btn-transmit');
         const ledTx = document.getElementById('led-tx');
         const canvasTx = document.getElementById('canvas-tx');
@@ -270,6 +264,7 @@
 
         // RX
         const btnListen = document.getElementById('btn-listen');
+        const btnPing = document.getElementById('btn-ping');
         const rxOutput = document.getElementById('rx-output');
         const rxBits = document.getElementById('rx-bits');
         const ledRx = document.getElementById('led-rx');
@@ -626,37 +621,7 @@
                 && analysis.power > rxNoiseFloor * PROTOCOL.PRESENCE_MARGIN;
         }
 
-        // --- ACOUSTIC BACK-CHANNEL (ACK) ---
-        //
-        // The receiver answers on two tones placed BELOW the data band. Two separate
-        // problems make that placement deliberate:
-        //   - The transmitter has to hear the ack while it is itself transmitting.
-        //     Its own speaker is far louder in its own mic than the remote device, so
-        //     the ack must be somewhere the data tones never reach. Goertzel at the
-        //     ack frequency simply does not see the data tones.
-        //   - Speaker distortion generates intermodulation products from the data
-        //     tones. Their differences are multiples of the 150Hz tone spacing (far
-        //     below the ack pair) and their sums land above 34kHz, so the chosen slot
-        //     stays clean.
-        // On top of that, the transmitter only LISTENS during the guard intervals it
-        // is already silent for — time separation on top of frequency separation.
-        // Requiring BOTH tones, several times, is what stops a random clatter from
-        // being mistaken for an ack.
-
-        function ackFreqs() {
-            return [activeBand.ackA, activeBand.ackB];
-        }
-
-        function scheduleAckBurst() {
-            const [fa, fb] = ackFreqs();
-            const step = PROTOCOL.ACK_TONE_MS / 1000;
-            const count = Math.round(PROTOCOL.ACK_MS / PROTOCOL.ACK_TONE_MS);
-            let t = audioCtx.currentTime + 0.02;
-            for (let i = 0; i < count; i++) {
-                scheduleTone(i % 2 === 0 ? fa : fb, t, step * 0.9, activeBand.gain);
-                t += step;
-            }
-        }
+        
 
         // --- TRANSMITTER (TX) ENGINE ---
         //
@@ -667,9 +632,7 @@
         // not each have to succeed — they only have to fill in each other's gaps.
 
         let txSession = null;
-        let ackAnalyser = null, ackBuffer = null, ackStream = null, ackRafId = null;
-        let ackHitsA = [], ackHitsB = [];
-        let txCanHearAck = false;
+        let ackTransmitting = false;
 
         function setTxState(text) {
             const el = document.getElementById('tx-state');
@@ -679,14 +642,16 @@
         btnTransmit.addEventListener('click', async () => {
             if (txSession) { stopTransmission('ABORTED BY USER'); return; }
 
-            const text = txInput.value;
+            const text = txInput.value.trim();
             if (!text) return alert("Enter a message to transmit!");
+            if (text.length > PROTOCOL.MAX_PAYLOAD) return alert(`Message too long. Max ${PROTOCOL.MAX_PAYLOAD} characters.`);
 
-            const messageId = Math.floor(Math.random() * 256);
+            const messageId = Math.floor(Math.random() * 250) + 1; // 1-250
             const symbols = encodeFrame(text, messageId);
-            if (!symbols) return alert(`Message too long. Maximum ${PROTOCOL.MAX_PAYLOAD} bytes per frame.`);
+            if (!symbols) return alert("Error encoding frame.");
 
             audioCtx.resume();
+            txInput.value = '';
 
             txSession = {
                 symbols,
@@ -699,10 +664,17 @@
                 oscillators: []
             };
 
-            ledTx.classList.add('active-red');
-            btnTransmit.textContent = "TRANSMITTING… (CLICK TO ABORT)";
+            // Push sending bubble to chat log
+            const msgDiv = document.createElement('div');
+            msgDiv.id = `msg-bubble-${messageId}`;
+            msgDiv.className = 'text-green-400 self-end max-w-[80%] break-words bg-green-900/30 p-2.5 rounded border border-green-800 text-xs';
+            msgDiv.innerHTML = `<div class="font-bold mb-1 text-[10px] text-green-500">YOU (TX)</div><div>${text}</div><div id="msg-status-${messageId}" class="text-[9px] text-yellow-500 mt-1">Sending (Pass 1)...</div>`;
+            chatLog.appendChild(msgDiv);
+            chatLog.scrollTop = chatLog.scrollHeight;
 
-            await startAckListener();
+            ledTx.classList.add('active-red');
+            btnTransmit.textContent = "ABORT ⏹";
+
             runTransmitPass();
         });
 
@@ -710,37 +682,37 @@
             if (!txSession) return;
             txSession.pass++;
 
-            const { symbols } = txSession;
+            const statusEl = document.getElementById(`msg-status-${txSession.messageId}`);
+            if (statusEl) statusEl.textContent = `Sending (Pass ${txSession.pass}/${PROTOCOL.MAX_PASSES})...`;
+
+            const { symbols, messageId } = txSession;
             const toneSec = PROTOCOL.TONE_MS / 1000;
             const symSec = PROTOCOL.SYMBOL_MS / 1000;
             const gain = activeBand.gain;
 
             let time = audioCtx.currentTime + 0.15;
+            txSession.oscillators = [];
 
-            // Preamble: a sustained sync tone. Its trailing edge is the single timing
-            // reference the receiver uses for every symbol in this pass.
             txSession.oscillators.push(scheduleTone(toneFreq(PROTOCOL.SYNC_TONE_INDEX), time, PROTOCOL.SYNC_MS / 1000, gain));
             time += PROTOCOL.SYNC_MS / 1000 + PROTOCOL.LEAD_IN_MS / 1000;
 
-            // Where the data symbols begin, in performance.now() terms — used to work
-            // out which moments are guard intervals we can listen for an ack in.
             txSession.payloadStartPerf = performance.now() + (time - audioCtx.currentTime) * 1000;
 
-            // Each symbol occupies SYMBOL_MS but only sounds for TONE_MS. The silent
-            // remainder is the guard interval: it stops the echo of one tone landing
-            // on the next, and doubles as the transmitter's listening window.
             for (const sym of symbols) {
                 txSession.oscillators.push(scheduleTone(toneFreq(sym), time, toneSec, gain));
                 time += symSec;
             }
 
-            const passMs = symbols.length * PROTOCOL.SYMBOL_MS;
-            setTxState(txCanHearAck
-                ? `PASS ${txSession.pass} / ${PROTOCOL.MAX_PASSES} — ${(passMs / 1000).toFixed(1)}s per pass, listening for ack`
-                : `⚠ PASS ${txSession.pass} / ${PROTOCOL.MAX_PASSES} — NO MIC ON THIS DEVICE, CANNOT HEAR THE ACK. Grant microphone permission HERE (the sender needs it too) or it will repeat all ${PROTOCOL.MAX_PASSES} times.`);
-            simulateTxVisualizer(passMs);
+            const totalPassMs = PROTOCOL.SYNC_MS + PROTOCOL.LEAD_IN_MS + (symbols.length * PROTOCOL.SYMBOL_MS);
+            setTxState(`PASS ${txSession.pass}/${PROTOCOL.MAX_PASSES} — TRANSMITTING`);
+            simulateTxVisualizer(totalPassMs);
 
-            txSession.timer = setTimeout(onTransmitPassEnd, passMs + PROTOCOL.INTER_FRAME_MS + 200);
+            // Unmute RX right after tone playback finishes
+            setTimeout(() => {
+                if (txSession) txSession.oscillators = [];
+            }, totalPassMs + 100);
+
+            txSession.timer = setTimeout(onTransmitPassEnd, totalPassMs + PROTOCOL.INTER_FRAME_MS);
         }
 
         function onTransmitPassEnd() {
@@ -763,154 +735,69 @@
             if (!txSession) return;
             clearTimeout(txSession.timer);
             txSession.oscillators.forEach(o => { try { o.stop(); } catch (e) {} });
+            
+            const msgId = txSession.messageId;
+            const isAcked = txSession.acked;
             txSession = null;
 
-            stopAckListener();
-            btnTransmit.textContent = "ENCODE & TRANSMIT 🔊";
+            btnTransmit.textContent = "SEND 🔊";
             ledTx.classList.remove('active-red');
             setTxState(reason);
+
+            const statusEl = document.getElementById(`msg-status-${msgId}`);
+            if (statusEl) {
+                if (isAcked) {
+                    statusEl.textContent = 'Delivered ✓';
+                    statusEl.className = 'text-[9px] text-green-400 font-bold mt-1';
+                } else {
+                    statusEl.textContent = 'Failed (No ACK) ❌';
+                    statusEl.className = 'text-[9px] text-red-500 font-bold mt-1';
+                }
+            }
         }
 
         // The transmitter opens its own mic purely to hear the ack. If that is refused
         // the link degrades to plain repeat-until-max, which still works — it just
         // cannot stop early.
-        async function startAckListener() {
-            if (ackAnalyser) return;
-            try {
-                ackStream = await navigator.mediaDevices.getUserMedia({
-                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }
-                });
-                const src = audioCtx.createMediaStreamSource(ackStream);
-                ackAnalyser = audioCtx.createAnalyser();
-                ackAnalyser.fftSize = 2048;
-                ackAnalyser.smoothingTimeConstant = 0;
-                src.connect(ackAnalyser);
-                ackBuffer = new Float32Array(ackAnalyser.fftSize);
-                ackHitsA = []; ackHitsB = [];
-                txCanHearAck = true;
-                ackRafId = requestAnimationFrame(ackListenLoop);
-            } catch (e) {
-                // This used to be reported once and then immediately overwritten by the
-                // first pass status, so the single most likely reason the sender never
-                // stops was invisible: the SENDING device needs microphone permission
-                // too, not just the receiving one.
-                txCanHearAck = false;
-            }
-        }
-
-        function stopAckListener() {
-            if (ackRafId) cancelAnimationFrame(ackRafId);
-            ackRafId = null;
-            if (ackStream) ackStream.getTracks().forEach(t => t.stop());
-            ackStream = null;
-            ackAnalyser = null;
-        }
-
-        // True when the speaker is currently silent: inside a guard interval, or in
-        // the gap between passes. Only then is the mic worth trusting.
-        function txIsSilentNow() {
-            if (!txSession || !txSession.payloadStartPerf) return false;
-            const elapsed = performance.now() - txSession.payloadStartPerf;
-            if (elapsed < 0) return false;                       // still in the preamble
-
-            const idx = Math.floor(elapsed / PROTOCOL.SYMBOL_MS);
-            if (idx >= txSession.symbols.length) return true;    // inter-frame gap
-
-            // The Goertzel window looks ~23ms BACKWARD, so entering the guard is not
-            // enough — we have to be far enough into it that the window no longer
-            // contains the tail of the tone we just played.
-            const pos = elapsed - idx * PROTOCOL.SYMBOL_MS;
-            return pos > PROTOCOL.TONE_MS + 28;
-        }
-
-        function ackListenLoop() {
-            if (!ackAnalyser) return;
-            ackRafId = requestAnimationFrame(ackListenLoop);
-            if (!txSession || txSession.acked) return;
-            if (!txIsSilentNow()) return;
-
-            ackAnalyser.getFloatTimeDomainData(ackBuffer);
-            const sr = audioCtx.sampleRate;
-            const [fa, fb] = ackFreqs();
-
-            const pa = goertzelPower(ackBuffer, fa, sr);
-            const pb = goertzelPower(ackBuffer, fb, sr);
-
-            // Reference slots must be genuinely EMPTY. The previous version sampled
-            // one of them halfway between the two ack tones — only 150Hz from each,
-            // about three Goertzel bins — so spectral leakage from the ack itself
-            // inflated the reference, and taking the max of the set made that the one
-            // that counted. The ratio could then never rise, and the sender sat there
-            // deaf while the receiver answered. These sit well clear of both the ack
-            // pair and the data band, and the median makes one noisy slot harmless.
-            const refs = [
-                goertzelPower(ackBuffer, fb - 700, sr),
-                goertzelPower(ackBuffer, fb - 500, sr),
-                goertzelPower(ackBuffer, fb - 300, sr)
-            ].sort((x, y) => x - y);
-            const ref = Math.max(refs[1], 1e-12);
-
-            const now = performance.now();
-            const marginA = pa / ref, marginB = pb / ref;
-            setTxState(`PASS ${txSession.pass} — LISTENING (ack margin ${Math.max(marginA, marginB).toFixed(0)}x)`);
-
-            if (marginA > PROTOCOL.ACK_SNR_MIN) ackHitsA.push(now);
-            if (marginB > PROTOCOL.ACK_SNR_MIN) ackHitsB.push(now);
-
-            const cutoff = now - PROTOCOL.ACK_WINDOW_MS;
-            ackHitsA = ackHitsA.filter(t => t >= cutoff);
-            ackHitsB = ackHitsB.filter(t => t >= cutoff);
-
-            // Both tones, several times each: a clatter or a door slam produces one
-            // broadband smear, not a sustained two-tone alternation.
-            if (ackHitsA.length >= PROTOCOL.ACK_HITS_MIN && ackHitsB.length >= PROTOCOL.ACK_HITS_MIN) {
-                // Stop NOW, not at the end of the pass. Merely flagging the session as
-                // acknowledged left the already-scheduled oscillators playing out the
-                // rest of the pass — up to another ten seconds of shouting at a
-                // receiver that had already said it was done.
-                txSession.acked = true;
-                stopTransmission('DELIVERED — RECEIVER ACKNOWLEDGED');
-            }
-        }
+        
 
         // --- RECEIVER (RX) ENGINE ---
 
         btnListen.addEventListener('click', async () => {
-            if (rxRunning) { stopReceiver(); return; }
+            if (rxRunning) { 
+                stopReceiver(); 
+                btnTransmit.disabled = true;
+            btnPing.disabled = true;
+                return; 
+            }
 
             try {
-                // Every one of these must be off: AGC rides the level up and down mid
-                // frame, and the noise suppressor treats steady sine tones as noise and
-                // removes precisely the signal we are trying to hear.
                 rxStream = await navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        autoGainControl: false,
-                        channelCount: 1
-                    }
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }
                 });
                 audioCtx.resume();
 
                 const source = audioCtx.createMediaStreamSource(rxStream);
                 rxAnalyser = audioCtx.createAnalyser();
                 rxAnalyser.fftSize = 2048;
-                rxAnalyser.smoothingTimeConstant = 0;   // we do our own integration
+                rxAnalyser.smoothingTimeConstant = 0;
                 source.connect(rxAnalyser);
 
                 rxTimeBuffer = new Float32Array(rxAnalyser.fftSize);
 
                 rxRunning = true;
-                rxNoiseFloor = 0;   // re-learn this room's floor from scratch
+                rxNoiseFloor = 0;
                 resetAccumulation();
                 resetPassState();
-                btnListen.textContent = "MIC ACTIVE — CLICK TO STOP 🎤";
+                btnListen.textContent = "MIC ACTIVE — CLICK TO DISCONNECT 🎤";
                 ledRx.classList.add('active-cyan');
+                btnTransmit.disabled = false;
+                btnPing.disabled = false;
 
                 rxRafId = requestAnimationFrame(rxProcessLoop);
 
             } catch (err) {
-                alert("Microphone access denied (" + (err.name || 'error') + "). The page must be served over HTTPS or localhost.");
+                alert("Microphone access denied (" + (err.name || 'error') + "). Must be served over HTTPS or localhost.");
                 console.error(err);
             }
         });
@@ -980,6 +867,9 @@
             if (!rxRunning || !rxAnalyser) return;
             rxRafId = requestAnimationFrame(rxProcessLoop);
 
+            // Mute RX while actively emitting audio — but keep the RAF loop alive!
+            if ((txSession && txSession.oscillators.length > 0) || ackTransmitting) return;
+
             rxAnalyser.getFloatTimeDomainData(rxTimeBuffer);
             drawSpectrum();
 
@@ -992,6 +882,9 @@
             if (rxPhase === RX.HUNT) {
                 setRxState(rxPasses > 0 ? `HOLDING ${rxPasses} PASS(ES) — WAITING FOR MORE` : 'HUNTING FOR PREAMBLE', snr);
                 if (present && index === PROTOCOL.SYNC_TONE_INDEX) {
+                    if (txSession) {
+                        resetAccumulation(); // Clean state for single-pass ACK detection
+                    }
                     rxPhase = RX.SYNC;
                     rxSyncSeenAt = now;
                 }
@@ -1087,6 +980,37 @@
             rxSymbolVotes = new Map();
         }
 
+        
+        function sendAckFrame(targetMsgId) {
+            const ackText = `ACK:${targetMsgId}`;
+            const symbols = encodeFrame(ackText, targetMsgId); // Use targetMsgId so passId matches
+            if (!symbols) return;
+
+            ackTransmitting = true;
+            ledTx.classList.add('active-red');
+            setTxState(`SENDING ACK FOR MSG #${targetMsgId}...`);
+
+            const toneSec = PROTOCOL.TONE_MS / 1000;
+            const symSec = PROTOCOL.SYMBOL_MS / 1000;
+            const gain = activeBand.gain;
+
+            let time = audioCtx.currentTime + 0.1;
+            scheduleTone(toneFreq(PROTOCOL.SYNC_TONE_INDEX), time, PROTOCOL.SYNC_MS / 1000, gain);
+            time += PROTOCOL.SYNC_MS / 1000 + PROTOCOL.LEAD_IN_MS / 1000;
+
+            for (const sym of symbols) {
+                scheduleTone(toneFreq(sym), time, toneSec, gain);
+                time += symSec;
+            }
+
+            const totalMs = PROTOCOL.SYNC_MS + PROTOCOL.LEAD_IN_MS + (symbols.length * PROTOCOL.SYMBOL_MS) + 300;
+            setTimeout(() => {
+                ackTransmitting = false;
+                ledTx.classList.remove('active-red');
+                setTxState('IDLE');
+            }, totalMs);
+        }
+
         function onReceivePassEnd() {
             // Trailing silence produces one empty slot; drop it so passes line up.
             while (rxPassAccum.length && bestTone(rxPassAccum[rxPassAccum.length - 1]) < 0) rxPassAccum.pop();
@@ -1104,8 +1028,8 @@
             // decoded text on screen untouched.
             if (passId === rxLastDecodedId) {
                 rxAckRepeats++;
-                scheduleAckBurst();
                 setRxState(`ALREADY DECODED — RE-ACKING (${rxAckRepeats})`);
+                sendAckFrame(passId);
                 resetPassState();
                 return;
             }
@@ -1136,18 +1060,31 @@
 
             const result = decodeFrame(symbols);
             if (result.ok) {
-                rxOutput.textContent = result.text;
-                rxOutput.style.color = '#0ff';
-                setRxState(`DECODED AFTER ${rxPasses} PASS(ES)` + (result.repaired ? ` — FEC REPAIRED ${result.repaired} BYTE(S)` : ''));
+                if (result.text.startsWith('ACK:')) {
+                    const ackedId = parseInt(result.text.split(':')[1]);
+                    if (txSession && txSession.messageId === ackedId) {
+                        txSession.acked = true;
+                        stopTransmission('DELIVERED — RECEIVER ACKNOWLEDGED');
+                    }
+                    resetAccumulation();
+                    resetPassState();
+                    return;
+                }
 
-                // Remember it, so the repeats that follow are answered rather than
-                // mistaken for a new message and collected all over again.
-                rxLastDecodedId = result.id;
-                rxAckRepeats = 1;
+                if (result.id !== rxLastDecodedId) {
+                    rxLastDecodedId = result.id;
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'text-cyan-400 self-start max-w-[80%] break-words bg-cyan-900/30 p-2.5 rounded border border-cyan-800 text-xs';
+                    msgDiv.innerHTML = `<div class="font-bold mb-1 text-[10px] text-cyan-400">PEER (RX)</div><div>${result.text}</div>`;
+                    chatLog.appendChild(msgDiv);
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                }
 
-                // Tell the transmitter it can stop. This lands in the sender's
-                // inter-frame gap: the pass just ended, so the sender is silent now.
-                scheduleAckBurst();
+                setRxState(`DECODED AFTER ${rxPasses} PASS(ES)`);
+
+                setTimeout(() => {
+                    sendAckFrame(result.id);
+                }, 800);
 
                 resetAccumulation();
                 resetPassState();
