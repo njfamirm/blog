@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { getPostData, getAllPostSlugs, getAdjacentPosts, tagSlug } from '@/lib/blog'
 import { Footer } from '@/components/footer'
 import { PostNav } from '@/components/post-nav'
+import { site, links } from '@/lib/site'
 import type { Metadata } from 'next'
 
 export async function generateStaticParams() {
@@ -20,15 +21,19 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.summary,
-    alternates: post.canonical ? {
-      canonical: post.canonical,
-    } : undefined,
+    keywords: post.tags,
+    authors: [{ name: site.name, url: site.url }],
+    // Self-canonical unless the post was first published elsewhere.
+    alternates: {
+      canonical: post.canonical ?? `/en/blog/${slug}`,
+    },
     openGraph: {
       type: 'article',
       title: post.title,
       description: post.summary,
       url: `/en/blog/${slug}`,
       publishedTime: post.date,
+      authors: [site.name],
       tags: post.tags,
     },
     twitter: {
@@ -47,9 +52,39 @@ export default async function BlogPostPage({
   const { slug } = await params
   const post = await getPostData(slug)
   const { newer, older } = getAdjacentPosts(slug)
+  const url = `${site.url}/en/blog/${slug}`
+
+  // Structured data: what search engines and LLM crawlers read instead of
+  // guessing at the markup.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.summary,
+    datePublished: post.date,
+    dateModified: post.date,
+    inLanguage: 'en',
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': post.canonical ?? url },
+    image: `${url}/opengraph-image`,
+    keywords: post.tags.join(', '),
+    author: {
+      '@type': 'Person',
+      name: site.name,
+      url: site.url,
+      sameAs: links
+        .filter((link) => !link.href.startsWith('mailto:'))
+        .map((link) => link.href),
+    },
+    publisher: { '@type': 'Person', name: site.name, url: site.url },
+  }
 
   return (
     <div className="min-h-screen selection:bg-foreground selection:text-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
         <Link
           href="/en/blog"
