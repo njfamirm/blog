@@ -18,7 +18,7 @@ export interface PostMeta {
   tags: string[]
   canonical?: string
   draft?: boolean
-  cover?: string
+  cover?: PostCover
 }
 
 export interface Post extends PostMeta {
@@ -32,18 +32,44 @@ export function tagSlug(tag: string) {
 
 const coverExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif']
 
+export interface PostCover {
+  /** In-article, 1600px wide. */
+  full: string
+  /** Post list, 320px wide. */
+  thumb: string
+  /** Social cards, 1200px wide JPEG — webp still isn't safe for every crawler. */
+  og: string
+}
+
+function publicFile(publicPath: string) {
+  return fs.existsSync(path.join(process.cwd(), 'public', publicPath))
+    ? publicPath
+    : undefined
+}
+
 /**
  * Covers live at public/img/blog/<slug>/cover.<ext> by convention, so a post
  * gets one by dropping the file in. Frontmatter `cover` overrides the lookup.
+ *
+ * Sized derivatives come from `pnpm prebuild`; each falls back to the source
+ * cover so a dev run without that step still shows the image.
  */
-function findCover(slug: string, fromMatter?: string): string | undefined {
-  if (fromMatter) return fromMatter
+function findCover(slug: string, fromMatter?: string): PostCover | undefined {
+  const source =
+    fromMatter ??
+    coverExtensions
+      .map((ext) => publicFile(`/img/blog/${slug}/cover.${ext}`))
+      .find(Boolean)
 
-  for (const ext of coverExtensions) {
-    const publicPath = `/img/blog/${slug}/cover.${ext}`
-    if (fs.existsSync(path.join(process.cwd(), 'public', publicPath))) {
-      return publicPath
-    }
+  if (!source) return undefined
+
+  const derivative = (name: string) =>
+    publicFile(`/img/blog/${slug}/${name}`) ?? source
+
+  return {
+    full: derivative('cover-1600.webp'),
+    thumb: derivative('cover-320.webp'),
+    og: derivative('cover-og.jpg'),
   }
 }
 

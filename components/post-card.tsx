@@ -16,6 +16,27 @@ export function PostCard({ post, index }: { post: PostMeta; index?: number }) {
             {String(index).padStart(3, '0')}
           </span>
         )}
+        {post.cover ? (
+          /* eslint-disable-next-line @next/next/no-img-element -- static export, images unoptimized */
+          <img
+            src={post.cover.thumb}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="hidden sm:block size-16 md:size-20 shrink-0 object-cover border border-border group-hover:border-background/25"
+          />
+        ) : (
+          /* Keeps rows aligned; echoes the 45-degree hatch in the page background. */
+          <div
+            aria-hidden
+            className="hidden sm:block size-16 md:size-20 shrink-0 border border-border text-muted-foreground opacity-40 group-hover:border-background/25 group-hover:text-background"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(45deg, currentColor 0, currentColor 0.5px, transparent 0, transparent 4px)',
+            }}
+          />
+        )}
         <div className="flex-1 flex flex-col md:flex-row md:items-baseline md:justify-between gap-2 md:gap-8 min-w-0">
           <div className="max-w-3xl">
             <h2 className="text-xl md:text-2xl font-bold tracking-tight text-balance group-hover:text-background">
